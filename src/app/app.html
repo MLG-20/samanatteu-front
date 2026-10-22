@@ -1,15 +1,2 @@
-<div class="conteneur">
-  <h1>SamaNatteu</h1>
-
-  <!-- @if : la nouvelle syntaxe de condition (remplace *ngIf).
-       Le contenu n'existe que si la condition est vraie. -->
-  @if (nbRoutes() !== null) {
-    <p class="ok">Le backend répond : <strong>{{ nbRoutes() }}</strong> routes d'API détectées.</p>
-  }
-
-  @if (erreur() !== null) {
-    <p class="ko">⚠ {{ erreur() }}</p>
-  }
-</div>
-
+<!-- La coquille de l'application : le routeur y affiche l'écran de l'URL courante. -->
 <router-outlet />
