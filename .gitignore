@@ -39,6 +39,10 @@ testem.log
 /typings
 __screenshots__/
 
+# Fichier de contexte local (mémoire de séance, comme côté backend) :
+# il décrit l'état du travail en cours, pas le projet lui-même.
+/CONTEXTE.md
+
 # System files
 .DS_Store
 Thumbs.db

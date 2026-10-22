@@ -1,59 +1,69 @@
-# SamanatteuFront
+# SamaNatteu — front (Angular)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.8.
+Front de la plateforme de tontines **SamaNatteu** : c'est ici que vivent les écrans des
+membres, des gestionnaires et de l'administrateur de la plateforme.
 
-## Development server
+Le **backend** (API REST, Spring Boot) est dans le dépôt voisin [`samanatteu`](../samanatteu).
 
-To start a local development server, run:
+## Démarrer
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Il faut **les deux** : l'API (Spring Boot) sur le port 8080, et le front sur le port 4200.
 
 ```bash
-ng generate component component-name
+# 1) l'API, depuis le dossier samanatteu/
+./mvnw spring-boot:run
+
+# 2) le front, depuis ce dossier
+npm install     # une seule fois
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Puis <http://localhost:4200>.
 
-```bash
-ng generate --help
+| Commande | Rôle |
+|---|---|
+| `npm start` | serveur de développement (recompile à chaque modification, recharge le navigateur) |
+| `npm test` | tests **en watch** (relance à chaque modification) |
+| `npx ng test --watch=false` | tests **une seule fois** (contrôle ponctuel, CI) |
+| `npm run build` | bundle de production dans `dist/` (fichiers statiques) |
+| `npx tsc -b` | régénère les sorties de compilation (corrige les erreurs TS6305 de l'IDE) |
+
+## Le proxy
+
+`proxy.conf.json` renvoie les préfixes de l'API (`/auth`, `/tontine`, `/dashboard`…) vers
+`http://localhost:8080`. Le navigateur ne voit donc qu'une seule origine (`localhost:4200`) : pas
+de problème de CORS en développement, et **exactement le même schéma qu'en production** (un
+serveur web sert les fichiers Angular et forwarde l'API).
+
+**Quand vous ajoutez un contrôleur côté Spring, ajoutez son préfixe ici.**
+
+## Organisation
+
+Un dossier par **fonctionnalité**, comme les packages par domaine côté Spring :
+
+```
+src/app/
+├── app.ts                 composant racine
+├── app.config.ts          configuration globale (HttpClient + intercepteurs, routeur)
+├── app.routes.ts          table URL → composant, avec les guards
+├── api/                   service transverse qui parle à l'API
+└── auth/                  fonctionnalité « authentification » (service, intercepteur, composants)
 ```
 
-## Building
+## Authentification
 
-To build the project run:
+Le backend renvoie un JWT (`POST /auth/login`) : un `accessToken` (15 min) et un `refreshToken`
+(7 jours). Le front :
 
-```bash
-ng build
-```
+1. stocke les deux tokens dans le `localStorage` (`AuthService`) ;
+2. ajoute `Authorization: Bearer …` à **chaque** requête (intercepteur HTTP) — on ne le passe
+   jamais à la main ;
+3. demande `GET /auth/me` pour savoir qui est connecté (le backend ne renvoie que les tokens au
+   login) ;
+4. protège les routes par rôle avec des **guards** (équivalent des règles de rôle de
+   `SecurityConfig`).
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Tests
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Vitest, avec `HttpTestingController` (l'équivalent de `MockMvc` côté front : les requêtes sont
+interceptées, aucun appel réseau) et `TestBed` pour l'injection de dépendances.
