@@ -2,7 +2,8 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "analytics": "89668d44-9337-4e0b-b639-cd17b93b49ad"
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -62,7 +63,8 @@
               "buildTarget": "samanatteu-front:build:production"
             },
             "development": {
-              "buildTarget": "samanatteu-front:build:development"
+              "buildTarget": "samanatteu-front:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
