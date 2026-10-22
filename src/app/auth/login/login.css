@@ -1,0 +1,643 @@
+/* Mobile d'abord. Paliers :
+   - < 380px  : petits téléphones (marges et textes resserrés)
+   - ≥ 600px  : tablette portrait (carte centrée, bandeau plus haut)
+   - ≥ 960px  : deux colonnes (marque | formulaire)
+   - ≥ 1400px : grand écran (plus d'air)
+   - paysage peu haut (téléphone couché) : bandeau réduit au logo.
+   clamp(min, idéal, max) = une taille qui suit la largeur de l'écran sans
+   jamais sortir des bornes : la typo s'adapte sans palier. */
+
+:host {
+  display: block;
+}
+
+.page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  /* dvh : la vraie hauteur visible sur mobile (barre d'URL comprise) */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ================= Panneau de marque ================= */
+
+.marque {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: linear-gradient(135deg, var(--primaire-950) 0%, var(--primaire-900) 45%, var(--accent-600) 100%);
+  background-size: 200% 200%;
+  animation: degrade 14s ease-in-out infinite;
+  color: var(--blanc);
+  padding: 1.5rem 1.25rem 2rem;
+  /* Mobile : bandeau aux coins bas arrondis, la carte vient en dessous. */
+  border-radius: 0 0 28px 28px;
+}
+
+/* Le dégradé glisse lentement : le panneau « respire ». */
+@keyframes degrade {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Bulles floues qui flottent derrière le texte. */
+.bulle {
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.55;
+  animation: flotte 12s ease-in-out infinite;
+}
+
+.bulle-1 {
+  width: 16rem;
+  height: 16rem;
+  background: var(--accent-400);
+  top: -6rem;
+  right: -4rem;
+}
+
+.bulle-2 {
+  width: 12rem;
+  height: 12rem;
+  background: var(--primaire-600);
+  bottom: -5rem;
+  left: -3rem;
+  animation-delay: -4s;
+}
+
+.bulle-3 {
+  width: 8rem;
+  height: 8rem;
+  background: #a5f3fc;
+  top: 40%;
+  left: 55%;
+  opacity: 0.3;
+  animation-delay: -8s;
+}
+
+@keyframes flotte {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(1.5rem, -1rem) scale(1.08);
+  }
+
+  66% {
+    transform: translate(-1rem, 1rem) scale(0.95);
+  }
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  animation: apparait 0.6s var(--courbe) both;
+}
+
+.logo-pastille {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent-400), var(--blanc));
+  color: var(--primaire-900);
+  font-weight: 800;
+  box-shadow: 0 6px 20px rgba(34, 211, 238, 0.45);
+}
+
+.logo-nom {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.accroche {
+  animation: apparait 0.7s 0.1s var(--courbe) both;
+}
+
+.accroche h1 {
+  margin: 1.5rem 0 0.6rem;
+  font-size: clamp(1.45rem, 4.5vw + 0.5rem, 3rem);
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* « en toute confiance » en dégradé cyan → blanc. */
+.surligne {
+  background: linear-gradient(90deg, var(--accent-400), #e0f7ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.accroche p {
+  margin: 0;
+  max-width: 30rem;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: clamp(0.95rem, 0.6vw + 0.8rem, 1.1rem);
+  line-height: 1.55;
+}
+
+/* Les atouts : cachés sur mobile (on va droit au formulaire). */
+.atouts {
+  display: none;
+  list-style: none;
+  margin: 2rem 0 0;
+  padding: 0;
+  gap: 0.75rem;
+  flex-direction: column;
+}
+
+.atouts li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: fit-content;
+  padding: 0.6rem 1rem 0.6rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+  font-weight: 500;
+  font-size: 0.95rem;
+  animation: apparait 0.6s var(--courbe) both;
+  transition: transform 0.25s var(--courbe), background 0.25s;
+}
+
+.atouts li:nth-child(1) {
+  animation-delay: 0.25s;
+}
+
+.atouts li:nth-child(2) {
+  animation-delay: 0.35s;
+}
+
+.atouts li:nth-child(3) {
+  animation-delay: 0.45s;
+}
+
+.atouts li:hover {
+  transform: translateX(6px);
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.atouts svg {
+  width: 1.9rem;
+  height: 1.9rem;
+  padding: 0.35rem;
+  border-radius: 50%;
+  background: rgba(34, 211, 238, 0.25);
+  fill: none;
+  stroke: var(--accent-400);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ================= Formulaire ================= */
+
+.zone-formulaire {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  /* La carte est centrée verticalement dans l'espace sous le bandeau. */
+  align-items: center;
+  padding: 1.75rem 1rem 2rem;
+}
+
+.carte {
+  position: relative;
+  width: 100%;
+  max-width: 27rem;
+  background: var(--blanc);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+  padding: 1.75rem 1.4rem;
+  animation: monte 0.7s 0.15s var(--courbe) both;
+}
+
+/* Fin liseré dégradé en haut de la carte. */
+.carte::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  border-radius: var(--rayon) var(--rayon) 0 0;
+  background: linear-gradient(90deg, var(--primaire-600), var(--accent-400));
+}
+
+.carte h2 {
+  margin: 0;
+  font-size: clamp(1.35rem, 1vw + 1.1rem, 1.7rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.sous-titre {
+  margin: 0.4rem 0 1.6rem;
+  color: var(--texte-doux);
+  font-size: 0.95rem;
+}
+
+/* Message d'erreur global (identifiants refusés par le backend). */
+.alerte {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin: -0.4rem 0 1.25rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: var(--rayon-champ);
+  background: var(--erreur-fond);
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  font-size: 0.9rem;
+  font-weight: 500;
+  animation: secoue 0.4s var(--courbe);
+}
+
+.alerte svg {
+  flex-shrink: 0;
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: none;
+  stroke: var(--erreur);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.champ {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 1.15rem;
+}
+
+.champ label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+/* Conteneur icône + input (+ œil) : l'icône est posée DANS le champ. */
+.saisie {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.icone {
+  position: absolute;
+  left: 0.9rem;
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: #94a3b8;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+  transition: stroke 0.2s;
+}
+
+.saisie input {
+  width: 100%;
+  height: 3.1rem;
+  padding: 0 2.9rem 0 2.75rem;
+  border: 1.5px solid var(--bordure);
+  border-radius: var(--rayon-champ);
+  background: #f8fafc;
+  color: var(--texte);
+  font-size: 1rem;
+  /* 16px min : sinon iOS zoome au focus */
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.saisie input::placeholder {
+  color: #a8b3c2;
+}
+
+/* Champ pré-rempli par le navigateur : Chrome impose son fond bleu-gris.
+   Une ombre intérieure pleine le recouvre avec notre couleur. */
+.saisie input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 100px #f8fafc inset;
+  -webkit-text-fill-color: var(--texte);
+  caret-color: var(--texte);
+}
+
+.saisie input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 100px var(--blanc) inset, 0 0 0 4px var(--primaire-100);
+}
+
+.saisie input:hover {
+  border-color: #b9c6d8;
+}
+
+.saisie input:focus {
+  outline: none;
+  background: var(--blanc);
+  border-color: var(--primaire-600);
+  box-shadow: 0 0 0 4px var(--primaire-100);
+}
+
+/* :focus-within = le conteneur contient le champ actif → l'icône s'allume. */
+.saisie:focus-within .icone {
+  stroke: var(--primaire-600);
+}
+
+/* Angular pose ces classes tout seul sur les inputs reliés au formulaire :
+   ng-touched = l'utilisateur a quitté le champ, ng-invalid = une règle échoue. */
+.saisie input.ng-touched.ng-invalid {
+  border-color: var(--erreur);
+  background: #fffafa;
+}
+
+.saisie input.ng-touched.ng-invalid:focus {
+  box-shadow: 0 0 0 4px var(--erreur-fond);
+}
+
+.saisie:has(input.ng-touched.ng-invalid) .icone {
+  stroke: var(--erreur);
+}
+
+/* Bouton œil (afficher / masquer le mot de passe). */
+.oeil {
+  position: absolute;
+  right: 0.45rem;
+  display: grid;
+  place-items: center;
+  width: 2.3rem;
+  height: 2.3rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.oeil:hover {
+  background: var(--primaire-50);
+}
+
+.oeil:focus-visible {
+  outline: 2px solid var(--primaire-600);
+  outline-offset: 1px;
+}
+
+.oeil svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: none;
+  stroke: #64748b;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.aide-erreur {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--erreur);
+  font-size: 0.84rem;
+  font-weight: 500;
+  animation: secoue 0.4s var(--courbe);
+}
+
+.aide-erreur::before {
+  content: '!';
+  display: grid;
+  place-items: center;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--erreur);
+  color: var(--blanc);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+/* Bouton principal : dégradé + reflet qui balaie au survol. */
+.bouton {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 3.2rem;
+  margin-top: 0.6rem;
+  border: none;
+  border-radius: var(--rayon-champ);
+  background: linear-gradient(135deg, var(--primaire-600), var(--accent-600));
+  color: var(--blanc);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 10px 25px -8px rgba(37, 99, 235, 0.6);
+  transition: transform 0.2s var(--courbe), box-shadow 0.2s, filter 0.2s;
+}
+
+.bouton svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.25s var(--courbe);
+}
+
+.bouton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+  transform: translateX(-100%);
+}
+
+.bouton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px -10px rgba(37, 99, 235, 0.7);
+}
+
+.bouton:hover:not(:disabled)::after {
+  transform: translateX(100%);
+  transition: transform 0.7s var(--courbe);
+}
+
+.bouton:hover:not(:disabled) svg {
+  transform: translateX(4px);
+}
+
+.bouton:active:not(:disabled) {
+  transform: translateY(0) scale(0.99);
+}
+
+.bouton:focus-visible {
+  outline: 3px solid var(--primaire-100);
+  outline-offset: 2px;
+}
+
+.bouton:disabled {
+  background: linear-gradient(135deg, #b8c7e6, #a9d6e2);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* ================= Animations communes ================= */
+
+@keyframes apparait {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes monte {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes secoue {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-4px);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateX(4px);
+  }
+
+  75% {
+    transform: translateX(-2px);
+  }
+
+  100% {
+    transform: none;
+  }
+}
+
+/* ================= Paliers ================= */
+
+/* Petits téléphones. */
+@media (max-width: 379px) {
+  .marque {
+    padding: 1.1rem 1rem 1.6rem;
+  }
+
+  .accroche p {
+    display: none;
+    /* on garde le titre, on gagne de la place */
+  }
+
+  .zone-formulaire {
+    padding: 1.25rem 0.6rem 1.5rem;
+  }
+
+  .carte {
+    padding: 1.4rem 1.1rem;
+  }
+}
+
+/* Tablette portrait. */
+@media (min-width: 600px) {
+  .marque {
+    padding: 2rem 2.5rem 3rem;
+    border-radius: 0 0 36px 36px;
+  }
+
+  .carte {
+    padding: 2.25rem 2rem;
+  }
+}
+
+/* Deux colonnes. */
+@media (min-width: 960px) {
+  .page {
+    flex-direction: row;
+  }
+
+  .marque {
+    flex: 1.1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2.75rem 3.5rem;
+    border-radius: 0; /* colonne pleine hauteur : coins droits */
+  }
+
+  .accroche {
+    margin-bottom: 3rem;
+  }
+
+  .atouts {
+    display: flex;
+  }
+
+  .zone-formulaire {
+    flex: 1;
+    align-items: center;
+    padding: 2rem;
+  }
+
+  .carte {
+    padding: 2.75rem 2.5rem;
+  }
+}
+
+/* Grand écran. */
+@media (min-width: 1400px) {
+  .marque {
+    padding: 3.5rem 5rem;
+  }
+
+  .carte {
+    max-width: 29rem;
+  }
+}
+
+/* Téléphone en paysage (peu de hauteur) : bandeau réduit au logo. */
+@media (max-height: 520px) and (orientation: landscape) and (max-width: 959px) {
+  .marque {
+    padding: 0.9rem 1.25rem;
+    border-radius: 0 0 20px 20px;
+  }
+
+  .accroche {
+    display: none;
+  }
+}

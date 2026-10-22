@@ -1,1 +1,67 @@
-/* You can add global styles to this file, and also import other style files */
+/* Styles globaux : la palette et les bases communes à tous les écrans.
+   Les styles propres à un écran restent dans son .css (ils ne débordent pas).
+   Les couleurs sont nommées par RÔLE (primaire, accent...) et non par teinte :
+   changer de palette = changer ce bloc seulement. */
+
+:root {
+  /* Palette « bleu océan + cyan ». */
+  --primaire-950: #0b1f4d;
+  --primaire-900: #1e3a8a;
+  --primaire-700: #1d4ed8;
+  --primaire-600: #2563eb;
+  --primaire-100: #dbeafe;
+  --primaire-50: #eff6ff;
+  --accent-600: #0891b2;
+  --accent-400: #22d3ee;
+  --accent-100: #cffafe;
+
+  --texte: #0f172a;
+  --texte-doux: #64748b;
+  --bordure: #dbe3ee;
+  --fond: #f5f8fc;
+  --blanc: #ffffff;
+  --erreur: #dc2626;
+  --erreur-fond: #fee2e2;
+
+  --rayon: 16px;
+  --rayon-champ: 12px;
+  --ombre: 0 20px 50px -12px rgba(30, 58, 138, 0.25);
+  --police: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --courbe: cubic-bezier(0.22, 1, 0.36, 1); /* départ rapide, arrivée douce */
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--police);
+  color: var(--texte);
+  background: var(--fond);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+/* Accessibilité : si l'utilisateur a demandé moins d'animations à son
+   système, on les coupe partout. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

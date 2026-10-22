@@ -1,0 +1,126 @@
+<div class="page">
+  <!-- Panneau de marque : à gauche sur grand écran, bandeau en haut sur mobile. -->
+  <aside class="marque">
+    <!-- Bulles décoratives animées (aria-hidden : ignorées des lecteurs d'écran). -->
+    <span class="bulle bulle-1" aria-hidden="true"></span>
+    <span class="bulle bulle-2" aria-hidden="true"></span>
+    <span class="bulle bulle-3" aria-hidden="true"></span>
+
+    <div class="logo">
+      <span class="logo-pastille">S</span>
+      <span class="logo-nom">SamaNatteu</span>
+    </div>
+
+    <div class="accroche">
+      <h1>Votre tontine, <span class="surligne">en toute confiance.</span></h1>
+      <p>Cotisations, tirages, prêts : tout est suivi, chacun voit où en est la caisse.</p>
+
+      <ul class="atouts">
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Z" /></svg>
+          Comptes sécurisés
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18M7 15l4-4 3 3 6-6" /></svg>
+          Caisse transparente
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10l-1 4H8L7 4Zm-3 6h16v10H4V10Zm5 4h6" /></svg>
+          Reçus et rappels
+        </li>
+      </ul>
+    </div>
+  </aside>
+
+  <main class="zone-formulaire">
+    <!-- [formGroup] : ce <form> est piloté par `formulaire` (la classe).
+         (ngSubmit) : à l'envoi (bouton ou Entrée), appelle seConnecter().
+         Les ( ) = un événement, de l'écran vers le code. -->
+    <form class="carte" [formGroup]="formulaire" (ngSubmit)="seConnecter()">
+      <h2>Bon retour 👋</h2>
+      <p class="sous-titre">Connectez-vous avec votre numéro de téléphone.</p>
+
+      <!-- erreur() : on LIT un signal en l'appelant comme une fonction.
+           role="alert" : un lecteur d'écran annonce le message dès qu'il apparaît. -->
+      @if (erreur()) {
+        <div class="alerte" role="alert">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v6M12 16.5v.5" /></svg>
+          <span>{{ erreur() }}</span>
+        </div>
+      }
+
+      <div class="champ">
+        <label for="telephone">Téléphone</label>
+        <div class="saisie">
+          <svg class="icone" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z" />
+          </svg>
+          <!-- formControlName : cet input est relié au champ `telephone`. -->
+          <input
+            id="telephone"
+            type="tel"
+            inputmode="tel"
+            autocomplete="tel"
+            placeholder="77 123 45 67"
+            formControlName="telephone"
+          />
+        </div>
+        <!-- L'erreur ne s'affiche qu'après que l'utilisateur a quitté le champ
+             (touched), pour ne pas crier dès l'ouverture de la page. -->
+        @if (formulaire.controls.telephone.touched && formulaire.controls.telephone.invalid) {
+          <span class="aide-erreur">Le numéro de téléphone est obligatoire.</span>
+        }
+      </div>
+
+      <div class="champ">
+        <label for="motDePasse">Mot de passe</label>
+        <div class="saisie">
+          <svg class="icone" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 10V8a6 6 0 1 1 12 0v2M5 10h14v11H5V10Zm7 4v3" />
+          </svg>
+          <!-- #mdp : une « variable de template », un nom pour cet <input>
+               utilisable ailleurs dans CE fichier HTML (le bouton œil). -->
+          <input
+            #mdp
+            id="motDePasse"
+            type="password"
+            autocomplete="current-password"
+            placeholder="••••••••"
+            formControlName="motDePasse"
+          />
+          <!-- (click) : la parenthèse = un ÉVÉNEMENT (le sens inverse des [ ]).
+               On bascule le type de l'input entre password et text.
+               type="button" : sinon un bouton dans un <form> envoie le formulaire. -->
+          <button
+            type="button"
+            class="oeil"
+            [attr.aria-label]="mdp.type === 'password' ? 'Afficher le mot de passe' : 'Masquer le mot de passe'"
+            (click)="mdp.type = mdp.type === 'password' ? 'text' : 'password'"
+          >
+            @if (mdp.type === 'password') {
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" />
+              </svg>
+            } @else {
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4M6.6 6.6A17 17 0 0 0 2 12s3.6 7 10 7a9.6 9.6 0 0 0 5.4-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+              </svg>
+            }
+          </button>
+        </div>
+        @if (formulaire.controls.motDePasse.touched && formulaire.controls.motDePasse.hasError('required')) {
+          <span class="aide-erreur">Le mot de passe est obligatoire.</span>
+        }
+        @if (formulaire.controls.motDePasse.touched && formulaire.controls.motDePasse.hasError('minlength')) {
+          <span class="aide-erreur">Au moins 8 caractères.</span>
+        }
+      </div>
+
+      <!-- [disabled] : bouton grisé tant qu'une règle n'est pas respectée. -->
+      <button type="submit" class="bouton" [disabled]="formulaire.invalid">
+        <span>Se connecter</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+      </button>
+    </form>
+  </main>
+</div>
