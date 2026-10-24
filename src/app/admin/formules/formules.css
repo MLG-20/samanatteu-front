@@ -1,0 +1,170 @@
+.tarifs {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  align-items: stretch;
+}
+
+.tarif {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 1.6rem 1.5rem 1.4rem;
+  transition: transform 0.3s var(--courbe), box-shadow 0.3s;
+}
+
+.tarif:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--ombre-2);
+}
+
+/* La formule mise en avant : bordure dégradée + halo. */
+.vedette {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(135deg, var(--primaire-600), var(--accent-400)) border-box;
+  box-shadow: 0 24px 50px -24px rgba(37, 99, 235, 0.55);
+}
+
+.ruban {
+  position: absolute;
+  top: -0.75rem;
+  left: 1.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--primaire-600), var(--accent-600));
+  color: var(--blanc);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  box-shadow: 0 6px 16px -6px rgba(37, 99, 235, 0.7);
+}
+
+.inactive {
+  opacity: 0.7;
+}
+
+.tarif header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.tarif h2 {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.prix {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 1rem 0 1.3rem;
+}
+
+.prix span {
+  font-family: var(--police-titre);
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.prix small {
+  color: var(--texte-doux);
+  font-weight: 500;
+}
+
+.quotas {
+  flex: 1;
+  display: grid;
+  gap: 0.75rem;
+  margin: 0 0 1.5rem;
+  padding: 1.2rem 0 0;
+  border-top: 1px solid var(--bordure);
+  list-style: none;
+  font-size: 0.9rem;
+  color: var(--texte-2);
+}
+
+.quotas li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.quotas app-icone {
+  width: 1.05rem;
+  height: 1.05rem;
+  color: var(--primaire-600);
+}
+
+.tarif footer {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tarif footer .btn {
+  flex: 1;
+}
+
+.trois {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 480px) {
+  .trois {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Interrupteur (case à cocher déguisée en glissière). */
+.interrupteur {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.interrupteur input {
+  position: absolute;
+  opacity: 0;
+}
+
+.glissiere {
+  position: relative;
+  width: 2.6rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  background: var(--bordure-forte);
+  transition: background 0.25s;
+}
+
+.glissiere::after {
+  content: '';
+  position: absolute;
+  top: 0.2rem;
+  left: 0.2rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  background: var(--blanc);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.25s var(--courbe);
+}
+
+.interrupteur input:checked + .glissiere {
+  background: var(--primaire-600);
+}
+
+.interrupteur input:checked + .glissiere::after {
+  transform: translateX(1.1rem);
+}
+
+.interrupteur input:focus-visible + .glissiere {
+  box-shadow: var(--anneau);
+}

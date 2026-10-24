@@ -1,0 +1,211 @@
+/* Couleurs catégorielles des graphiques (palette de référence validée pour
+   les daltonismes : bleu, orange, vert d'eau, dans cet ordre fixe). */
+:host {
+  --serie-1: #2a78d6;
+  --serie-2: #eb6834;
+  --serie-3: #1baf7a;
+  --barre: #2a78d6;
+}
+
+:host-context([data-theme='dark']) {
+  --serie-1: #3987e5;
+  --serie-2: #d95926;
+  --serie-3: #199e70;
+  --barre: #3987e5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :host-context(:root:not([data-theme='light'])) {
+    --serie-1: #3987e5;
+    --serie-2: #d95926;
+    --serie-3: #199e70;
+    --barre: #3987e5;
+  }
+}
+
+.bloc {
+  margin-bottom: 1.25rem;
+}
+
+.graphique {
+  padding-top: 1.4rem;
+}
+
+/* ---- Barre empilée ---- */
+.empilee {
+  display: flex;
+  gap: 2px; /* le fond de la carte sépare les segments */
+  height: 1.1rem;
+}
+
+.segment {
+  position: relative;
+  min-width: 6px;
+  flex-basis: 0;
+  transition: filter 0.2s, transform 0.2s;
+  animation: deplie 0.9s var(--courbe) both;
+  transform-origin: left;
+}
+
+.segment:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.segment:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.segment:only-child {
+  border-radius: 4px;
+}
+
+.segment:hover {
+  filter: brightness(1.1);
+}
+
+@keyframes deplie {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* L'info-bulle au survol (data-info) : le chiffre exact, sans chercher. */
+[data-info] {
+  position: relative;
+}
+
+[data-info]:hover::after {
+  content: attr(data-info);
+  position: absolute;
+  z-index: 5;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.35rem 0.6rem;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #f8fafc;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: var(--ombre-2);
+}
+
+.legende {
+  display: grid;
+  gap: 0.15rem;
+  margin: 1.3rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legende li {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px dashed var(--bordure);
+  font-size: 0.9rem;
+}
+
+.legende li:last-child {
+  border-bottom: none;
+}
+
+.puce {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 3px;
+}
+
+.legende .nom {
+  flex: 1;
+  color: var(--texte-2);
+}
+
+.legende .part {
+  width: 3.2rem;
+  text-align: right;
+  color: var(--texte-doux);
+  font-size: 0.82rem;
+}
+
+/* ---- Barres horizontales ---- */
+.barres {
+  display: grid;
+  gap: 0.95rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.barres li {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr 2.2rem;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 0.9rem;
+}
+
+.barres .nom {
+  color: var(--texte-2);
+}
+
+.barres strong {
+  text-align: right;
+}
+
+.piste {
+  height: 0.75rem;
+}
+
+.barre {
+  display: block;
+  height: 100%;
+  min-width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--barre);
+  transform-origin: left;
+  animation: deplie 0.9s var(--courbe) both;
+}
+
+.barres li:hover .barre {
+  filter: brightness(1.12);
+}
+
+/* ---- Listes ---- */
+.liste {
+  margin: 0;
+  padding: 0.35rem 0;
+  list-style: none;
+}
+
+.liste li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 1.25rem;
+  transition: background 0.15s;
+}
+
+.liste li:hover {
+  background: var(--surface-2);
+}
+
+.echeance {
+  flex-shrink: 0;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: var(--attention-fond);
+  color: var(--attention-texte);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+@media (max-width: 420px) {
+  .barres li {
+    grid-template-columns: 6rem 1fr 2rem;
+  }
+}

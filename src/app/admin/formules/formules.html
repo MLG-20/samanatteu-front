@@ -1,0 +1,110 @@
+<div class="entete-page">
+  <div>
+    <h1>Formules</h1>
+    <p class="sous-titre">L'offre proposée aux gestionnaires : quotas et prix mensuels.</p>
+  </div>
+  <div class="actions">
+    <button type="button" class="btn btn-primaire" (click)="ouvrir('nouvelle')"><app-icone nom="plus" /> Nouvelle formule</button>
+  </div>
+</div>
+
+@if (erreur()) {
+  <div class="alerte alerte-erreur"><app-icone nom="erreur" /><span>{{ erreur() }}</span></div>
+}
+
+@if (chargement()) {
+  <div class="tarifs">
+    @for (i of [1, 2, 3]; track i) {
+      <div class="carte tarif"><span class="squelette" style="height: 18rem"></span></div>
+    }
+  </div>
+} @else if (triees().length === 0) {
+  <div class="carte">
+    <app-etat-vide icone="formules" titre="Aucune formule" texte="Créez la première formule pour pouvoir abonner des gestionnaires.">
+      <button type="button" class="btn btn-primaire" (click)="ouvrir('nouvelle')"><app-icone nom="plus" /> Créer une formule</button>
+    </app-etat-vide>
+  </div>
+} @else {
+  <div class="tarifs">
+    @for (f of triees(); track f.id; let i = $index) {
+      <article class="carte tarif cascade" [style.--i]="i" [class.vedette]="f.id === vedette()" [class.inactive]="!f.active">
+        @if (f.id === vedette()) {
+          <span class="ruban">Recommandée</span>
+        }
+        <header>
+          <h2>{{ f.nom }}</h2>
+          @if (!f.active) {
+            <span class="badge badge-neutre">Retirée</span>
+          }
+        </header>
+        <p class="prix">
+          <span class="chiffres">{{ f.prixMensuel | fcfa }}</span>
+          <small>/ mois</small>
+        </p>
+        <ul class="quotas">
+          <li><app-icone nom="tontine" /> <strong>{{ f.nbTontinesMax }}</strong> tontine{{ f.nbTontinesMax > 1 ? 's' : '' }}</li>
+          <li><app-icone nom="utilisateurs" /> <strong>{{ f.nbMembresMax }}</strong> membres par tontine</li>
+          <li><app-icone nom="message" /> <strong>{{ f.smsParMois }}</strong> SMS par mois</li>
+          <li><app-icone nom="recu" /> Reçus PDF illimités</li>
+        </ul>
+        <footer>
+          <button type="button" class="btn btn-secondaire" (click)="ouvrir(f)"><app-icone nom="crayon" /> Modifier</button>
+          <button type="button" class="btn btn-fantome" (click)="basculer(f)">
+            <app-icone [nom]="f.active ? 'pause' : 'lecture'" />
+            {{ f.active ? 'Retirer' : 'Proposer' }}
+          </button>
+        </footer>
+      </article>
+    }
+  </div>
+}
+
+<app-modale
+  [ouverte]="edition() !== null"
+  [titre]="edition() === 'nouvelle' ? 'Nouvelle formule' : 'Modifier la formule'"
+  sousTitre="Les abonnements en cours gardent leurs quotas jusqu'à leur renouvellement."
+  (fermer)="edition.set(null)"
+>
+  <form id="form-formule" [formGroup]="formulaire" (ngSubmit)="enregistrer()">
+    @if (erreurModale()) {
+      <div class="alerte alerte-erreur" role="alert"><app-icone nom="erreur" /><span>{{ erreurModale() }}</span></div>
+    }
+    <div class="champ">
+      <label for="f-nom">Nom</label>
+      <input id="f-nom" class="entree" formControlName="nom" placeholder="Ex. Essentiel" />
+    </div>
+    <div class="champ">
+      <label for="f-prix">Prix mensuel</label>
+      <div class="saisie">
+        <input id="f-prix" class="entree" type="number" min="0" step="500" formControlName="prixMensuel" />
+        <span class="suffixe">FCFA</span>
+      </div>
+    </div>
+    <div class="ligne-champs trois">
+      <div class="champ">
+        <label for="f-tontines">Tontines max</label>
+        <input id="f-tontines" class="entree" type="number" min="0" formControlName="nbTontinesMax" />
+      </div>
+      <div class="champ">
+        <label for="f-membres">Membres max</label>
+        <input id="f-membres" class="entree" type="number" min="0" formControlName="nbMembresMax" />
+      </div>
+      <div class="champ">
+        <label for="f-sms">SMS / mois</label>
+        <input id="f-sms" class="entree" type="number" min="0" formControlName="smsParMois" />
+      </div>
+    </div>
+    <label class="interrupteur">
+      <input type="checkbox" formControlName="active" />
+      <span class="glissiere" aria-hidden="true"></span>
+      <span>Proposée aux gestionnaires</span>
+    </label>
+  </form>
+  <div pied>
+    <button type="button" class="btn btn-secondaire" (click)="edition.set(null)">Annuler</button>
+    <button type="submit" form="form-formule" class="btn btn-primaire" [disabled]="envoi()">
+      @if (envoi()) { <span class="rouage"></span> }
+      Enregistrer
+    </button>
+  </div>
+</app-modale>

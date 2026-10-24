@@ -1,0 +1,98 @@
+.bloc {
+  margin-bottom: 1.25rem;
+}
+
+.filtres {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--bordure);
+}
+
+.recherche .entree {
+  height: 2.6rem;
+}
+
+.bloc-petit {
+  display: block;
+  color: var(--texte-doux);
+  font-size: 0.8rem;
+}
+
+.conso {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 9rem;
+}
+
+.conso .jauge {
+  flex: 1;
+}
+
+.conso small {
+  color: var(--texte-doux);
+  white-space: nowrap;
+}
+
+.formules-choix {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: 0.6rem;
+}
+
+.formule-choix {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.8rem 0.9rem;
+  border: 1.5px solid var(--bordure);
+  border-radius: 12px;
+  background: var(--surface-2);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.formule-choix input {
+  position: absolute;
+  opacity: 0;
+}
+
+.formule-choix small {
+  color: var(--texte-doux);
+}
+
+.formule-choix:has(input:checked) {
+  border-color: var(--primaire-600);
+  background: var(--primaire-50);
+}
+
+.formule-choix:has(input:focus-visible) {
+  box-shadow: var(--anneau);
+}
+
+.recap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  padding: 1rem 1.1rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primaire-50), var(--accent-100));
+  color: var(--texte-2);
+  font-weight: 600;
+}
+
+.recap strong {
+  font-family: var(--police-titre);
+  font-size: 1.35rem;
+  color: var(--texte);
+}
+
+@media (max-width: 720px) {
+  .conso {
+    min-width: 0;
+    width: 55%;
+  }
+}

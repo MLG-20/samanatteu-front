@@ -1,0 +1,144 @@
+@let c = comptes();
+@let t = tontines();
+<div class="entete-page">
+  <div>
+    <h1>Vue d'ensemble</h1>
+    <p class="sous-titre">La santé de la plateforme SamaNatteu, en un coup d'œil.</p>
+  </div>
+  <div class="actions">
+    <a class="btn btn-secondaire" routerLink="/admin/formules"><app-icone nom="formules" /> Formules</a>
+    <a class="btn btn-primaire" routerLink="/admin/utilisateurs"><app-icone nom="ajoutUtilisateur" /> Gérer les comptes</a>
+  </div>
+</div>
+
+@if (erreur()) {
+  <div class="alerte alerte-erreur"><app-icone nom="erreur" /><span>{{ erreur() }}</span></div>
+}
+
+<div class="grille-stats bloc">
+  <app-carte-stat icone="utilisateurs" libelle="Comptes" [valeur]="c?.total ?? 0" [chargement]="chargement()" [aide]="(c?.nbGestionnaires ?? 0) + ' gestionnaires'" />
+  <app-carte-stat icone="tontine" libelle="Tontines actives" ton="succes" [valeur]="t?.nbActive ?? 0" [chargement]="chargement()" [aide]="'sur ' + (t?.total ?? 0) + ' créées'" />
+  <app-carte-stat icone="carte" libelle="Abonnés actifs" ton="info" [valeur]="nbAbonnesActifs()" [chargement]="chargement()" [aide]="abonnements().length + ' abonnements au total'" />
+  <app-carte-stat icone="tendance" libelle="Revenu mensuel" ton="accent" [valeur]="fcfa(revenuMensuel())" [chargement]="chargement()" aide="abonnements en cours" />
+</div>
+
+<div class="grille-2 bloc">
+  <!-- Répartition des comptes : une barre empilée (part d'un tout) + légende. -->
+  <section class="carte">
+    <div class="carte-entete">
+      <div>
+        <h2>Répartition des comptes</h2>
+        <p class="sous">Par rôle, sur {{ c?.total ?? 0 }} comptes</p>
+      </div>
+    </div>
+    <div class="carte-corps graphique">
+      @if (chargement()) {
+        <span class="squelette" style="height: 1.1rem"></span>
+        <span class="squelette" style="height: 4rem; margin-top: 1.2rem"></span>
+      } @else {
+        <div class="empilee" role="img" [attr.aria-label]="'Membres ' + (c?.nbMembres ?? 0) + ', gestionnaires ' + (c?.nbGestionnaires ?? 0) + ', administrateurs ' + (c?.nbAdmins ?? 0)">
+          @for (p of repartition(); track p.libelle) {
+            @if (p.valeur > 0) {
+              <span class="segment" [style.flex-grow]="p.valeur" [style.background]="p.couleur" [attr.data-info]="p.libelle + ' : ' + p.valeur + ' (' + p.part + ' %)'"></span>
+            }
+          }
+        </div>
+        <ul class="legende">
+          @for (p of repartition(); track p.libelle) {
+            <li>
+              <span class="puce" [style.background]="p.couleur"></span>
+              <span class="nom">{{ p.libelle }}</span>
+              <strong class="chiffres">{{ p.valeur }}</strong>
+              <span class="part chiffres">{{ p.part }} %</span>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  </section>
+
+  <!-- Tontines par statut : barres horizontales, une seule teinte. -->
+  <section class="carte">
+    <div class="carte-entete">
+      <div>
+        <h2>Tontines par statut</h2>
+        <p class="sous">{{ t?.total ?? 0 }} tontines sur la plateforme</p>
+      </div>
+    </div>
+    <div class="carte-corps graphique">
+      @if (chargement()) {
+        @for (i of [1, 2, 3, 4]; track i) {
+          <span class="squelette" style="height: 1.6rem; margin-bottom: 0.8rem"></span>
+        }
+      } @else {
+        <ul class="barres">
+          @for (l of parStatut(); track l.statut) {
+            <li [attr.data-info]="l.libelle + ' : ' + l.valeur">
+              <span class="nom">{{ l.libelle }}</span>
+              <span class="piste"><span class="barre" [style.width.%]="l.largeur"></span></span>
+              <strong class="chiffres">{{ l.valeur }}</strong>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  </section>
+</div>
+
+<div class="grille-2">
+  <section class="carte">
+    <div class="carte-entete">
+      <div>
+        <h2>Abonnements à renouveler</h2>
+        <p class="sous">Fin dans les 30 prochains jours</p>
+      </div>
+      <a class="btn btn-fantome btn-petit" routerLink="/admin/abonnements">Tout voir <app-icone nom="chevronDroit" /></a>
+    </div>
+    @if (!chargement() && bientotExpires().length === 0) {
+      <app-etat-vide icone="succes" titre="Rien à relancer" texte="Aucun abonnement actif n'expire ce mois-ci." [compact]="true" />
+    } @else {
+      <ul class="liste">
+        @for (a of bientotExpires(); track a.id) {
+          <li>
+            <div class="personne">
+              <span class="avatar" [attr.data-teinte]="teinte(a.utilisateurId)">{{ initiales(a.prenom, a.nom) }}</span>
+              <div>
+                <strong>{{ a.prenom }} {{ a.nom }}</strong>
+                <small>{{ a.formule }} · {{ a.prixMensuel | fcfa }}/mois</small>
+              </div>
+            </div>
+            <span class="echeance">{{ a.dateFin | dateRelative }}</span>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+
+  <section class="carte">
+    <div class="carte-entete">
+      <div>
+        <h2>Derniers inscrits</h2>
+        <p class="sous">Les 5 comptes les plus récents</p>
+      </div>
+      <a class="btn btn-fantome btn-petit" routerLink="/admin/utilisateurs">Tout voir <app-icone nom="chevronDroit" /></a>
+    </div>
+    @if (!chargement() && recents().length === 0) {
+      <app-etat-vide icone="utilisateurs" titre="Aucun compte" [compact]="true" />
+    } @else {
+      <ul class="liste">
+        @for (u of recents(); track u.id) {
+          <li>
+            <div class="personne">
+              <span class="avatar" [attr.data-teinte]="teinte(u.id)">{{ initiales(u.prenom, u.nom) }}</span>
+              <div>
+                <strong>{{ u.prenom }} {{ u.nom }}</strong>
+                <small>{{ u.telephone }} · {{ u.createdAt | dateCourte }}</small>
+              </div>
+            </div>
+            <app-statut domaine="role" [valeur]="u.role" />
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</div>

@@ -1,0 +1,144 @@
+@let s = stats();
+<div class="entete-page">
+  <div>
+    <h1>Abonnements</h1>
+    <p class="sous-titre">Activation manuelle après réception du paiement du gestionnaire.</p>
+  </div>
+  <div class="actions">
+    <button type="button" class="btn btn-primaire" (click)="ouvrir()"><app-icone nom="plus" /> Activer un abonnement</button>
+  </div>
+</div>
+
+<div class="grille-stats bloc">
+  <app-carte-stat icone="carte" libelle="Abonnements actifs" ton="succes" [valeur]="s.actifs" [chargement]="chargement()" />
+  <app-carte-stat icone="tendance" libelle="Revenu mensuel" ton="accent" [valeur]="fcfa(s.revenu)" [chargement]="chargement()" />
+  <app-carte-stat icone="message" libelle="SMS envoyés ce mois" ton="info" [valeur]="s.sms" [chargement]="chargement()" aide="tous gestionnaires confondus" />
+</div>
+
+<section class="carte">
+  <div class="barre-filtres filtres">
+    <div class="recherche saisie">
+      <app-icone nom="recherche" />
+      <input class="entree" type="search" placeholder="Gestionnaire, téléphone, formule…" aria-label="Rechercher" [ngModel]="recherche()" (ngModelChange)="recherche.set($event)" />
+    </div>
+  </div>
+
+  @if (erreur()) {
+    <div class="carte-corps"><div class="alerte alerte-erreur"><app-icone nom="erreur" /><span>{{ erreur() }}</span></div></div>
+  } @else if (chargement()) {
+    <div class="carte-corps">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <span class="squelette" style="height: 3rem; margin-bottom: 0.6rem"></span>
+      }
+    </div>
+  } @else if (filtres().length === 0) {
+    <app-etat-vide icone="carte" titre="Aucun abonnement" texte="Activez l'abonnement d'un gestionnaire pour qu'il puisse créer ses tontines.">
+      <button type="button" class="btn btn-primaire" (click)="ouvrir()"><app-icone nom="plus" /> Activer un abonnement</button>
+    </app-etat-vide>
+  } @else {
+    <div class="tableau-conteneur">
+      <table class="tableau tableau-empilable">
+        <thead>
+          <tr>
+            <th>Gestionnaire</th>
+            <th>Formule</th>
+            <th>Période</th>
+            <th>SMS du mois</th>
+            <th>Statut</th>
+            <th class="droite"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (a of filtres(); track a.id) {
+            <tr>
+              <td class="td-principal">
+                <div class="personne">
+                  <span class="avatar" [attr.data-teinte]="teinte(a.utilisateurId)">{{ initiales(a.prenom, a.nom) }}</span>
+                  <div>
+                    <strong>{{ a.prenom }} {{ a.nom }}</strong>
+                    <small>{{ a.telephone }}</small>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Formule">
+                <strong>{{ a.formule }}</strong>
+                <small class="bloc-petit">{{ a.prixMensuel | fcfa }} / mois</small>
+              </td>
+              <td data-label="Période" class="texte-doux">{{ a.dateDebut | dateCourte }} → {{ a.dateFin | dateCourte }}</td>
+              <td data-label="SMS du mois">
+                <div class="conso">
+                  <div class="jauge" [class.jauge-attention]="pourcentage(a.smsEnvoyesMois, a.smsParMois) >= 80">
+                    <span [style.width.%]="pourcentage(a.smsEnvoyesMois, a.smsParMois)"></span>
+                  </div>
+                  <small class="chiffres">{{ a.smsEnvoyesMois }} / {{ a.smsParMois }}</small>
+                </div>
+              </td>
+              <td data-label="Statut"><app-statut domaine="abonnement" [valeur]="a.actif ? 'ACTIF' : a.statut === 'ACTIF' ? 'RESILIE' : a.statut" /></td>
+              <td class="droite">
+                <button type="button" class="btn btn-doux btn-petit" (click)="ouvrir(a)"><app-icone nom="rafraichir" /> Prolonger</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+<app-modale
+  [ouverte]="modaleOuverte()"
+  titre="Activer un abonnement"
+  sousTitre="Un abonnement en cours est prolongé ; sinon un nouveau démarre aujourd'hui."
+  (fermer)="modaleOuverte.set(false)"
+>
+  <form id="form-abonnement" [formGroup]="formulaire" (ngSubmit)="activer()">
+    @if (erreurModale()) {
+      <div class="alerte alerte-erreur" role="alert"><app-icone nom="erreur" /><span>{{ erreurModale() }}</span></div>
+    }
+    <div class="champ">
+      <label for="a-gestionnaire">Gestionnaire</label>
+      <select id="a-gestionnaire" class="entree" formControlName="utilisateurId">
+        <option [ngValue]="null" disabled>Choisir un gestionnaire…</option>
+        @for (g of gestionnaires(); track g.id) {
+          <option [ngValue]="g.id">{{ g.prenom }} {{ g.nom }} — {{ g.telephone }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="champ">
+      <span class="etiquette">Formule</span>
+      <div class="formules-choix">
+        @for (f of formulesActives(); track f.id) {
+          <label class="formule-choix">
+            <input type="radio" formControlName="formuleId" [value]="f.id" />
+            <strong>{{ f.nom }}</strong>
+            <small>{{ f.prixMensuel | fcfa }} / mois</small>
+          </label>
+        } @empty {
+          <p class="texte-doux">Aucune formule proposée : créez-en une d'abord.</p>
+        }
+      </div>
+    </div>
+
+    <div class="champ">
+      <span class="etiquette">Durée</span>
+      <div class="choix">
+        @for (d of durees; track d) {
+          <label><input type="radio" formControlName="dureeMois" [value]="d" /> {{ d }} mois</label>
+        }
+      </div>
+    </div>
+
+    <div class="recap">
+      <span>Montant à encaisser</span>
+      <strong class="chiffres">{{ fcfa(total()) }}</strong>
+    </div>
+  </form>
+  <div pied>
+    <button type="button" class="btn btn-secondaire" (click)="modaleOuverte.set(false)">Annuler</button>
+    <button type="submit" form="form-abonnement" class="btn btn-primaire" [disabled]="envoi() || formulaire.invalid">
+      @if (envoi()) { <span class="rouage"></span> } @else { <app-icone nom="valider" /> }
+      Activer
+    </button>
+  </div>
+</app-modale>

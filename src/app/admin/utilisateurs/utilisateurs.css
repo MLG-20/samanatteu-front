@@ -1,0 +1,30 @@
+.filtres {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--bordure);
+}
+
+.recherche .entree {
+  height: 2.6rem;
+}
+
+.vous {
+  margin-left: 0.35rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: var(--primaire-50);
+  color: var(--primaire-600);
+  font-size: 0.7rem;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.actions-ligne {
+  display: inline-flex;
+  gap: 0.25rem;
+}
+
+.supprimer:hover:not(:disabled) {
+  background: var(--erreur-fond);
+  color: var(--erreur);
+}

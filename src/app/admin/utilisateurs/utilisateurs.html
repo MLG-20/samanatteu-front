@@ -1,0 +1,150 @@
+<div class="entete-page">
+  <div>
+    <h1>Utilisateurs</h1>
+    <p class="sous-titre">{{ compte().TOUS }} comptes sur la plateforme.</p>
+  </div>
+  <div class="actions">
+    <button type="button" class="btn btn-primaire" (click)="ouvrirCreation()"><app-icone nom="ajoutUtilisateur" /> Nouveau compte</button>
+  </div>
+</div>
+
+<section class="carte">
+  <div class="barre-filtres filtres">
+    <div class="recherche saisie">
+      <app-icone nom="recherche" />
+      <input class="entree" type="search" placeholder="Nom, téléphone ou email…" aria-label="Rechercher" [ngModel]="recherche()" (ngModelChange)="recherche.set($event)" />
+    </div>
+    <div class="segments">
+      @for (f of filtresRoles; track f.valeur) {
+        <button type="button" [class.actif]="role() === f.valeur" (click)="role.set(f.valeur)">
+          {{ f.libelle }} <span class="compte">{{ compte()[f.valeur] }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (erreur()) {
+    <div class="carte-corps"><div class="alerte alerte-erreur"><app-icone nom="erreur" /><span>{{ erreur() }}</span></div></div>
+  } @else if (chargement()) {
+    <div class="carte-corps">
+      @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+        <span class="squelette" style="height: 2.8rem; margin-bottom: 0.6rem"></span>
+      }
+    </div>
+  } @else if (filtres().length === 0) {
+    <app-etat-vide icone="recherche" titre="Aucun compte trouvé" texte="Modifiez la recherche ou le filtre de rôle." />
+  } @else {
+    <div class="tableau-conteneur">
+      <table class="tableau tableau-empilable">
+        <thead>
+          <tr>
+            <th>Personne</th>
+            <th>Rôle</th>
+            <th>Email</th>
+            <th>Statut</th>
+            <th>Inscrit le</th>
+            <th class="droite"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of filtres(); track u.id) {
+            <tr>
+              <td class="td-principal">
+                <div class="personne">
+                  <span class="avatar" [attr.data-teinte]="teinte(u.id)">{{ initiales(u.prenom, u.nom) }}</span>
+                  <div>
+                    <strong>{{ u.prenom }} {{ u.nom }} @if (u.id === moiId) { <span class="vous">vous</span> }</strong>
+                    <small>{{ u.telephone }}</small>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Rôle"><app-statut domaine="role" [valeur]="u.role" /></td>
+              <td data-label="Email" class="texte-doux">{{ u.email ?? '—' }}</td>
+              <td data-label="Statut">
+                <span class="badge" [class]="u.actif === false ? 'badge badge-neutre' : 'badge badge-succes'">{{ u.actif === false ? 'Inactif' : 'Actif' }}</span>
+              </td>
+              <td data-label="Inscrit le" class="texte-doux">{{ u.createdAt | dateCourte }}</td>
+              <td class="droite">
+                <div class="actions-ligne">
+                  <button type="button" class="btn btn-fantome btn-icone btn-petit" aria-label="Modifier" (click)="ouvrirModification(u)"><app-icone nom="crayon" /></button>
+                  @if (u.id !== moiId) {
+                    <button type="button" class="btn btn-fantome btn-icone btn-petit supprimer" aria-label="Supprimer" (click)="supprimer(u)"><app-icone nom="poubelle" /></button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+<!-- La modale de création / modification. -->
+<app-modale
+  [ouverte]="edition() !== null"
+  [titre]="estEdition() ? 'Modifier le compte' : 'Nouveau compte'"
+  [sousTitre]="estEdition() ? 'Le téléphone et le rôle ne se modifient pas.' : 'Le compte pourra se connecter tout de suite.'"
+  (fermer)="edition.set(null)"
+>
+  <form id="form-utilisateur" [formGroup]="formulaire" (ngSubmit)="enregistrer()">
+    @if (erreurModale()) {
+      <div class="alerte alerte-erreur" role="alert"><app-icone nom="erreur" /><span>{{ erreurModale() }}</span></div>
+    }
+    @if (!estEdition()) {
+      <div class="champ">
+        <span class="etiquette">Rôle</span>
+        <div class="choix">
+          <label><input type="radio" formControlName="role" value="MEMBRE" /> Membre</label>
+          <label><input type="radio" formControlName="role" value="GESTIONNAIRE" /> Gestionnaire</label>
+          <label><input type="radio" formControlName="role" value="ADMIN" /> Administrateur</label>
+        </div>
+      </div>
+    }
+    <div class="ligne-champs">
+      <div class="champ">
+        <label for="u-prenom">Prénom</label>
+        <input id="u-prenom" class="entree" formControlName="prenom" />
+      </div>
+      <div class="champ">
+        <label for="u-nom">Nom</label>
+        <input id="u-nom" class="entree" formControlName="nom" />
+      </div>
+    </div>
+    <div class="champ">
+      <label for="u-tel">Téléphone</label>
+      <div class="saisie">
+        <app-icone nom="telephone" />
+        <input id="u-tel" class="entree" type="tel" formControlName="telephone" placeholder="77 123 45 67" />
+      </div>
+    </div>
+    <div class="champ">
+      <label for="u-email">Email</label>
+      <div class="saisie">
+        <app-icone nom="email" />
+        <input id="u-email" class="entree" type="email" formControlName="email" />
+      </div>
+      @if (formulaire.controls.email.touched && formulaire.controls.email.invalid) {
+        <span class="aide-erreur">Adresse email invalide.</span>
+      }
+    </div>
+    @if (!estEdition()) {
+      <div class="champ">
+        <label for="u-mdp">Mot de passe provisoire</label>
+        <input id="u-mdp" class="entree" type="text" formControlName="motDePasse" autocomplete="off" />
+        <span class="aide">À transmettre à la personne : elle pourra le changer dans son profil.</span>
+        @if (formulaire.controls.motDePasse.touched && formulaire.controls.motDePasse.invalid) {
+          <span class="aide-erreur">Au moins 8 caractères.</span>
+        }
+      </div>
+    }
+  </form>
+  <div pied>
+    <button type="button" class="btn btn-secondaire" (click)="edition.set(null)">Annuler</button>
+    <!-- form="…" : ce bouton, placé hors du <form>, l'envoie quand même. -->
+    <button type="submit" form="form-utilisateur" class="btn btn-primaire" [disabled]="envoi()">
+      @if (envoi()) { <span class="rouage"></span> }
+      {{ estEdition() ? 'Enregistrer' : 'Créer le compte' }}
+    </button>
+  </div>
+</app-modale>
