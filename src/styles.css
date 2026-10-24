@@ -1,34 +1,141 @@
-/* Styles globaux : la palette et les bases communes à tous les écrans.
+/* Styles globaux : la palette et le « système de design » commun à tous les
+   écrans (boutons, champs, cartes, tableaux, badges…).
    Les styles propres à un écran restent dans son .css (ils ne débordent pas).
-   Les couleurs sont nommées par RÔLE (primaire, accent...) et non par teinte :
-   changer de palette = changer ce bloc seulement. */
+   Les couleurs sont nommées par RÔLE (primaire, surface, succès…) et non par
+   teinte : changer de palette ou passer en sombre = changer ces blocs seulement. */
 
 :root {
-  /* Palette « bleu océan + cyan ». */
+  color-scheme: light;
+
+  /* Palette « bleu océan + cyan » (la marque). */
   --primaire-950: #0b1f4d;
   --primaire-900: #1e3a8a;
   --primaire-700: #1d4ed8;
   --primaire-600: #2563eb;
+  --primaire-500: #3b82f6;
   --primaire-100: #dbeafe;
   --primaire-50: #eff6ff;
   --accent-600: #0891b2;
   --accent-400: #22d3ee;
   --accent-100: #cffafe;
+  --or-500: #f59e0b; /* la touche « gain », réservée aux tirages */
 
+  /* Surfaces et textes. */
+  --fond: #f4f7fb;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --surface-3: #eef2f7;
+  --bordure: #e2e8f0;
+  --bordure-forte: #cbd5e1;
   --texte: #0f172a;
+  --texte-2: #334155;
   --texte-doux: #64748b;
-  --bordure: #dbe3ee;
-  --fond: #f5f8fc;
-  --blanc: #ffffff;
+  --texte-pale: #94a3b8;
+  --blanc: #ffffff; /* toujours blanc (texte sur dégradé), même en sombre */
+
+  /* États (badges, alertes, montants). Toujours avec un texte ou une icône :
+     la couleur seule ne porte jamais le sens. */
+  --succes: #059669;
+  --succes-fond: #ecfdf5;
+  --succes-texte: #047857;
+  --attention: #d97706;
+  --attention-fond: #fffbeb;
+  --attention-texte: #b45309;
   --erreur: #dc2626;
   --erreur-fond: #fee2e2;
+  --erreur-texte: #b91c1c;
+  --info: #7c3aed;
+  --info-fond: #f5f3ff;
+  --info-texte: #6d28d9;
+  --neutre-fond: #f1f5f9;
+  --neutre-texte: #475569;
 
   --rayon: 16px;
   --rayon-champ: 12px;
+  --rayon-petit: 8px;
+  --ombre-1: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+  --ombre-2: 0 4px 6px -2px rgba(15, 23, 42, 0.05), 0 10px 24px -6px rgba(15, 23, 42, 0.1);
   --ombre: 0 20px 50px -12px rgba(30, 58, 138, 0.25);
+  --anneau: 0 0 0 4px var(--primaire-100);
   --police: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --police-titre: 'Plus Jakarta Sans', var(--police);
   --courbe: cubic-bezier(0.22, 1, 0.36, 1); /* départ rapide, arrivée douce */
 }
+
+/* Mode sombre : les MÊMES rôles, d'autres valeurs. Deux portes d'entrée :
+   le réglage du système (media query) et le bouton soleil/lune (data-theme),
+   qui gagne dans les deux sens. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --primaire-100: rgba(59, 130, 246, 0.28);
+    --primaire-50: rgba(59, 130, 246, 0.12);
+    --accent-100: rgba(34, 211, 238, 0.18);
+    --fond: #070d1c;
+    --surface: #0f172a;
+    --surface-2: #131c33;
+    --surface-3: #1b2640;
+    --bordure: #1f2b45;
+    --bordure-forte: #2e3c5c;
+    --texte: #e7edf7;
+    --texte-2: #c3cddd;
+    --texte-doux: #8d9bb5;
+    --texte-pale: #64748b;
+    --succes: #34d399;
+    --succes-fond: rgba(16, 185, 129, 0.14);
+    --succes-texte: #6ee7b7;
+    --attention: #fbbf24;
+    --attention-fond: rgba(245, 158, 11, 0.14);
+    --attention-texte: #fcd34d;
+    --erreur: #f87171;
+    --erreur-fond: rgba(239, 68, 68, 0.15);
+    --erreur-texte: #fca5a5;
+    --info: #a78bfa;
+    --info-fond: rgba(139, 92, 246, 0.16);
+    --info-texte: #c4b5fd;
+    --neutre-fond: rgba(148, 163, 184, 0.12);
+    --neutre-texte: #cbd5e1;
+    --ombre-1: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --ombre-2: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+    --ombre: 0 24px 60px -12px rgba(0, 0, 0, 0.6);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --primaire-100: rgba(59, 130, 246, 0.28);
+  --primaire-50: rgba(59, 130, 246, 0.12);
+  --accent-100: rgba(34, 211, 238, 0.18);
+  --fond: #070d1c;
+  --surface: #0f172a;
+  --surface-2: #131c33;
+  --surface-3: #1b2640;
+  --bordure: #1f2b45;
+  --bordure-forte: #2e3c5c;
+  --texte: #e7edf7;
+  --texte-2: #c3cddd;
+  --texte-doux: #8d9bb5;
+  --texte-pale: #64748b;
+  --succes: #34d399;
+  --succes-fond: rgba(16, 185, 129, 0.14);
+  --succes-texte: #6ee7b7;
+  --attention: #fbbf24;
+  --attention-fond: rgba(245, 158, 11, 0.14);
+  --attention-texte: #fcd34d;
+  --erreur: #f87171;
+  --erreur-fond: rgba(239, 68, 68, 0.15);
+  --erreur-texte: #fca5a5;
+  --info: #a78bfa;
+  --info-fond: rgba(139, 92, 246, 0.16);
+  --info-texte: #c4b5fd;
+  --neutre-fond: rgba(148, 163, 184, 0.12);
+  --neutre-texte: #cbd5e1;
+  --ombre-1: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --ombre-2: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+  --ombre: 0 24px 60px -12px rgba(0, 0, 0, 0.6);
+}
+
+/* ================= Bases ================= */
 
 *,
 *::before,
@@ -47,11 +154,1089 @@ body {
   color: var(--texte);
   background: var(--fond);
   -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'cv11', 'ss01'; /* chiffres et « a » plus nets d'Inter */
+  transition: background 0.3s, color 0.3s;
 }
 
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--police-titre);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+a {
+  color: var(--primaire-600);
+}
+
+/* Les montants : chiffres de largeur fixe, les colonnes s'alignent. */
+.chiffres {
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background: var(--primaire-100);
+}
+
+/* Lecteurs d'écran seulement (le texte existe, il n'est pas affiché). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ================= Boutons ================= */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.6rem;
+  padding: 0 1.1rem;
+  border: 1px solid transparent;
+  border-radius: var(--rayon-champ);
+  font-size: 0.92rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s var(--courbe), box-shadow 0.2s, background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--anneau);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn app-icone {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.btn-primaire {
+  background: linear-gradient(135deg, var(--primaire-600), var(--accent-600));
+  color: var(--blanc);
+  box-shadow: 0 8px 20px -8px rgba(37, 99, 235, 0.65);
+}
+
+.btn-primaire:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px -10px rgba(37, 99, 235, 0.75);
+}
+
+.btn-secondaire {
+  background: var(--surface);
+  border-color: var(--bordure);
+  color: var(--texte-2);
+  box-shadow: var(--ombre-1);
+}
+
+.btn-secondaire:hover:not(:disabled) {
+  border-color: var(--bordure-forte);
+  color: var(--texte);
+}
+
+.btn-fantome {
+  background: transparent;
+  color: var(--texte-2);
+}
+
+.btn-fantome:hover:not(:disabled) {
+  background: var(--surface-3);
+  color: var(--texte);
+}
+
+.btn-danger {
+  background: var(--erreur);
+  color: var(--blanc);
+}
+
+.btn-danger:hover:not(:disabled) {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+.btn-doux {
+  background: var(--primaire-50);
+  color: var(--primaire-600);
+}
+
+.btn-doux:hover:not(:disabled) {
+  background: var(--primaire-100);
+}
+
+.btn-petit {
+  height: 2.1rem;
+  padding: 0 0.8rem;
+  font-size: 0.84rem;
+  border-radius: 10px;
+}
+
+.btn-grand {
+  height: 3.2rem;
+  padding: 0 1.5rem;
+  font-size: 1rem;
+}
+
+.btn-bloc {
+  width: 100%;
+}
+
+.btn-icone {
+  width: 2.5rem;
+  padding: 0;
+}
+
+.btn-icone.btn-petit {
+  width: 2.1rem;
+}
+
+/* Petit cercle qui tourne dans un bouton pendant l'envoi. */
+.rouage {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: tourne 0.7s linear infinite;
+}
+
+@keyframes tourne {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ================= Champs de formulaire ================= */
+
+.champ {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.05rem;
+  min-width: 0;
+}
+
+.champ > label,
+.champ .etiquette {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--texte-2);
+}
+
+.champ .aide {
+  font-size: 0.8rem;
+  color: var(--texte-doux);
+}
+
+/* Conteneur icône + input (+ bouton) : l'icône est posée DANS le champ. */
+.saisie {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.saisie > app-icone {
+  position: absolute;
+  left: 0.85rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--texte-pale);
+  pointer-events: none;
+  transition: color 0.2s;
+}
+
+.saisie .suffixe {
+  position: absolute;
+  right: 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--texte-doux);
+  pointer-events: none;
+}
+
+.entree {
+  width: 100%;
+  height: 2.9rem;
+  padding: 0 0.95rem;
+  border: 1.5px solid var(--bordure);
+  border-radius: var(--rayon-champ);
+  background: var(--surface-2);
+  color: var(--texte);
+  font-size: 1rem; /* 16px min : sinon iOS zoome au focus */
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+textarea.entree {
+  height: auto;
+  min-height: 5.5rem;
+  padding: 0.75rem 0.95rem;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+select.entree {
+  appearance: none;
+  padding-right: 2.5rem;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  background-size: 1.1rem;
+}
+
+.saisie > app-icone ~ .entree {
+  padding-left: 2.6rem;
+}
+
+.saisie:has(.suffixe) .entree {
+  padding-right: 4.2rem;
+}
+
+.entree::placeholder {
+  color: var(--texte-pale);
+}
+
+/* Champ pré-rempli par le navigateur : Chrome impose son fond bleu-gris.
+   Une ombre intérieure pleine le recouvre avec notre couleur. */
+.entree:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 100px var(--surface-2) inset;
+  -webkit-text-fill-color: var(--texte);
+  caret-color: var(--texte);
+}
+
+.entree:hover {
+  border-color: var(--bordure-forte);
+}
+
+.entree:focus {
+  outline: none;
+  background: var(--surface);
+  border-color: var(--primaire-600);
+  box-shadow: var(--anneau);
+}
+
+/* :focus-within = le conteneur contient le champ actif → l'icône s'allume. */
+.saisie:focus-within > app-icone {
+  color: var(--primaire-600);
+}
+
+/* Angular pose ces classes tout seul sur les champs reliés à un formulaire :
+   ng-touched = l'utilisateur a quitté le champ, ng-invalid = une règle échoue. */
+.entree.ng-touched.ng-invalid {
+  border-color: var(--erreur);
+}
+
+.entree.ng-touched.ng-invalid:focus {
+  box-shadow: 0 0 0 4px var(--erreur-fond);
+}
+
+.saisie:has(.entree.ng-touched.ng-invalid) > app-icone {
+  color: var(--erreur);
+}
+
+.aide-erreur {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--erreur);
+  font-size: 0.82rem;
+  font-weight: 500;
+  animation: secoue 0.4s var(--courbe);
+}
+
+.aide-erreur::before {
+  content: '!';
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--erreur);
+  color: var(--blanc);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+/* Bouton œil (afficher / masquer le mot de passe), posé dans le champ. */
+.oeil {
+  position: absolute;
+  right: 0.4rem;
+  display: grid;
+  place-items: center;
+  width: 2.3rem;
+  height: 2.3rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--texte-doux);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.oeil:hover {
+  background: var(--primaire-50);
+}
+
+.oeil:focus-visible {
+  outline: 2px solid var(--primaire-600);
+  outline-offset: 1px;
+}
+
+.saisie:has(.oeil) .entree {
+  padding-right: 2.9rem;
+}
+
+/* Les pages publiques (dans la carte du cadre d'authentification). */
+.titre-auth {
+  font-size: clamp(1.35rem, 1vw + 1.1rem, 1.7rem);
+  font-weight: 800;
+}
+
+.sous-titre-auth {
+  margin: 0.4rem 0 1.6rem;
+  color: var(--texte-doux);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.bas-auth {
+  margin: 1.4rem 0 0;
+  text-align: center;
+  color: var(--texte-doux);
+  font-size: 0.9rem;
+}
+
+.bas-auth a,
+.lien-discret {
+  color: var(--primaire-600);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.bas-auth a:hover,
+.lien-discret:hover {
+  text-decoration: underline;
+}
+
+/* Deux champs côte à côte (un seul par ligne sur téléphone). */
+.ligne-champs {
+  display: grid;
+  gap: 0 1rem;
+}
+
+@media (min-width: 560px) {
+  .ligne-champs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Choix exclusif en pastilles (mode de paiement, rôle…) : des radios stylées. */
+.choix {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.choix label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.9rem;
+  border: 1.5px solid var(--bordure);
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--texte-2);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.choix input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.choix label:has(input:checked) {
+  border-color: var(--primaire-600);
+  background: var(--primaire-50);
+  color: var(--primaire-600);
+}
+
+.choix label:has(input:focus-visible) {
+  box-shadow: var(--anneau);
+}
+
+/* ================= Alertes ================= */
+
+.alerte {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-bottom: 1.1rem;
+  padding: 0.8rem 0.95rem;
+  border-radius: var(--rayon-champ);
+  border: 1px solid transparent;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.alerte app-icone {
+  flex-shrink: 0;
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-top: 0.05rem;
+}
+
+.alerte-erreur {
+  background: var(--erreur-fond);
+  border-color: color-mix(in srgb, var(--erreur) 25%, transparent);
+  color: var(--erreur-texte);
+  animation: secoue 0.4s var(--courbe);
+}
+
+.alerte-succes {
+  background: var(--succes-fond);
+  border-color: color-mix(in srgb, var(--succes) 25%, transparent);
+  color: var(--succes-texte);
+}
+
+.alerte-info {
+  background: var(--primaire-50);
+  border-color: var(--primaire-100);
+  color: var(--primaire-700);
+}
+
+:root[data-theme='dark'] .alerte-info {
+  color: #93c5fd;
+}
+
+.alerte-attention {
+  background: var(--attention-fond);
+  border-color: color-mix(in srgb, var(--attention) 25%, transparent);
+  color: var(--attention-texte);
+}
+
+/* ================= Cartes et sections ================= */
+
+.carte {
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre-1);
+}
+
+.carte-corps {
+  padding: 1.25rem;
+}
+
+.carte-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid var(--bordure);
+}
+
+.carte-entete h2,
+.carte-entete h3 {
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.carte-entete .sous {
+  margin: 0.15rem 0 0;
+  font-size: 0.82rem;
+  color: var(--texte-doux);
+}
+
+.carte-cliquable {
+  transition: transform 0.25s var(--courbe), box-shadow 0.25s, border-color 0.25s;
+  cursor: pointer;
+}
+
+.carte-cliquable:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--ombre-2);
+  border-color: var(--bordure-forte);
+}
+
+/* Les grilles responsives : autant de colonnes que la largeur le permet. */
+.grille {
+  display: grid;
+  gap: 1rem;
+}
+
+.grille-stats {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+}
+
+.grille-cartes {
+  display: grid;
+  gap: 1.1rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+}
+
+.grille-2 {
+  display: grid;
+  gap: 1.1rem;
+}
+
+@media (min-width: 1100px) {
+  .grille-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grille-2-1 {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+
+.pile {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+/* ================= Tableaux ================= */
+
+.tableau-conteneur {
+  overflow-x: auto; /* le tableau défile DANS sa carte, jamais la page */
+}
+
+.tableau {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.tableau th {
+  padding: 0.7rem 1.25rem;
+  text-align: left;
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--texte-doux);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--bordure);
+  white-space: nowrap;
+}
+
+.tableau td {
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--bordure);
+  vertical-align: middle;
+}
+
+.tableau tbody tr {
+  transition: background 0.15s;
+}
+
+.tableau tbody tr:hover {
+  background: var(--surface-2);
+}
+
+.tableau tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tableau .droite {
+  text-align: right;
+}
+
+.tableau .montant {
+  text-align: right;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* La cellule « personne » : avatar + nom + téléphone. */
+.personne {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.personne strong {
+  display: block;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.personne small {
+  display: block;
+  color: var(--texte-doux);
+  font-size: 0.8rem;
+}
+
+/* Sur téléphone, chaque ligne devient une petite carte empilée. */
+@media (max-width: 720px) {
+  .tableau-empilable thead {
+    display: none;
+  }
+
+  .tableau-empilable,
+  .tableau-empilable tbody,
+  .tableau-empilable tr,
+  .tableau-empilable td {
+    display: block;
+  }
+
+  .tableau-empilable tr {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--bordure);
+  }
+
+  .tableau-empilable tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .tableau-empilable td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.3rem 0;
+    border: none;
+    text-align: right;
+  }
+
+  .tableau-empilable td::before {
+    content: attr(data-label);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--texte-doux);
+    text-align: left;
+  }
+
+  .tableau-empilable td.td-principal {
+    justify-content: flex-start;
+    padding-bottom: 0.5rem;
+  }
+
+  .tableau-empilable td.td-principal::before {
+    display: none;
+  }
+}
+
+/* ================= Badges, avatars, pastilles ================= */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.badge::before {
+  content: '';
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.badge-succes {
+  background: var(--succes-fond);
+  color: var(--succes-texte);
+}
+
+.badge-attention {
+  background: var(--attention-fond);
+  color: var(--attention-texte);
+}
+
+.badge-danger {
+  background: var(--erreur-fond);
+  color: var(--erreur-texte);
+}
+
+.badge-info {
+  background: var(--info-fond);
+  color: var(--info-texte);
+}
+
+.badge-primaire {
+  background: var(--primaire-50);
+  color: var(--primaire-600);
+}
+
+:root[data-theme='dark'] .badge-primaire {
+  color: #93c5fd;
+}
+
+.badge-neutre {
+  background: var(--neutre-fond);
+  color: var(--neutre-texte);
+}
+
+.avatar {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primaire-600), var(--accent-400));
+  color: var(--blanc);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Variante de teinte calculée à partir de l'id (voir teinteAvatar). */
+.avatar[data-teinte='1'] {
+  background: linear-gradient(135deg, #7c3aed, #c084fc);
+}
+
+.avatar[data-teinte='2'] {
+  background: linear-gradient(135deg, #0891b2, #34d399);
+}
+
+.avatar[data-teinte='3'] {
+  background: linear-gradient(135deg, #ea580c, #fbbf24);
+}
+
+.avatar[data-teinte='4'] {
+  background: linear-gradient(135deg, #db2777, #f472b6);
+}
+
+.avatar-grand {
+  width: 4.5rem;
+  height: 4.5rem;
+  font-size: 1.4rem;
+}
+
+/* ================= En-tête de page ================= */
+
+.entete-page {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.6rem;
+  animation: apparait 0.5s var(--courbe) both;
+}
+
+.entete-page h1 {
+  font-size: clamp(1.45rem, 1.2vw + 1.1rem, 1.95rem);
+  font-weight: 800;
+}
+
+.entete-page .sous-titre {
+  margin: 0.35rem 0 0;
+  color: var(--texte-doux);
+  font-size: 0.95rem;
+}
+
+.entete-page .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.fil {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.6rem;
+  color: var(--texte-doux);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.fil:hover {
+  color: var(--primaire-600);
+}
+
+.fil app-icone {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Barre de filtres au-dessus d'une liste. */
+.barre-filtres {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.1rem;
+}
+
+.barre-filtres .recherche {
+  flex: 1 1 16rem;
+}
+
+.barre-filtres .champ {
+  margin: 0;
+}
+
+/* Onglets segmentés (filtres de statut, sous-pages). */
+.segments {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: var(--rayon-champ);
+  background: var(--surface-3);
+}
+
+.segments button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 2.1rem;
+  padding: 0 0.85rem;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--texte-doux);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.segments button:hover {
+  color: var(--texte);
+}
+
+.segments button.actif {
+  background: var(--surface);
+  color: var(--texte);
+  box-shadow: var(--ombre-1);
+}
+
+.segments .compte {
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: var(--surface-3);
+  font-size: 0.72rem;
+}
+
+.segments button.actif .compte {
+  background: var(--primaire-50);
+  color: var(--primaire-600);
+}
+
+/* ================= Barres de progression ================= */
+
+.jauge {
+  position: relative;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+
+.jauge > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primaire-600), var(--accent-400));
+  transition: width 0.9s var(--courbe);
+}
+
+.jauge-succes > span {
+  background: linear-gradient(90deg, #059669, #34d399);
+}
+
+.jauge-attention > span {
+  background: linear-gradient(90deg, #d97706, #fbbf24);
+}
+
+/* ================= Squelettes (chargement) ================= */
+
+.squelette {
+  display: block;
+  border-radius: var(--rayon-petit);
+  background: linear-gradient(90deg, var(--surface-3) 25%, var(--surface-2) 50%, var(--surface-3) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ================= Divers ================= */
+
+.texte-doux {
+  color: var(--texte-doux);
+}
+
+.texte-succes {
+  color: var(--succes-texte);
+}
+
+.texte-danger {
+  color: var(--erreur-texte);
+}
+
+.texte-attention {
+  color: var(--attention-texte);
+}
+
+.separateur {
+  height: 1px;
+  margin: 1.25rem 0;
+  border: none;
+  background: var(--bordure);
+}
+
+/* Liste de détails « libellé : valeur ». */
+.details {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+}
+
+.details > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.details dt {
+  color: var(--texte-doux);
+}
+
+.details dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Apparition en cascade des éléments d'une liste : style="--i: 3". */
+.cascade {
+  animation: apparait 0.5s var(--courbe) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+
+/* Apparition au défilement (directive appApparition) : caché, puis fondu + montée.
+   style="--delai: 120ms" décale l'entrée pour un effet de cascade. */
+.apparition {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s var(--courbe) var(--delai, 0ms),
+    transform 0.8s var(--courbe) var(--delai, 0ms);
+}
+
+.apparition.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ================= Animations communes ================= */
+
+@keyframes apparait {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes monte {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes secoue {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-4px);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateX(4px);
+  }
+
+  75% {
+    transform: translateX(-2px);
+  }
+
+  100% {
+    transform: none;
+  }
+}
+
+/* Barres de défilement discrètes (Chrome, Edge, Safari). */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bordure-forte);
+  border: 3px solid var(--fond);
+  border-radius: 999px;
 }
 
 /* Accessibilité : si l'utilisateur a demandé moins d'animations à son

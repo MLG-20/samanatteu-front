@@ -5,10 +5,21 @@
   <title>SamaNatteu</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="SamaNatteu : la gestion de tontines en toute transparence. Cotisations, tirages, prêts et reçus.">
+  <meta name="theme-color" content="#1e3a8a">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <!-- Le thème choisi (clair / sombre) est appliqué AVANT l'affichage, sinon la
+       page clignoterait en clair au chargement. try : le localStorage peut être
+       bloqué (navigation privée). -->
+  <script>
+    try {
+      var theme = localStorage.getItem('samanatteu.theme');
+      if (theme === 'dark' || theme === 'light') document.documentElement.dataset.theme = theme;
+    } catch (e) {}
+  </script>
 </head>
 <body>
   <app-root></app-root>
