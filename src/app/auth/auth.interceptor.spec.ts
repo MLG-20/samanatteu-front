@@ -4,8 +4,8 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Router, provideRouter } from '@angular/router';
 
-import { AuthService } from './auth.service';
 import { authInterceptor } from './auth.interceptor';
 
 // Test de l'intercepteur JWT.
@@ -16,6 +16,7 @@ import { authInterceptor } from './auth.interceptor';
 describe('authInterceptor', () => {
   let http: HttpClient;
   let controller: HttpTestingController;
+  let navigate: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     localStorage.clear();
@@ -23,16 +24,23 @@ describe('authInterceptor', () => {
       providers: [
         provideHttpClient(withInterceptors([authInterceptor])),
         provideHttpClientTesting(),
+        provideRouter([]),
       ],
     });
     http = TestBed.inject(HttpClient);
     controller = TestBed.inject(HttpTestingController);
+    navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
   });
 
   afterEach(() => {
     controller.verify(); // aucune requête laissée en attente
     localStorage.clear();
   });
+
+  function connecter(): void {
+    localStorage.setItem('samanatteu.accessToken', 'ancien-jwt');
+    localStorage.setItem('samanatteu.refreshToken', 'refresh-7j');
+  }
 
   // Règle : une requête AVEC un token porte l'en-tête Authorization.
   it('ajoute le token dans l en-tete Authorization', () => {
@@ -54,15 +62,87 @@ describe('authInterceptor', () => {
     requete.flush({});
   });
 
-  // Règle : un token présent mais une route publique -> le token part quand
-  // même (c'est sans conséquence : le backend décide de l'ignorer).
-  it('ajoute le token a la route publique aussi', () => {
+  // Règle : le login et le refresh partent SANS token, même s'il en reste un
+  // vieux dans le localStorage (il ne prouve rien, et peut être périmé).
+  it('n ajoute pas le token au login ni au refresh', () => {
     localStorage.setItem('samanatteu.accessToken', 'un-jwt');
 
     http.post('/auth/login', {}).subscribe();
+    http.post('/auth/refresh', {}).subscribe();
 
-    const requete = controller.expectOne('/auth/login');
-    expect(requete.request.headers.get('Authorization')).toBe('Bearer un-jwt');
-    requete.flush({});
+    const login = controller.expectOne('/auth/login');
+    const refresh = controller.expectOne('/auth/refresh');
+    expect(login.request.headers.has('Authorization')).toBe(false);
+    expect(refresh.request.headers.has('Authorization')).toBe(false);
+    login.flush({});
+    refresh.flush({});
+  });
+
+  // Règle : 401 → refresh → la requête est REJOUÉE avec le nouveau token.
+  it('rafraichit le token sur 401 et rejoue la requete', () => {
+    connecter();
+    let reponse: unknown;
+
+    http.get('/tontine').subscribe((r) => (reponse = r));
+
+    controller.expectOne('/tontine').flush(null, { status: 401, statusText: 'Unauthorized' });
+    const refresh = controller.expectOne('/auth/refresh');
+    expect(refresh.request.body).toEqual({ refreshToken: 'refresh-7j' });
+    refresh.flush({ accessToken: 'nouveau-jwt', refreshToken: 'nouveau-refresh' });
+
+    const rejouee = controller.expectOne('/tontine');
+    expect(rejouee.request.headers.get('Authorization')).toBe('Bearer nouveau-jwt');
+    rejouee.flush([{ id: 1 }]);
+
+    expect(reponse).toEqual([{ id: 1 }]);
+    expect(localStorage.getItem('samanatteu.accessToken')).toBe('nouveau-jwt');
+  });
+
+  // Règle : deux 401 simultanés → UN SEUL appel à /auth/refresh.
+  it('ne rafraichit qu une fois pour plusieurs 401 simultanes', () => {
+    connecter();
+
+    http.get('/tontine').subscribe();
+    http.get('/cycle').subscribe();
+    controller.expectOne('/tontine').flush(null, { status: 401, statusText: 'Unauthorized' });
+    controller.expectOne('/cycle').flush(null, { status: 401, statusText: 'Unauthorized' });
+
+    controller.expectOne('/auth/refresh').flush({ accessToken: 'n', refreshToken: 'r' });
+    controller.expectOne('/tontine').flush([]);
+    controller.expectOne('/cycle').flush([]);
+  });
+
+  // Règle : refresh refusé → on vide la session et on renvoie à la connexion.
+  it('deconnecte et renvoie a la connexion si le refresh echoue', () => {
+    connecter();
+    let erreur: unknown;
+
+    http.get('/tontine').subscribe({ error: (e) => (erreur = e) });
+    controller.expectOne('/tontine').flush(null, { status: 401, statusText: 'Unauthorized' });
+    controller.expectOne('/auth/refresh').flush(null, { status: 401, statusText: 'Unauthorized' });
+
+    expect(erreur).toBeTruthy();
+    expect(localStorage.getItem('samanatteu.accessToken')).toBeNull();
+    expect(navigate).toHaveBeenCalledWith(['/connexion'], { queryParams: { expiree: 1 } });
+  });
+
+  // Règle : un 401 au LOGIN = mauvais mot de passe, pas de refresh tenté.
+  it('ne tente pas de refresh sur un 401 du login', () => {
+    connecter();
+
+    http.post('/auth/login', {}).subscribe({ error: () => undefined });
+    controller.expectOne('/auth/login').flush(null, { status: 401, statusText: 'Unauthorized' });
+
+    controller.expectNone('/auth/refresh');
+  });
+
+  // Règle : un 403 (mauvais rôle) n'est pas un token périmé : on le laisse passer.
+  it('ne tente pas de refresh sur un 403', () => {
+    connecter();
+
+    http.get('/utilisateur').subscribe({ error: () => undefined });
+    controller.expectOne('/utilisateur').flush(null, { status: 403, statusText: 'Forbidden' });
+
+    controller.expectNone('/auth/refresh');
   });
 });
