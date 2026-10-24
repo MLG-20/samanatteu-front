@@ -1,0 +1,118 @@
+<app-cadre-auth
+  accroche="Lancez-vous,"
+  surligne="en quelques secondes."
+  texte="Rejoignez la tontine de vos proches, ou organisez la vôtre : SamaNatteu tient les comptes à votre place."
+  [large]="true"
+>
+  <form [formGroup]="formulaire" (ngSubmit)="creerCompte()" novalidate>
+    <h2 class="titre-auth">Créer un compte</h2>
+    <p class="sous-titre-auth">Votre numéro de téléphone sera votre identifiant.</p>
+
+    @if (erreur()) {
+      <div class="alerte alerte-erreur" role="alert">
+        <app-icone nom="erreur" />
+        <span>{{ erreur() }}</span>
+      </div>
+    }
+
+    <!-- Le choix du profil : deux grandes cartes-radios. -->
+    <fieldset class="profils">
+      <legend class="sr-only">Je veux…</legend>
+      <label class="profil">
+        <input type="radio" formControlName="role" value="MEMBRE" />
+        <span class="profil-icone"><app-icone nom="utilisateur" /></span>
+        <strong>Je cotise</strong>
+        <small>Je rejoins une tontine existante</small>
+      </label>
+      <label class="profil">
+        <input type="radio" formControlName="role" value="GESTIONNAIRE" />
+        <span class="profil-icone"><app-icone nom="couronne" /></span>
+        <strong>J'organise</strong>
+        <small>Je gère une ou plusieurs tontines</small>
+      </label>
+    </fieldset>
+
+    <div class="ligne-champs">
+      <div class="champ">
+        <label for="prenom">Prénom</label>
+        <input id="prenom" class="entree" autocomplete="given-name" formControlName="prenom" />
+        @if (fautif('prenom')) {
+          <span class="aide-erreur">Le prénom est obligatoire.</span>
+        }
+      </div>
+      <div class="champ">
+        <label for="nom">Nom</label>
+        <input id="nom" class="entree" autocomplete="family-name" formControlName="nom" />
+        @if (fautif('nom')) {
+          <span class="aide-erreur">Le nom est obligatoire.</span>
+        }
+      </div>
+    </div>
+
+    <div class="champ">
+      <label for="telephone">Téléphone</label>
+      <div class="saisie">
+        <app-icone nom="telephone" />
+        <input id="telephone" class="entree" type="tel" inputmode="tel" autocomplete="tel" placeholder="77 123 45 67" formControlName="telephone" />
+      </div>
+      @if (fautif('telephone')) {
+        <span class="aide-erreur">Le numéro de téléphone est obligatoire.</span>
+      }
+    </div>
+
+    <div class="champ">
+      <label for="email">
+        Email
+        @if (role() === 'GESTIONNAIRE') {
+          <span class="requis">obligatoire pour un gestionnaire</span>
+        } @else {
+          <span class="optionnel">facultatif</span>
+        }
+      </label>
+      <div class="saisie">
+        <app-icone nom="email" />
+        <input id="email" class="entree" type="email" autocomplete="email" placeholder="vous@exemple.sn" formControlName="email" />
+      </div>
+      @if (fautif('email')) {
+        <span class="aide-erreur">Adresse email invalide.</span>
+      }
+      @if (formulaire.hasError('emailObligatoire') && formulaire.controls.email.touched) {
+        <span class="aide-erreur">Un gestionnaire reçoit ses reçus par email : il est obligatoire.</span>
+      }
+    </div>
+
+    <div class="ligne-champs">
+      <div class="champ">
+        <label for="motDePasse">Mot de passe</label>
+        <div class="saisie">
+          <input #mdp id="motDePasse" class="entree" type="password" autocomplete="new-password" formControlName="motDePasse" />
+          <button type="button" class="oeil" [attr.aria-label]="mdp.type === 'password' ? 'Afficher' : 'Masquer'" (click)="mdp.type = mdp.type === 'password' ? 'text' : 'password'">
+            <app-icone [nom]="mdp.type === 'password' ? 'oeil' : 'oeilBarre'" />
+          </button>
+        </div>
+        @if (fautif('motDePasse')) {
+          <span class="aide-erreur">Au moins 8 caractères.</span>
+        }
+      </div>
+      <div class="champ">
+        <label for="confirmation">Confirmation</label>
+        <input id="confirmation" class="entree" type="password" autocomplete="new-password" formControlName="confirmation" />
+        @if (formulaire.hasError('differents') && formulaire.controls.confirmation.touched) {
+          <span class="aide-erreur">Les deux mots de passe diffèrent.</span>
+        }
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primaire btn-grand btn-bloc envoi" [disabled]="envoi()">
+      @if (envoi()) {
+        <span class="rouage"></span>
+        <span>Création du compte…</span>
+      } @else {
+        <span>Créer mon compte</span>
+        <app-icone nom="flecheDroite" />
+      }
+    </button>
+
+    <p class="bas-auth">Déjà inscrit ? <a routerLink="/connexion">Se connecter</a></p>
+  </form>
+</app-cadre-auth>

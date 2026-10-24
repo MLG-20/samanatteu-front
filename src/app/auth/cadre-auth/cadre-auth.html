@@ -1,0 +1,47 @@
+<div class="page">
+  <!-- Panneau de marque : à gauche sur grand écran, bandeau en haut sur mobile. -->
+  <aside class="marque">
+    <!-- Bulles décoratives animées (aria-hidden : ignorées des lecteurs d'écran). -->
+    <span class="bulle bulle-1" aria-hidden="true"></span>
+    <span class="bulle bulle-2" aria-hidden="true"></span>
+    <span class="bulle bulle-3" aria-hidden="true"></span>
+    <span class="grille-deco" aria-hidden="true"></span>
+
+    <!-- Le logo ramène à la vitrine. -->
+    <a class="logo" routerLink="/">
+      <span class="logo-pastille">S</span>
+      <span class="logo-nom">SamaNatteu</span>
+    </a>
+
+    <div class="accroche">
+      <h1>{{ accroche() }} <span class="surligne">{{ surligne() }}</span></h1>
+      <p>{{ texte() }}</p>
+
+      <ul class="atouts">
+        <li><app-icone nom="bouclier" /> Comptes sécurisés</li>
+        <li><app-icone nom="graphique" /> Caisse transparente</li>
+        <li><app-icone nom="recu" /> Reçus et rappels par SMS</li>
+      </ul>
+    </div>
+
+    <!-- Une fausse « carte de tirage » qui flotte : montre le produit en un coup d'œil. -->
+    <div class="apercu" aria-hidden="true">
+      <div class="apercu-haut">
+        <span class="apercu-icone"><app-icone nom="cadeau" /></span>
+        <div>
+          <small>Tirage du cycle 4</small>
+          <strong>Aïssatou D. remporte la cagnotte</strong>
+        </div>
+      </div>
+      <div class="apercu-montant">250 000 <span>FCFA</span></div>
+      <div class="apercu-jauge"><span></span></div>
+      <small class="apercu-pied">12 / 12 cotisations reçues</small>
+    </div>
+  </aside>
+
+  <main class="zone-formulaire">
+    <div class="carte-auth" [class.large]="large()">
+      <ng-content />
+    </div>
+  </main>
+</div>

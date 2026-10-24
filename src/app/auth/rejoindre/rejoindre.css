@@ -1,0 +1,47 @@
+.invitation {
+  animation: apparait 0.5s var(--courbe) both;
+}
+
+.sceau {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin-bottom: 1.1rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--primaire-600), var(--accent-400));
+  color: var(--blanc);
+  box-shadow: 0 14px 30px -12px rgba(37, 99, 235, 0.7);
+}
+
+.sceau app-icone {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.sceau-erreur {
+  background: var(--surface-3);
+  color: var(--texte-doux);
+  box-shadow: none;
+}
+
+.sur-titre {
+  margin: 0 0 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-600);
+}
+
+.encadre {
+  margin-bottom: 1.4rem;
+  padding: 1rem 1.1rem;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--bordure);
+}
+
+.second {
+  margin-top: 0.6rem;
+}

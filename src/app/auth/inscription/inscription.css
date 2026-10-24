@@ -1,0 +1,101 @@
+.profils {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0 0 1.4rem;
+  padding: 0;
+  border: none;
+}
+
+/* Une carte-radio : la vraie radio est cachée, la carte entière est cliquable. */
+.profil {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.95rem;
+  border: 1.5px solid var(--bordure);
+  border-radius: 14px;
+  background: var(--surface-2);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.2s var(--courbe);
+}
+
+.profil:hover {
+  border-color: var(--bordure-forte);
+}
+
+.profil input {
+  position: absolute;
+  opacity: 0;
+}
+
+.profil:has(input:checked) {
+  border-color: var(--primaire-600);
+  background: var(--primaire-50);
+  box-shadow: 0 8px 22px -12px rgba(37, 99, 235, 0.55);
+  transform: translateY(-1px);
+}
+
+.profil:has(input:focus-visible) {
+  box-shadow: var(--anneau);
+}
+
+/* La coche ronde en haut à droite. */
+.profil::after {
+  content: '';
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  width: 1.05rem;
+  height: 1.05rem;
+  border: 1.5px solid var(--bordure-forte);
+  border-radius: 50%;
+  transition: border 0.2s, background 0.2s;
+}
+
+.profil:has(input:checked)::after {
+  border: 5px solid var(--primaire-600);
+  background: var(--surface);
+}
+
+.profil-icone {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  margin-bottom: 0.45rem;
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--primaire-600);
+  box-shadow: var(--ombre-1);
+}
+
+.profil strong {
+  font-size: 0.95rem;
+}
+
+.profil small {
+  color: var(--texte-doux);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.requis,
+.optionnel {
+  margin-left: 0.35rem;
+  font-weight: 500;
+  font-size: 0.76rem;
+}
+
+.requis {
+  color: var(--primaire-600);
+}
+
+.optionnel {
+  color: var(--texte-pale);
+}
+
+.envoi {
+  margin-top: 0.5rem;
+}

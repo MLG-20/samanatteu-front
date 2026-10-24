@@ -1,0 +1,90 @@
+.etapes {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--texte-pale);
+}
+
+.etapes li {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;
+}
+
+.etapes li > span {
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: var(--surface-3);
+  font-size: 0.78rem;
+}
+
+.etapes li > span app-icone {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.etapes .courante {
+  color: var(--texte);
+}
+
+.etapes .courante > span {
+  background: var(--primaire-600);
+  color: var(--blanc);
+  box-shadow: 0 0 0 4px var(--primaire-100);
+}
+
+.etapes .faite {
+  color: var(--succes-texte);
+}
+
+.etapes .faite > span {
+  background: var(--succes);
+  color: var(--blanc);
+}
+
+.etapes .trait {
+  flex: 1;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--bordure);
+}
+
+/* Le code : gros chiffres espacés, centrés. */
+.code {
+  height: 3.4rem;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.5em;
+  font-variant-numeric: tabular-nums;
+}
+
+.lien-bouton {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--primaire-600);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.lien-bouton:hover {
+  text-decoration: underline;
+}
+
+.apparition {
+  animation: apparait 0.45s var(--courbe) both;
+}
+
+.btn-bloc {
+  margin-top: 0.4rem;
+}

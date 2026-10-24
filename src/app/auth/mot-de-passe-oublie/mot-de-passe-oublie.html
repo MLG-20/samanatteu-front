@@ -1,0 +1,87 @@
+<app-cadre-auth
+  accroche="Pas de panique,"
+  surligne="on vous renvoie un code."
+  texte="Un code à usage unique part par SMS sur votre numéro. Il suffit de le saisir pour choisir un nouveau mot de passe."
+>
+  <!-- Les deux pastilles d'étape, en haut de la carte. -->
+  <ol class="etapes" aria-label="Étapes">
+    <li [class.faite]="etape() === 2" [class.courante]="etape() === 1">
+      <span>@if (etape() === 2) { <app-icone nom="valider" /> } @else { 1 }</span> Téléphone
+    </li>
+    <li class="trait" aria-hidden="true"></li>
+    <li [class.courante]="etape() === 2"><span>2</span> Nouveau mot de passe</li>
+  </ol>
+
+  @if (erreur()) {
+    <div class="alerte alerte-erreur" role="alert">
+      <app-icone nom="erreur" />
+      <span>{{ erreur() }}</span>
+    </div>
+  }
+
+  @if (etape() === 1) {
+    <form [formGroup]="demande" (ngSubmit)="envoyerCode()" class="apparition">
+      <h2 class="titre-auth">Mot de passe oublié</h2>
+      <p class="sous-titre-auth">Saisissez le numéro de votre compte.</p>
+
+      <div class="champ">
+        <label for="telephone">Téléphone</label>
+        <div class="saisie">
+          <app-icone nom="telephone" />
+          <input id="telephone" class="entree" type="tel" inputmode="tel" autocomplete="tel" placeholder="77 123 45 67" formControlName="telephone" />
+        </div>
+        @if (demande.controls.telephone.touched && demande.controls.telephone.invalid) {
+          <span class="aide-erreur">Le numéro de téléphone est obligatoire.</span>
+        }
+      </div>
+
+      <button type="submit" class="btn btn-primaire btn-grand btn-bloc" [disabled]="envoi()">
+        @if (envoi()) {
+          <span class="rouage"></span> Envoi du code…
+        } @else {
+          <app-icone nom="message" /> Recevoir le code par SMS
+        }
+      </button>
+    </form>
+  } @else {
+    <form [formGroup]="reinit" (ngSubmit)="reinitialiser()" class="apparition">
+      <h2 class="titre-auth">Vérifiez vos SMS</h2>
+      <p class="sous-titre-auth">
+        Un code a été envoyé au <strong>{{ demande.getRawValue().telephone }}</strong>.
+        <button type="button" class="lien-bouton" (click)="recommencer()">Changer de numéro</button>
+      </p>
+
+      <div class="champ">
+        <label for="code">Code reçu</label>
+        <input id="code" class="entree code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="• • • • • •" formControlName="code" />
+        @if (reinit.controls.code.touched && reinit.controls.code.invalid) {
+          <span class="aide-erreur">Le code est fait de 4 à 8 chiffres.</span>
+        }
+      </div>
+
+      <div class="champ">
+        <label for="nouveau">Nouveau mot de passe</label>
+        <div class="saisie">
+          <app-icone nom="cadenas" />
+          <input #mdp id="nouveau" class="entree" type="password" autocomplete="new-password" formControlName="nouveauMotDePasse" />
+          <button type="button" class="oeil" [attr.aria-label]="mdp.type === 'password' ? 'Afficher' : 'Masquer'" (click)="mdp.type = mdp.type === 'password' ? 'text' : 'password'">
+            <app-icone [nom]="mdp.type === 'password' ? 'oeil' : 'oeilBarre'" />
+          </button>
+        </div>
+        @if (reinit.controls.nouveauMotDePasse.touched && reinit.controls.nouveauMotDePasse.invalid) {
+          <span class="aide-erreur">Au moins 8 caractères.</span>
+        }
+      </div>
+
+      <button type="submit" class="btn btn-primaire btn-grand btn-bloc" [disabled]="envoi()">
+        @if (envoi()) {
+          <span class="rouage"></span> Enregistrement…
+        } @else {
+          <app-icone nom="valider" /> Changer mon mot de passe
+        }
+      </button>
+    </form>
+  }
+
+  <p class="bas-auth"><a routerLink="/connexion">← Retour à la connexion</a></p>
+</app-cadre-auth>

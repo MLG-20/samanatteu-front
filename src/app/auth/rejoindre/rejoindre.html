@@ -1,0 +1,74 @@
+<app-cadre-auth
+  accroche="On vous attend,"
+  surligne="rejoignez la tontine."
+  texte="Vous avez reçu une invitation. Rejoignez le groupe : vos cotisations, vos tirages et vos reçus seront suivis automatiquement."
+>
+  @if (chargement()) {
+    <span class="squelette" style="height: 3.5rem; width: 3.5rem; border-radius: 16px"></span>
+    <span class="squelette" style="height: 1.6rem; width: 75%; margin-top: 1.2rem"></span>
+    <span class="squelette" style="height: 1rem; width: 55%; margin-top: 0.7rem"></span>
+    <span class="squelette" style="height: 3.2rem; margin-top: 1.8rem"></span>
+  } @else if (lien(); as l) {
+    <!-- « as l » : on nomme la valeur du signal pour la réutiliser plus bas. -->
+    <div class="invitation">
+      <span class="sceau"><app-icone nom="tontine" /></span>
+      <p class="sur-titre">Invitation {{ l.type === 'GROUPE' ? 'de groupe' : 'personnelle' }}</p>
+      <h2 class="titre-auth">{{ l.nomTontine }}</h2>
+      @if (l.prenomPreRempli) {
+        <p class="sous-titre-auth">Bonjour {{ l.prenomPreRempli }}, votre place vous attend.</p>
+      } @else {
+        <p class="sous-titre-auth">Vous êtes invité(e) à rejoindre cette tontine.</p>
+      }
+
+      <dl class="details encadre">
+        <div>
+          <dt>Valable jusqu'au</dt>
+          <dd>{{ l.expireAt | dateCourte }}</dd>
+        </div>
+        @if (l.telephone) {
+          <div>
+            <dt>Réservée au</dt>
+            <dd>{{ l.telephone }}</dd>
+          </div>
+        }
+      </dl>
+
+      @if (erreur()) {
+        <div class="alerte alerte-erreur" role="alert">
+          <app-icone nom="erreur" />
+          <span>{{ erreur() }}</span>
+        </div>
+      }
+
+      @let moi = auth.utilisateur();
+      @if (!moi) {
+        <a class="btn btn-primaire btn-grand btn-bloc" routerLink="/connexion" [queryParams]="{ retour: ici }">
+          Se connecter pour rejoindre <app-icone nom="flecheDroite" />
+        </a>
+        <a class="btn btn-secondaire btn-grand btn-bloc second" routerLink="/inscription" [queryParams]="{ retour: ici }">
+          Je n'ai pas encore de compte
+        </a>
+      } @else if (moi.role === 'MEMBRE') {
+        <button type="button" class="btn btn-primaire btn-grand btn-bloc" [disabled]="envoi()" (click)="rejoindre()">
+          @if (envoi()) {
+            <span class="rouage"></span> Inscription…
+          } @else {
+            <app-icone nom="valider" /> Rejoindre en tant que {{ moi.prenom }}
+          }
+        </button>
+      } @else {
+        <div class="alerte alerte-attention">
+          <app-icone nom="info" />
+          <span>Vous êtes connecté(e) avec un compte {{ moi.role === 'ADMIN' ? 'administrateur' : 'gestionnaire' }}. Seul un compte membre peut rejoindre une tontine.</span>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="invitation">
+      <span class="sceau sceau-erreur"><app-icone nom="lien" /></span>
+      <h2 class="titre-auth">Lien invalide</h2>
+      <p class="sous-titre-auth">{{ erreur() }} Demandez un nouveau lien à votre gestionnaire.</p>
+      <a class="btn btn-secondaire btn-bloc" routerLink="/connexion">Aller à la connexion</a>
+    </div>
+  }
+</app-cadre-auth>
