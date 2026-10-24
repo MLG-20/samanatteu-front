@@ -1,0 +1,98 @@
+@let tot = totaux();
+<div class="entete-page">
+  <div>
+    <h1>{{ estMembre ? 'Mon historique' : 'Journal financier' }}</h1>
+    <p class="sous-titre">
+      {{ estMembre ? 'Toutes vos opérations, avec leurs reçus.' : "Chaque mouvement d'argent de vos tontines, avec son reçu PDF." }}
+    </p>
+  </div>
+</div>
+
+<div class="grille-stats bloc">
+  <app-carte-stat icone="entrant" libelle="Entrées" ton="succes" [valeur]="fcfa(tot.entrees)" [chargement]="chargement()" aide="Cotisations, remboursements" />
+  <app-carte-stat icone="sortant" libelle="Sorties" ton="attention" [valeur]="fcfa(tot.sorties)" [chargement]="chargement()" aide="Gains versés, prêts accordés" />
+  <app-carte-stat icone="graphique" libelle="Solde net" [ton]="tot.net >= 0 ? 'primaire' : 'danger'" [valeur]="fcfa(tot.net)" [chargement]="chargement()" />
+  <app-carte-stat icone="recu" libelle="Opérations" ton="info" [valeur]="tot.nombre" [chargement]="chargement()" aide="selon les filtres" />
+</div>
+
+<section class="carte">
+  <div class="barre-filtres filtres">
+    <div class="recherche saisie">
+      <app-icone nom="recherche" />
+      <!-- [(ngModel)] : la « boîte à banane » [( )] = lire ET écrire. Ici on
+           branche l'input sur le signal recherche (lecture + set à la frappe). -->
+      <input class="entree" type="search" placeholder="Rechercher (référence, description…)" [ngModel]="recherche()" (ngModelChange)="recherche.set($event)" aria-label="Rechercher" />
+    </div>
+    @if (listeTontines().length > 1) {
+      <select class="entree choix-tontine" aria-label="Tontine" [ngModel]="tontine()" (ngModelChange)="tontine.set($event)">
+        <option value="TOUTES">Toutes les tontines</option>
+        @for (t of listeTontines(); track t.id) {
+          <option [ngValue]="t.id">{{ t.nom }}</option>
+        }
+      </select>
+    }
+    <div class="segments">
+      <button type="button" [class.actif]="sens() === 'TOUS'" (click)="sens.set('TOUS')">Tout</button>
+      <button type="button" [class.actif]="sens() === 'ENTRANT'" (click)="sens.set('ENTRANT')">Entrées</button>
+      <button type="button" [class.actif]="sens() === 'SORTANT'" (click)="sens.set('SORTANT')">Sorties</button>
+    </div>
+  </div>
+
+  @if (erreur()) {
+    <div class="carte-corps"><div class="alerte alerte-erreur"><app-icone nom="erreur" /><span>{{ erreur() }}</span></div></div>
+  } @else if (chargement()) {
+    <div class="carte-corps">
+      @for (i of [1, 2, 3, 4, 5]; track i) {
+        <span class="squelette" style="height: 2.6rem; margin-bottom: 0.6rem"></span>
+      }
+    </div>
+  } @else if (filtrees().length === 0) {
+    <app-etat-vide
+      icone="recu"
+      [titre]="transactions().length ? 'Aucun résultat' : 'Aucune opération pour le moment'"
+      [texte]="transactions().length ? 'Essayez un autre filtre ou une autre recherche.' : 'Les cotisations payées, gains versés et prêts apparaîtront ici.'"
+    />
+  } @else {
+    <div class="tableau-conteneur">
+      <table class="tableau tableau-empilable">
+        <thead>
+          <tr>
+            <th>Opération</th>
+            <th>Tontine</th>
+            <th>Date</th>
+            <th>Mode</th>
+            <th class="droite">Montant</th>
+            <th class="droite"><span class="sr-only">Reçu</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (t of filtrees(); track t.id) {
+            <tr>
+              <td class="td-principal">
+                <div class="operation">
+                  <span class="type" [attr.data-sens]="t.sens"><app-icone [nom]="icones[t.type]" /></span>
+                  <div>
+                    <strong>{{ types[t.type] }}</strong>
+                    <small>{{ t.description || t.reference || 'Opération n°' + t.id }}</small>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Tontine">{{ nomsTontines()[t.tontineId] ?? '—' }}</td>
+              <td data-label="Date" class="texte-doux">{{ t.dateTransaction | dateHeure }}</td>
+              <td data-label="Mode">{{ t.modePaiement ? modes[t.modePaiement] : '—' }}</td>
+              <td data-label="Montant" class="montant" [class.texte-succes]="t.sens === 'ENTRANT'">
+                {{ t.sens === 'ENTRANT' ? '+' : '−' }} {{ t.montant | fcfa }}
+              </td>
+              <td class="droite">
+                <button type="button" class="btn btn-secondaire btn-petit" [disabled]="enTelechargement() === t.id" (click)="telechargerRecu(t)">
+                  @if (enTelechargement() === t.id) { <span class="rouage"></span> } @else { <app-icone nom="telecharger" /> }
+                  Reçu
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

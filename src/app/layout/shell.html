@@ -1,0 +1,125 @@
+<div class="coquille" [class.tiroir-ouvert]="tiroirOuvert()">
+  <!-- ============ Menu latéral (tiroir sur téléphone) ============ -->
+  <aside class="menu" aria-label="Navigation principale">
+    <span class="lueur" aria-hidden="true"></span>
+
+    <a class="logo" [routerLink]="racine()">
+      <span class="logo-pastille">S</span>
+      <span class="logo-texte">
+        <strong>SamaNatteu</strong>
+        <small>{{ libelleRole() }}</small>
+      </span>
+    </a>
+
+    <nav>
+      <!-- @for … track : la boucle du template (≈ for-each), track = la clé qui
+           identifie chaque élément (Angular ne redessine que ce qui change). -->
+      @for (bloc of menu(); track bloc.section) {
+        <p class="section">{{ bloc.section }}</p>
+        @for (lien of bloc.liens; track lien.chemin) {
+          <!-- routerLinkActive : pose la classe « actif » quand l'URL correspond. -->
+          <a
+            class="lien"
+            [routerLink]="lien.chemin"
+            routerLinkActive="actif"
+            [routerLinkActiveOptions]="{ exact: !!lien.exact }"
+          >
+            <app-icone [nom]="lien.icone" />
+            <span>{{ lien.libelle }}</span>
+          </a>
+        }
+      }
+    </nav>
+
+    <div class="pied-menu">
+      <a class="carte-moi" [routerLink]="racine() + '/profil'" routerLinkActive="actif">
+        <span class="avatar" [attr.data-teinte]="teinte()">{{ initiales() }}</span>
+        <span class="qui">
+          <strong>{{ auth.nomComplet() }}</strong>
+          <small>{{ moi()?.telephone }}</small>
+        </span>
+        <app-icone nom="chevronDroit" />
+      </a>
+      <button type="button" class="lien sortie" (click)="deconnecter()">
+        <app-icone nom="deconnexion" />
+        <span>Se déconnecter</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Voile sombre derrière le tiroir ouvert (téléphone) : un clic le referme. -->
+  <div class="voile" (click)="tiroirOuvert.set(false)" aria-hidden="true"></div>
+
+  <!-- ============ Zone principale ============ -->
+  <div class="principal">
+    <header class="barre">
+      <button
+        type="button"
+        class="btn btn-fantome btn-icone burger"
+        aria-label="Ouvrir le menu"
+        (click)="tiroirOuvert.set(true)"
+      >
+        <app-icone nom="menu" />
+      </button>
+
+      <div class="salut">
+        <span>{{ salut }},</span>
+        <strong>{{ moi()?.prenom }}</strong>
+      </div>
+
+      <div class="outils">
+        <button
+          type="button"
+          class="btn btn-fantome btn-icone"
+          [attr.aria-label]="theme.sombre() ? 'Passer en mode clair' : 'Passer en mode sombre'"
+          (click)="theme.basculer()"
+        >
+          <app-icone [nom]="theme.sombre() ? 'soleil' : 'lune'" />
+        </button>
+
+        @if (moi()?.role !== 'ADMIN') {
+          <a class="btn btn-fantome btn-icone" [routerLink]="racine() + '/notifications'" aria-label="Notifications">
+            <app-icone nom="cloche" />
+          </a>
+        }
+
+        <div class="compte">
+          <button
+            type="button"
+            class="declencheur"
+            [attr.aria-expanded]="menuCompteOuvert()"
+            (click)="menuCompteOuvert.set(!menuCompteOuvert())"
+          >
+            <span class="avatar" [attr.data-teinte]="teinte()">{{ initiales() }}</span>
+            <app-icone nom="chevronBas" />
+          </button>
+
+          @if (menuCompteOuvert()) {
+            <div class="fond-menu" (click)="menuCompteOuvert.set(false)"></div>
+            <div class="menu-compte" role="menu">
+              <div class="entete-compte">
+                <strong>{{ auth.nomComplet() }}</strong>
+                <small>{{ moi()?.email ?? moi()?.telephone }}</small>
+              </div>
+              <a role="menuitem" [routerLink]="racine() + '/profil'">
+                <app-icone nom="utilisateur" /> Mon profil
+              </a>
+              @if (moi()?.role === 'GESTIONNAIRE') {
+                <a role="menuitem" routerLink="/gestionnaire/abonnement">
+                  <app-icone nom="carte" /> Mon abonnement
+                </a>
+              }
+              <button role="menuitem" type="button" class="danger" (click)="deconnecter()">
+                <app-icone nom="deconnexion" /> Se déconnecter
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    </header>
+
+    <main class="contenu">
+      <router-outlet />
+    </main>
+  </div>
+</div>

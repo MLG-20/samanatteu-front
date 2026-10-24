@@ -1,0 +1,55 @@
+<div class="entete-page">
+  <div>
+    <h1>Notifications</h1>
+    <p class="sous-titre">Les SMS et emails que SamaNatteu vous a envoyés.</p>
+  </div>
+  <div class="segments" role="tablist">
+    <button type="button" [class.actif]="canal() === 'TOUS'" (click)="canal.set('TOUS')">Tout <span class="compte">{{ compte().TOUS }}</span></button>
+    <button type="button" [class.actif]="canal() === 'SMS'" (click)="canal.set('SMS')"><app-icone nom="message" /> SMS <span class="compte">{{ compte().SMS }}</span></button>
+    <button type="button" [class.actif]="canal() === 'EMAIL'" (click)="canal.set('EMAIL')"><app-icone nom="email" /> Email <span class="compte">{{ compte().EMAIL }}</span></button>
+  </div>
+</div>
+
+@if (erreur()) {
+  <div class="alerte alerte-erreur"><app-icone nom="erreur" /><span>{{ erreur() }}</span></div>
+}
+
+@if (chargement()) {
+  <div class="carte">
+    @for (i of [1, 2, 3, 4]; track i) {
+      <div class="ligne-squelette">
+        <span class="squelette" style="width: 2.6rem; height: 2.6rem; border-radius: 12px"></span>
+        <div style="flex: 1">
+          <span class="squelette" style="height: 0.95rem; width: 40%"></span>
+          <span class="squelette" style="height: 0.8rem; width: 75%; margin-top: 0.5rem"></span>
+        </div>
+      </div>
+    }
+  </div>
+} @else if (groupes().length === 0) {
+  <div class="carte">
+    <app-etat-vide icone="cloche" titre="Aucune notification" texte="Les confirmations de paiement, les résultats de tirage et les rappels apparaîtront ici." />
+  </div>
+} @else {
+  @for (g of groupes(); track g.jour) {
+    <h2 class="jour">{{ g.jour }}</h2>
+    <div class="carte liste">
+      @for (n of g.elements; track n.id; let i = $index) {
+        <article class="notif cascade" [style.--i]="i">
+          <span class="pastille" [attr.data-ton]="apparence[n.type].ton"><app-icone [nom]="apparence[n.type].icone" /></span>
+          <div class="texte">
+            <div class="ligne-titre">
+              <h3>{{ n.titre }}</h3>
+              <time>{{ n.dateEnvoi ?? n.createdAt | dateHeure }}</time>
+            </div>
+            <p>{{ n.message }}</p>
+            <div class="pied">
+              <span class="canal"><app-icone [nom]="n.canal === 'SMS' ? 'message' : 'email'" /> {{ n.canal === 'SMS' ? 'SMS' : 'Email' }}</span>
+              <app-statut domaine="notification" [valeur]="n.statut" />
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  }
+}

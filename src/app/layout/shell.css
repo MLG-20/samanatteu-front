@@ -1,0 +1,424 @@
+/* La coquille : menu fixe à gauche (≥ 1024px), tiroir sur les petits écrans. */
+
+:host {
+  display: block;
+}
+
+.coquille {
+  --largeur-menu: 16.5rem;
+  min-height: 100dvh;
+}
+
+/* ================= Menu latéral ================= */
+
+.menu {
+  position: fixed;
+  z-index: 50;
+  inset: 0 auto 0 0;
+  width: var(--largeur-menu);
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 0.9rem 1rem;
+  overflow: hidden auto;
+  isolation: isolate;
+  background: linear-gradient(180deg, #0b1f4d 0%, #0f2a66 55%, #0c3a5c 100%);
+  color: #dbe6ff;
+  transform: translateX(-100%);
+  transition: transform 0.35s var(--courbe);
+}
+
+/* Une tache de lumière cyan, très floue, dans le coin : de la profondeur. */
+.lueur {
+  position: absolute;
+  z-index: -1;
+  top: -6rem;
+  right: -6rem;
+  width: 16rem;
+  height: 16rem;
+  border-radius: 50%;
+  background: var(--accent-400);
+  filter: blur(70px);
+  opacity: 0.22;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.35rem 0.6rem 1.4rem;
+  color: var(--blanc);
+  text-decoration: none;
+}
+
+.logo-pastille {
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent-400), var(--blanc));
+  color: var(--primaire-900);
+  font-family: var(--police-titre);
+  font-weight: 800;
+  box-shadow: 0 6px 20px rgba(34, 211, 238, 0.4);
+}
+
+.logo-texte strong {
+  display: block;
+  font-family: var(--police-titre);
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+}
+
+.logo-texte small {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-400);
+}
+
+nav {
+  flex: 1;
+}
+
+.section {
+  margin: 1.1rem 0.75rem 0.45rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(219, 230, 255, 0.45);
+}
+
+.lien {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  height: 2.65rem;
+  margin-bottom: 0.15rem;
+  padding: 0 0.8rem;
+  border: none;
+  border-radius: 11px;
+  background: transparent;
+  color: rgba(219, 230, 255, 0.78);
+  font-size: 0.92rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.lien:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--blanc);
+}
+
+.lien:focus-visible {
+  outline: 2px solid var(--accent-400);
+  outline-offset: -2px;
+}
+
+.lien.actif {
+  background: linear-gradient(90deg, rgba(34, 211, 238, 0.18), rgba(255, 255, 255, 0.06));
+  color: var(--blanc);
+  font-weight: 600;
+}
+
+/* Le petit trait cyan à gauche du lien actif. */
+.lien.actif::before {
+  content: '';
+  position: absolute;
+  left: -0.9rem;
+  top: 0.55rem;
+  bottom: 0.55rem;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--accent-400);
+  box-shadow: 0 0 12px var(--accent-400);
+}
+
+.lien.actif app-icone {
+  color: var(--accent-400);
+}
+
+.pied-menu {
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.carte-moi {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.4rem;
+  padding: 0.6rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--blanc);
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.carte-moi:hover,
+.carte-moi.actif {
+  background: rgba(255, 255, 255, 0.11);
+}
+
+.carte-moi .qui {
+  flex: 1;
+  min-width: 0;
+}
+
+.carte-moi strong,
+.carte-moi small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.carte-moi strong {
+  font-size: 0.88rem;
+}
+
+.carte-moi small {
+  font-size: 0.75rem;
+  color: rgba(219, 230, 255, 0.6);
+}
+
+.carte-moi > app-icone {
+  width: 1rem;
+  height: 1rem;
+  color: rgba(219, 230, 255, 0.5);
+}
+
+.sortie:hover {
+  background: rgba(248, 113, 113, 0.12);
+  color: #fecaca;
+}
+
+.voile {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  background: rgba(7, 13, 28, 0.5);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.tiroir-ouvert .menu {
+  transform: none;
+  box-shadow: 20px 0 60px rgba(0, 0, 0, 0.35);
+}
+
+.tiroir-ouvert .voile {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ================= Barre du haut ================= */
+
+.principal {
+  min-width: 0;
+}
+
+.barre {
+  position: sticky;
+  z-index: 30;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: 4rem;
+  padding: 0 1rem;
+  background: color-mix(in srgb, var(--fond) 82%, transparent);
+  backdrop-filter: saturate(1.6) blur(14px);
+  border-bottom: 1px solid color-mix(in srgb, var(--bordure) 70%, transparent);
+}
+
+.salut {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 0.95rem;
+  color: var(--texte-doux);
+}
+
+.salut strong {
+  margin-left: 0.3rem;
+  color: var(--texte);
+  font-weight: 700;
+}
+
+.outils {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.compte {
+  position: relative;
+  margin-left: 0.35rem;
+}
+
+.declencheur {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.35rem 0.2rem 0.2rem;
+  border: 1px solid var(--bordure);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--texte-doux);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.declencheur:hover {
+  border-color: var(--bordure-forte);
+}
+
+.declencheur:focus-visible {
+  outline: none;
+  box-shadow: var(--anneau);
+}
+
+.declencheur .avatar {
+  width: 2rem;
+  height: 2rem;
+  font-size: 0.75rem;
+}
+
+.declencheur app-icone {
+  width: 1rem;
+  height: 1rem;
+}
+
+.fond-menu {
+  position: fixed;
+  inset: 0;
+}
+
+.menu-compte {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  width: 15rem;
+  padding: 0.4rem;
+  border: 1px solid var(--bordure);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--ombre-2);
+  animation: deroule 0.25s var(--courbe);
+}
+
+.entete-compte {
+  padding: 0.6rem 0.7rem 0.7rem;
+  margin-bottom: 0.3rem;
+  border-bottom: 1px solid var(--bordure);
+}
+
+.entete-compte strong,
+.entete-compte small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.entete-compte small {
+  margin-top: 0.15rem;
+  color: var(--texte-doux);
+  font-size: 0.8rem;
+}
+
+.menu-compte a,
+.menu-compte button {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border: none;
+  border-radius: 9px;
+  background: none;
+  color: var(--texte-2);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.menu-compte a:hover,
+.menu-compte button:hover {
+  background: var(--surface-3);
+  color: var(--texte);
+}
+
+.menu-compte app-icone {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.menu-compte .danger:hover {
+  background: var(--erreur-fond);
+  color: var(--erreur-texte);
+}
+
+@keyframes deroule {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}
+
+/* ================= Contenu ================= */
+
+.contenu {
+  width: 100%;
+  max-width: 82rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+@media (min-width: 640px) {
+  .barre {
+    padding: 0 1.5rem;
+  }
+
+  .contenu {
+    padding: 2rem 1.5rem 3.5rem;
+  }
+}
+
+/* Grand écran : menu fixe, plus de tiroir. */
+@media (min-width: 1024px) {
+  .menu {
+    transform: none;
+  }
+
+  .voile,
+  .burger {
+    display: none;
+  }
+
+  .principal {
+    margin-left: var(--largeur-menu);
+  }
+
+  .barre {
+    padding: 0 2.25rem;
+  }
+
+  .contenu {
+    padding: 2.25rem 2.25rem 4rem;
+  }
+}

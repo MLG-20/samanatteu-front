@@ -1,0 +1,120 @@
+@let u = moi();
+<div class="entete-page">
+  <div>
+    <h1>Mon profil</h1>
+    <p class="sous-titre">Vos informations personnelles et la sécurité de votre compte.</p>
+  </div>
+</div>
+
+<!-- La carte d'identité : bannière dégradée + avatar qui la chevauche. -->
+<section class="carte identite">
+  <div class="banniere" aria-hidden="true"></div>
+  <div class="identite-corps">
+    <span class="avatar avatar-grand" [attr.data-teinte]="teinte()">{{ initiales() }}</span>
+    <div class="qui">
+      <h2>{{ u?.prenom }} {{ u?.nom }}</h2>
+      <div class="meta">
+        <app-statut domaine="role" [valeur]="u?.role" />
+        <span><app-icone nom="telephone" /> {{ u?.telephone }}</span>
+        @if (u?.email) {
+          <span><app-icone nom="email" /> {{ u?.email }}</span>
+        }
+        @if (u?.createdAt) {
+          <span><app-icone nom="calendrier" /> Membre depuis le {{ u?.createdAt | dateCourte }}</span>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="grille-2">
+  <form class="carte" [formGroup]="infos" (ngSubmit)="enregistrerInfos()">
+    <div class="carte-entete">
+      <div>
+        <h2>Informations</h2>
+        <p class="sous">Le téléphone sert d'identifiant : il ne se change pas ici.</p>
+      </div>
+    </div>
+    <div class="carte-corps">
+      @if (erreurInfos()) {
+        <div class="alerte alerte-erreur" role="alert"><app-icone nom="erreur" /><span>{{ erreurInfos() }}</span></div>
+      }
+      <div class="ligne-champs">
+        <div class="champ">
+          <label for="prenom">Prénom</label>
+          <input id="prenom" class="entree" formControlName="prenom" autocomplete="given-name" />
+        </div>
+        <div class="champ">
+          <label for="nom">Nom</label>
+          <input id="nom" class="entree" formControlName="nom" autocomplete="family-name" />
+        </div>
+      </div>
+      <div class="champ">
+        <label for="email">Email</label>
+        <div class="saisie">
+          <app-icone nom="email" />
+          <input id="email" class="entree" type="email" formControlName="email" autocomplete="email" />
+        </div>
+        @if (infos.controls.email.touched && infos.controls.email.invalid) {
+          <span class="aide-erreur">Adresse email invalide.</span>
+        }
+      </div>
+      <div class="champ">
+        <label for="tel">Téléphone</label>
+        <div class="saisie">
+          <app-icone nom="cadenas" />
+          <input id="tel" class="entree" [value]="u?.telephone" disabled />
+        </div>
+      </div>
+    </div>
+    <div class="pied-carte">
+      <button type="submit" class="btn btn-primaire" [disabled]="infos.pristine || envoiInfos()">
+        @if (envoiInfos()) { <span class="rouage"></span> } @else { <app-icone nom="valider" /> }
+        Enregistrer
+      </button>
+    </div>
+  </form>
+
+  <form class="carte" [formGroup]="motDePasse" (ngSubmit)="changerMotDePasse()">
+    <div class="carte-entete">
+      <div>
+        <h2>Mot de passe</h2>
+        <p class="sous">Après le changement, vos autres appareils seront déconnectés.</p>
+      </div>
+      <span class="bouclier"><app-icone nom="bouclier" /></span>
+    </div>
+    <div class="carte-corps">
+      @if (erreurMdp()) {
+        <div class="alerte alerte-erreur" role="alert"><app-icone nom="erreur" /><span>{{ erreurMdp() }}</span></div>
+      }
+      <div class="champ">
+        <label for="ancien">Mot de passe actuel</label>
+        <input id="ancien" class="entree" type="password" formControlName="ancien" autocomplete="current-password" />
+      </div>
+      <div class="champ">
+        <label for="nouveau">Nouveau mot de passe</label>
+        <div class="saisie">
+          <input #mdp id="nouveau" class="entree" type="password" formControlName="nouveau" autocomplete="new-password" />
+          <button type="button" class="oeil" [attr.aria-label]="mdp.type === 'password' ? 'Afficher' : 'Masquer'" (click)="mdp.type = mdp.type === 'password' ? 'text' : 'password'">
+            <app-icone [nom]="mdp.type === 'password' ? 'oeil' : 'oeilBarre'" />
+          </button>
+        </div>
+        @if (motDePasse.controls.nouveau.touched && motDePasse.controls.nouveau.invalid) {
+          <span class="aide-erreur">Au moins 8 caractères.</span>
+        }
+        <!-- Petite jauge de solidité, recalculée à chaque frappe. -->
+        @let longueur = motDePasse.controls.nouveau.value.length;
+        <div class="solidite" [attr.data-niveau]="longueur >= 12 ? 3 : longueur >= 8 ? 2 : longueur > 0 ? 1 : 0">
+          <span></span><span></span><span></span>
+          <small>{{ longueur >= 12 ? 'Solide' : longueur >= 8 ? 'Correct' : longueur > 0 ? 'Trop court' : '' }}</small>
+        </div>
+      </div>
+    </div>
+    <div class="pied-carte">
+      <button type="submit" class="btn btn-primaire" [disabled]="envoiMdp()">
+        @if (envoiMdp()) { <span class="rouage"></span> } @else { <app-icone nom="cadenas" /> }
+        Changer le mot de passe
+      </button>
+    </div>
+  </form>
+</div>

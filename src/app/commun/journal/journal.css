@@ -1,0 +1,65 @@
+.bloc {
+  margin-bottom: 1.25rem;
+}
+
+.filtres {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--bordure);
+}
+
+.choix-tontine {
+  width: auto;
+  min-width: 12rem;
+  height: 2.6rem;
+}
+
+.recherche .entree {
+  height: 2.6rem;
+}
+
+.operation {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.operation strong {
+  display: block;
+  font-weight: 600;
+}
+
+.operation small {
+  display: block;
+  max-width: 22rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--texte-doux);
+  font-size: 0.8rem;
+}
+
+.type {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 11px;
+}
+
+.type[data-sens='ENTRANT'] {
+  background: var(--succes-fond);
+  color: var(--succes);
+}
+
+.type[data-sens='SORTANT'] {
+  background: var(--attention-fond);
+  color: var(--attention);
+}
+
+.type app-icone {
+  width: 1.1rem;
+  height: 1.1rem;
+}
