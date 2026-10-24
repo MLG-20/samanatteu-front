@@ -1,0 +1,187 @@
+.fiche {
+  padding: 1.3rem 1.4rem;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.monogramme {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--primaire-600), var(--accent-400));
+  color: var(--blanc);
+  font-family: var(--police-titre);
+  font-size: 1.25rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.titre {
+  flex: 1;
+  min-width: 0;
+}
+
+h2 {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.titre p {
+  margin: 0.2rem 0 0;
+  color: var(--texte-doux);
+  font-size: 0.86rem;
+}
+
+.chiffres-cles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 1.1rem 0;
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--bordure);
+  border-bottom: 1px solid var(--bordure);
+}
+
+.chiffres-cles small {
+  display: block;
+  color: var(--texte-doux);
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.chiffres-cles strong {
+  display: block;
+  margin-top: 0.2rem;
+  font-family: var(--police-titre);
+  font-size: 1.1rem;
+}
+
+.en-cours {
+  margin-bottom: 1.1rem;
+}
+
+.en-cours .ligne {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.3rem;
+  margin-bottom: 0.45rem;
+  font-size: 0.86rem;
+  color: var(--texte-doux);
+}
+
+.en-cours strong {
+  color: var(--texte);
+}
+
+.etiquette-histo {
+  margin: 0 0 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--texte-doux);
+}
+
+.historique ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Une pastille par cycle, colorée selon MA cotisation. */
+.historique li {
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 10px;
+  background: var(--surface-3);
+  color: var(--texte-doux);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.historique li[data-statut='COMPLET'] {
+  background: var(--succes-fond);
+  color: var(--succes-texte);
+}
+
+.historique li[data-statut='EN_RETARD'] {
+  background: var(--erreur-fond);
+  color: var(--erreur-texte);
+}
+
+.historique li[data-statut='PARTIEL'] {
+  background: var(--attention-fond);
+  color: var(--attention-texte);
+}
+
+.historique li.gagne {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #451a03;
+  box-shadow: 0 6px 14px -6px rgba(245, 158, 11, 0.8);
+}
+
+.historique li app-icone {
+  width: 1rem;
+  height: 1rem;
+}
+
+.legende {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  margin-top: 0.7rem;
+  font-size: 0.76rem;
+  color: var(--texte-doux);
+}
+
+.legende span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.legende i {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 3px;
+}
+
+.p-complet {
+  background: var(--succes);
+}
+
+.p-retard {
+  background: var(--erreur);
+}
+
+.p-attente {
+  background: var(--bordure-forte);
+}
+
+.p-gagne {
+  background: #f59e0b;
+}
+
+.description {
+  margin: 1rem 0 0;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--bordure);
+  color: var(--texte-2);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
