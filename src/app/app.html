@@ -1,2 +1,6 @@
-<!-- La coquille de l'application : le routeur y affiche l'écran de l'URL courante. -->
+<!-- La coquille de l'application : le routeur y affiche l'écran de l'URL courante.
+     Les toasts et la boîte de confirmation sont posés une seule fois ici :
+     n'importe quel écran peut les déclencher via leur service. -->
 <router-outlet />
+<app-toasts />
+<app-confirmation />
