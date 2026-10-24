@@ -1,0 +1,384 @@
+<!-- La fine barre de progression de lecture, tout en haut. -->
+<div class="progression" [style.width.%]="progression()" aria-hidden="true"></div>
+
+<!-- ======================= Navigation ======================= -->
+<header class="nav" [class.defile]="defile()" [class.ouvert]="menuOuvert()">
+  <div class="nav-interieur">
+    <a class="logo" routerLink="/" (click)="allerA('haut')">
+      <span class="logo-pastille">S</span>
+      <span>SamaNatteu</span>
+    </a>
+
+    <nav class="liens" aria-label="Sections">
+      <button type="button" (click)="allerA('fonctionnement')">Comment ça marche</button>
+      <button type="button" (click)="allerA('atouts')">Fonctionnalités</button>
+      <button type="button" (click)="allerA('demo')">Le tirage</button>
+      <button type="button" (click)="allerA('offre')">Offre</button>
+      <button type="button" (click)="allerA('faq')">Questions</button>
+    </nav>
+
+    <div class="nav-actions">
+      @if (monEspace(); as espace) {
+        <a class="bouton bouton-lumineux petit" [routerLink]="espace">Mon espace <app-icone nom="flecheDroite" /></a>
+      } @else {
+        <a class="lien-connexion" routerLink="/connexion">Se connecter</a>
+        <a class="bouton bouton-lumineux petit" routerLink="/inscription">Commencer</a>
+      }
+      <button type="button" class="burger" [attr.aria-expanded]="menuOuvert()" aria-label="Menu" (click)="menuOuvert.set(!menuOuvert())">
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Le menu déroulant du téléphone. -->
+  <div class="menu-mobile">
+    <button type="button" (click)="allerA('fonctionnement')">Comment ça marche</button>
+    <button type="button" (click)="allerA('atouts')">Fonctionnalités</button>
+    <button type="button" (click)="allerA('demo')">Le tirage</button>
+    <button type="button" (click)="allerA('offre')">Offre</button>
+    <button type="button" (click)="allerA('faq')">Questions</button>
+    @if (!monEspace()) {
+      <a routerLink="/connexion">Se connecter</a>
+    }
+  </div>
+</header>
+
+<main id="haut">
+  <!-- ======================= Héros ======================= -->
+  <section class="heros" (mousemove)="bougeSouris($event)">
+    <!-- Le décor : aurores animées, quadrillage, étoiles de poussière. -->
+    <div class="decor" aria-hidden="true">
+      <span class="aurore aurore-1"></span>
+      <span class="aurore aurore-2"></span>
+      <span class="aurore aurore-3"></span>
+      <span class="quadrillage"></span>
+      <span class="grain"></span>
+    </div>
+
+    <div class="heros-interieur">
+      <div class="heros-texte">
+        <p class="pastille-annonce">
+          <span class="point-vivant"></span>
+          La tontine, version 2026
+        </p>
+        <h1>
+          La tontine
+          <span class="mot-tournant" aria-live="polite">
+            @for (mot of mots; track mot; let i = $index) {
+              <span class="mot" [class.actif]="i === indexMot()">{{ mot }}</span>
+            }
+          </span>
+          <span class="ligne-serif">enfin <em>sereine</em>.</span>
+        </h1>
+        <p class="chapeau">
+          Cotisations, tirages au sort, prêts et reçus : SamaNatteu tient les comptes de votre tontine,
+          prévient chacun par SMS et rend tout transparent. Fini le cahier, finis les doutes.
+        </p>
+        <div class="heros-boutons">
+          <a class="bouton bouton-lumineux grand" routerLink="/inscription">
+            Créer ma tontine gratuitement
+            <app-icone nom="flecheDroite" />
+          </a>
+          <button type="button" class="bouton bouton-verre grand" (click)="allerA('demo')">
+            <app-icone nom="lecture" /> Voir un tirage
+          </button>
+        </div>
+        <ul class="reassurance">
+          <li><app-icone nom="valider" /> Gratuit pour les membres</li>
+          <li><app-icone nom="valider" /> Wave, Orange Money, espèces</li>
+          <li><app-icone nom="valider" /> Reçus PDF automatiques</li>
+        </ul>
+      </div>
+
+      <!-- La maquette 3D de l'application (pur HTML/CSS, elle bouge avec la souris). -->
+      <div class="scene" aria-hidden="true">
+        <div class="maquette">
+          <div class="maquette-barre">
+            <span></span><span></span><span></span>
+            <small>samanatteu.sn</small>
+          </div>
+          <div class="maquette-corps">
+            <div class="maquette-entete">
+              <span class="m-mono">M</span>
+              <div>
+                <strong>Les Amies de Médina</strong>
+                <small>Cycle 4 sur 12 · chaque mois</small>
+              </div>
+              <span class="m-badge">Active</span>
+            </div>
+
+            <div class="m-collecte">
+              <!-- L'anneau de progression : un cercle SVG dont on « dévoile » le trait. -->
+              <svg class="anneau" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="52" class="piste" />
+                <circle cx="60" cy="60" r="52" class="valeur" [style.stroke-dashoffset]="327 - (327 * partCagnotte()) / 100" />
+              </svg>
+              <div class="m-collecte-texte">
+                <small>Collecté ce cycle</small>
+                <strong>{{ fcfa(cagnotte()) }}</strong>
+                <span>sur {{ fcfa(objectif) }} · {{ partCagnotte() }} %</span>
+              </div>
+            </div>
+
+            <ul class="m-membres">
+              <li><span class="m-av t1">AD</span> Aïssatou D. <em class="ok">Payé</em></li>
+              <li><span class="m-av t2">FN</span> Fatou N. <em class="ok">Payé</em></li>
+              <li><span class="m-av t3">MS</span> Mariama S. <em class="attente">En attente</em></li>
+              <li><span class="m-av t4">KB</span> Khady B. <em class="ok">Payé</em></li>
+            </ul>
+
+            <div class="m-barres">
+              <span style="--h: 45%"></span><span style="--h: 62%"></span><span style="--h: 55%"></span><span style="--h: 78%"></span>
+              <span style="--h: 70%"></span><span style="--h: 88%"></span><span style="--h: 95%"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Les cartes qui flottent autour (profondeurs différentes = parallaxe). -->
+        <div class="flottante f1">
+          <span class="f-icone vert"><app-icone nom="succes" /></span>
+          <div><strong>Paiement reçu · Wave</strong><small>Fatou N. · +12 500 FCFA</small></div>
+        </div>
+        <div class="flottante f2">
+          <span class="f-icone or"><app-icone nom="cadeau" /></span>
+          <div><strong>Tirage du cycle 3</strong><small>Mariama S. remporte 250 000 FCFA</small></div>
+        </div>
+        <div class="flottante f3">
+          <span class="f-icone bleu"><app-icone nom="message" /></span>
+          <div><strong>Rappel envoyé</strong><small>3 membres prévenus par SMS</small></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Le défilé des moyens et des fonctions (boucle infinie). -->
+    <div class="defile-bande" aria-hidden="true">
+      <div class="defile-piste">
+        @for (tour of [1, 2]; track tour) {
+          <span>Espèces</span><i></i><span>Wave</span><i></i><span>Orange Money</span><i></i><span>Free Money</span><i></i>
+          <span>Reçus PDF</span><i></i><span>Rappels SMS</span><i></i><span>Tirage au sort</span><i></i>
+          <span>Caisse de prêt</span><i></i><span>Import Excel</span><i></i><span>Lien WhatsApp</span><i></i>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= Comment ça marche ======================= -->
+  <section id="fonctionnement" class="section">
+    <div class="conteneur">
+      <div class="titre-section" appApparition>
+        <p class="sur-titre">Comment ça marche</p>
+        <h2>Trois étapes. <em>Zéro cahier.</em></h2>
+        <p>Votre tontine tourne comme avant, mais tout le monde sait où en est la caisse.</p>
+      </div>
+      <ol class="etapes">
+        @for (e of etapes; track e.numero; let i = $index) {
+          <li class="etape" appApparition [style.--delai]="i * 140 + 'ms'">
+            <span class="etape-numero">{{ e.numero }}</span>
+            <span class="etape-icone"><app-icone [nom]="e.icone" /></span>
+            <h3>{{ e.titre }}</h3>
+            <p>{{ e.texte }}</p>
+          </li>
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ======================= Les atouts (grille « bento ») ======================= -->
+  <section id="atouts" class="section section-sombre">
+    <div class="conteneur">
+      <div class="titre-section" appApparition>
+        <p class="sur-titre">Fonctionnalités</p>
+        <h2>Tout ce qu'une tontine mérite, <em>rien de superflu.</em></h2>
+      </div>
+      <div class="bento">
+        @for (a of atouts; track a.titre; let i = $index) {
+          <article class="case" [class]="'case ' + a.classe" appApparition [style.--delai]="i * 90 + 'ms'">
+            <span class="case-icone"><app-icone [nom]="a.icone" /></span>
+            <h3>{{ a.titre }}</h3>
+            <p>{{ a.texte }}</p>
+            @if (a.classe === 'grande') {
+              <!-- Un mini journal de paiements, en décor. -->
+              <div class="mini-journal" aria-hidden="true">
+                <div><span class="m-av t1">AD</span> Aïssatou D. <small>Wave</small> <b>+12 500</b></div>
+                <div><span class="m-av t2">FN</span> Fatou N. <small>Espèces</small> <b>+12 500</b></div>
+                <div><span class="m-av t4">KB</span> Khady B. <small>Orange Money</small> <b>+25 000</b></div>
+              </div>
+            }
+            @if (a.classe === 'haute') {
+              <div class="mini-caisse" aria-hidden="true">
+                <small>Caisse disponible</small>
+                <strong>84 000 FCFA</strong>
+                <div class="mini-jauge"><span></span></div>
+                <small>3 prêts en cours · 2 remboursés</small>
+              </div>
+            }
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= Chiffres clés (faits sur le produit) ======================= -->
+  <section class="bande-chiffres">
+    <div class="conteneur chiffres-grille">
+      <div appApparition><strong>4</strong><span>moyens de paiement suivis</span></div>
+      <div appApparition style="--delai: 100ms"><strong>1</strong><span>lien pour inviter tout le groupe</span></div>
+      <div appApparition style="--delai: 200ms"><strong>100 %</strong><span>des paiements avec reçu</span></div>
+      <div appApparition style="--delai: 300ms"><strong>0</strong><span>cahier à tenir</span></div>
+    </div>
+  </section>
+
+  <!-- ======================= Démo du tirage ======================= -->
+  <section id="demo" class="section">
+    <div class="conteneur demo">
+      <div class="demo-texte" appApparition>
+        <p class="sur-titre">Essayez maintenant</p>
+        <h2>Le moment que tout le monde <em>attend.</em></h2>
+        <p>
+          À la fin du cycle, un tirage désigne qui reçoit la cagnotte, parmi ceux qui n'ont pas encore gagné.
+          Le résultat est enregistré, horodaté, visible par tous. Lancez-en un pour voir.
+        </p>
+        <button type="button" class="bouton bouton-or grand" [disabled]="tirageEnCours()" (click)="lancerTirage()">
+          <app-icone nom="melanger" />
+          {{ tirageEnCours() ? 'Tirage en cours…' : gagnante() ? 'Relancer le tirage' : 'Lancer le tirage' }}
+        </button>
+      </div>
+
+      <div class="roue" appApparition style="--delai: 150ms">
+        <div class="roue-entete">
+          <span>Les Amies de Médina · cycle 4</span>
+          <strong>{{ fcfa(objectif) }}</strong>
+        </div>
+        <ul class="noms">
+          @for (p of participants; track p; let i = $index) {
+            <li [class.surligne]="surligne() === i" [class.gagne]="gagnante() === p">{{ p }}</li>
+          }
+        </ul>
+        @if (gagnante(); as g) {
+          <div class="resultat">
+            <div class="confettis" aria-hidden="true">
+              @for (c of confettis; track c) {
+                <i [style.--i]="c"></i>
+              }
+            </div>
+            <span class="trophee"><app-icone nom="cadeau" /></span>
+            <p><strong>{{ g }}</strong> remporte la cagnotte !</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= Pour qui ======================= -->
+  <section class="section section-douce">
+    <div class="conteneur">
+      <div class="titre-section" appApparition>
+        <p class="sur-titre">Pour qui ?</p>
+        <h2>Pour toutes les tontines, <em>petites et grandes.</em></h2>
+      </div>
+      <div class="profils">
+        @for (p of profils; track p.titre; let i = $index) {
+          <article class="profil" appApparition [style.--delai]="i * 120 + 'ms'">
+            <span class="profil-icone"><app-icone [nom]="p.icone" /></span>
+            <h3>{{ p.titre }}</h3>
+            <p>{{ p.texte }}</p>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= Offre ======================= -->
+  <section id="offre" class="section">
+    <div class="conteneur">
+      <div class="titre-section" appApparition>
+        <p class="sur-titre">L'offre</p>
+        <h2>Gratuit pour cotiser. <em>Simple pour organiser.</em></h2>
+      </div>
+      <div class="offres">
+        <article class="offre" appApparition>
+          <p class="offre-nom">Membre</p>
+          <p class="offre-prix">Gratuit</p>
+          <p class="offre-texte">Pour rejoindre une ou plusieurs tontines.</p>
+          <ul>
+            <li><app-icone nom="valider" /> Vos cotisations et votre historique</li>
+            <li><app-icone nom="valider" /> Vos reçus PDF à tout moment</li>
+            <li><app-icone nom="valider" /> Rappels et résultats par SMS</li>
+            <li><app-icone nom="valider" /> Vos gains et vos prêts</li>
+          </ul>
+          <a class="bouton bouton-contour grand" routerLink="/inscription">Créer mon compte</a>
+        </article>
+        <article class="offre vedette" appApparition style="--delai: 120ms">
+          <span class="offre-ruban">Pour les organisateurs</span>
+          <p class="offre-nom">Gestionnaire</p>
+          <p class="offre-prix">Formule mensuelle</p>
+          <p class="offre-texte">Selon le nombre de tontines et de membres que vous gérez.</p>
+          <ul>
+            <li><app-icone nom="valider" /> Tontines, cycles et tirages illimités dans votre formule</li>
+            <li><app-icone nom="valider" /> Invitations WhatsApp et import Excel</li>
+            <li><app-icone nom="valider" /> Caisse de prêt avec échéancier</li>
+            <li><app-icone nom="valider" /> Journal financier et reçus</li>
+            <li><app-icone nom="valider" /> SMS inclus chaque mois</li>
+          </ul>
+          <a class="bouton bouton-lumineux grand" routerLink="/inscription">Lancer ma tontine <app-icone nom="flecheDroite" /></a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= FAQ ======================= -->
+  <section id="faq" class="section section-douce">
+    <div class="conteneur etroit">
+      <div class="titre-section" appApparition>
+        <p class="sur-titre">Questions fréquentes</p>
+        <!-- &#8209; : un trait d'union insécable, « peut‑être » ne se coupe jamais. -->
+        <h2>Vous vous demandez <em>peut&#8209;être…</em></h2>
+      </div>
+      <div class="faq">
+        <!-- <details> / <summary> : l'accordéon natif du navigateur (accessible au clavier, sans code). -->
+        @for (q of faq; track q.question; let i = $index) {
+          <details appApparition [style.--delai]="i * 70 + 'ms'">
+            <summary>{{ q.question }} <app-icone nom="plus" /></summary>
+            <p>{{ q.reponse }}</p>
+          </details>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= Appel final ======================= -->
+  <section class="final">
+    <div class="decor" aria-hidden="true">
+      <span class="aurore aurore-1"></span>
+      <span class="aurore aurore-2"></span>
+      <span class="quadrillage"></span>
+    </div>
+    <div class="conteneur final-interieur" appApparition>
+      <h2>Votre prochaine tontine <em>commence ici.</em></h2>
+      <p>Créez-la en une minute, invitez votre groupe en un lien. Le reste, SamaNatteu s'en charge.</p>
+      <div class="heros-boutons centre">
+        <a class="bouton bouton-lumineux grand" routerLink="/inscription">Commencer gratuitement <app-icone nom="flecheDroite" /></a>
+        <a class="bouton bouton-verre grand" routerLink="/connexion">J'ai déjà un compte</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="pied">
+  <div class="conteneur pied-interieur">
+    <div>
+      <a class="logo" routerLink="/" (click)="allerA('haut')">
+        <span class="logo-pastille">S</span>
+        <span>SamaNatteu</span>
+      </a>
+      <p>La gestion de tontines, en toute confiance.</p>
+    </div>
+    <nav aria-label="Liens du pied de page">
+      <button type="button" (click)="allerA('fonctionnement')">Comment ça marche</button>
+      <button type="button" (click)="allerA('offre')">Offre</button>
+      <button type="button" (click)="allerA('faq')">Questions</button>
+      <a routerLink="/connexion">Se connecter</a>
+    </nav>
+  </div>
+  <p class="conteneur copyright">© {{ annee }} SamaNatteu · Fait avec soin au Sénégal</p>
+</footer>

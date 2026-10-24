@@ -1,0 +1,1684 @@
+/* La vitrine : un univers à part, toujours sombre (« nuit de Dakar »),
+   quel que soit le thème choisi dans l'application.
+   Mobile d'abord ; paliers à 720px (tablette) et 1080px (deux colonnes). */
+
+:host {
+  --nuit: #040a1c;
+  --nuit-2: #081333;
+  --nuit-3: #0d1b45;
+  --ligne: rgba(148, 178, 255, 0.14);
+  --clair: #eaf0ff;
+  --doux: #9fb1d6;
+  --cyan: #22d3ee;
+  --bleu: #3b82f6;
+  --violet: #8b5cf6;
+  --or: #fbbf24;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --sx: 0;
+  --sy: 0;
+
+  display: block;
+  min-height: 100dvh;
+  background: var(--nuit);
+  color: var(--clair);
+  overflow-x: clip; /* les décors débordent, la page ne défile jamais de côté */
+}
+
+.conteneur {
+  width: 100%;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.conteneur.etroit {
+  max-width: 50rem;
+}
+
+/* Les mots en italique à empattements : la touche « éditoriale » haut de gamme. */
+h1 em,
+h2 em,
+.ligne-serif {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+h2 em {
+  background: linear-gradient(90deg, var(--cyan), #a5b4fc 60%, #f0abfc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-right: 0.08em;
+}
+
+/* ================= Boutons ================= */
+
+.bouton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  height: 2.9rem;
+  padding: 0 1.3rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.25s var(--courbe), box-shadow 0.25s, background 0.25s, border-color 0.25s;
+}
+
+.bouton.grand {
+  height: 3.4rem;
+  padding: 0 1.7rem;
+  font-size: 1rem;
+}
+
+.bouton.petit {
+  height: 2.4rem;
+  padding: 0 1.05rem;
+  font-size: 0.88rem;
+}
+
+.bouton app-icone {
+  width: 1.1rem;
+  height: 1.1rem;
+  transition: transform 0.25s var(--courbe);
+}
+
+.bouton:hover app-icone {
+  transform: translateX(3px);
+}
+
+.bouton:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+/* Le bouton principal : dégradé lumineux + halo qui respire + reflet au survol. */
+.bouton-lumineux {
+  overflow: hidden;
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  color: #fff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12) inset, 0 12px 34px -10px rgba(34, 211, 238, 0.75);
+}
+
+.bouton-lumineux::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
+  transform: translateX(-120%);
+}
+
+.bouton-lumineux:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18) inset, 0 18px 44px -10px rgba(34, 211, 238, 0.9);
+}
+
+.bouton-lumineux:hover::after {
+  transform: translateX(120%);
+  transition: transform 0.8s var(--courbe);
+}
+
+.bouton-verre {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: var(--clair);
+  backdrop-filter: blur(10px);
+}
+
+.bouton-verre:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+.bouton-contour {
+  border-color: var(--ligne);
+  color: var(--clair);
+}
+
+.bouton-contour:hover {
+  border-color: rgba(34, 211, 238, 0.6);
+  background: rgba(34, 211, 238, 0.06);
+}
+
+.bouton-or {
+  background: linear-gradient(135deg, #fde68a, #f59e0b);
+  color: #3b1d02;
+  box-shadow: 0 14px 36px -12px rgba(245, 158, 11, 0.8);
+}
+
+.bouton-or:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.bouton:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+/* ================= Progression + navigation ================= */
+
+.progression {
+  position: fixed;
+  z-index: 60;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--violet));
+  box-shadow: 0 0 12px var(--cyan);
+}
+
+.nav {
+  position: fixed;
+  z-index: 50;
+  inset: 0 0 auto;
+  padding: 0.9rem 0;
+  transition: padding 0.35s var(--courbe), background 0.35s, border-color 0.35s;
+  border-bottom: 1px solid transparent;
+}
+
+/* Après un peu de défilement : barre plus fine, en verre dépoli. */
+.nav.defile,
+.nav.ouvert {
+  padding: 0.55rem 0;
+  background: rgba(4, 10, 28, 0.72);
+  backdrop-filter: saturate(1.6) blur(16px);
+  border-bottom-color: var(--ligne);
+}
+
+.nav-interieur {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--clair);
+  font-family: var(--police-titre);
+  font-size: 1.12rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.logo-pastille {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 11px;
+  background: linear-gradient(135deg, var(--cyan), #fff);
+  color: #0b1f4d;
+  box-shadow: 0 0 24px rgba(34, 211, 238, 0.45);
+}
+
+.liens {
+  display: none;
+  flex: 1;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.liens button,
+.menu-mobile button,
+.menu-mobile a,
+.pied nav button,
+.pied nav a {
+  padding: 0.5rem 0.8rem;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--doux);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+}
+
+.liens button:hover,
+.pied nav button:hover,
+.pied nav a:hover {
+  color: var(--clair);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-left: auto;
+}
+
+.lien-connexion {
+  display: none;
+  color: var(--clair);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.lien-connexion:hover {
+  color: var(--cyan);
+}
+
+/* Le burger : deux traits qui deviennent une croix. */
+.burger {
+  display: grid;
+  place-content: center;
+  gap: 6px;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--ligne);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+}
+
+.burger span {
+  width: 1.1rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--clair);
+  transition: transform 0.3s var(--courbe);
+}
+
+.ouvert .burger span:first-child {
+  transform: translateY(4px) rotate(45deg);
+}
+
+.ouvert .burger span:last-child {
+  transform: translateY(-4px) rotate(-45deg);
+}
+
+.menu-mobile {
+  display: grid;
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 1rem;
+  transition: max-height 0.4s var(--courbe), padding 0.4s;
+}
+
+.ouvert .menu-mobile {
+  max-height: 22rem;
+  padding: 0.6rem 1rem 1rem;
+}
+
+.menu-mobile button,
+.menu-mobile a {
+  padding: 0.85rem 0.4rem;
+  border-radius: 0;
+  border-bottom: 1px solid var(--ligne);
+  text-align: left;
+  font-size: 1rem;
+}
+
+/* ================= Héros ================= */
+
+.heros {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 7rem 0 0;
+}
+
+.decor {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Trois aurores floues qui dérivent lentement. */
+.aurore {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.55;
+  animation: derive 18s ease-in-out infinite;
+}
+
+.aurore-1 {
+  top: -14rem;
+  left: -10rem;
+  width: 38rem;
+  height: 38rem;
+  background: radial-gradient(circle, #1d4ed8, transparent 65%);
+}
+
+.aurore-2 {
+  top: -6rem;
+  right: -12rem;
+  width: 34rem;
+  height: 34rem;
+  background: radial-gradient(circle, #0891b2, transparent 65%);
+  animation-delay: -6s;
+}
+
+.aurore-3 {
+  bottom: -16rem;
+  left: 30%;
+  width: 40rem;
+  height: 30rem;
+  background: radial-gradient(circle, #6d28d9, transparent 65%);
+  opacity: 0.4;
+  animation-delay: -12s;
+}
+
+@keyframes derive {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(4rem, 2rem) scale(1.1);
+  }
+
+  66% {
+    transform: translate(-3rem, 3rem) scale(0.95);
+  }
+}
+
+/* Le quadrillage en perspective, qui s'efface vers les bords. */
+.quadrillage {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(148, 178, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 178, 255, 0.07) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
+}
+
+/* Un grain très fin : la texture « photo » qui évite l'aspect plastique. */
+.grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
+}
+
+.heros-interieur {
+  display: grid;
+  gap: 3.5rem;
+  width: 100%;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.pastille-annonce {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0 0 1.4rem;
+  padding: 0.4rem 0.9rem 0.4rem 0.7rem;
+  border: 1px solid var(--ligne);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--doux);
+  font-size: 0.82rem;
+  font-weight: 600;
+  animation: entree 0.8s var(--courbe) both;
+}
+
+.point-vivant {
+  position: relative;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #34d399;
+}
+
+.point-vivant::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #34d399;
+  animation: pulse 2s ease-out infinite;
+}
+
+@keyframes pulse {
+  to {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+h1 {
+  margin: 0;
+  font-family: var(--police-titre);
+  font-size: clamp(2.25rem, 6.4vw + 0.6rem, 5.2rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  animation: entree 0.9s 0.08s var(--courbe) both;
+}
+
+/* Le mot qui change : les mots sont empilés au même endroit, un seul visible. */
+.mot-tournant {
+  display: grid;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+
+.mot {
+  grid-area: 1 / 1;
+  white-space: nowrap; /* un mot long (« entre collègues ») ne doit jamais passer sur 2 lignes */
+  background: linear-gradient(90deg, var(--cyan), #93c5fd 50%, #c4b5fd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0;
+  transform: translateY(100%);
+  filter: blur(8px);
+  transition: transform 0.7s var(--courbe), opacity 0.7s var(--courbe), filter 0.7s var(--courbe);
+}
+
+.mot.actif {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+.ligne-serif {
+  display: block;
+  color: #dbe5ff;
+  font-size: 1.04em;
+}
+
+.ligne-serif em {
+  color: var(--or);
+  text-shadow: 0 0 40px rgba(251, 191, 36, 0.45);
+}
+
+.chapeau {
+  max-width: 34rem;
+  margin: 1.6rem 0 2.1rem;
+  color: var(--doux);
+  font-size: clamp(1rem, 0.5vw + 0.9rem, 1.18rem);
+  line-height: 1.65;
+  animation: entree 0.9s 0.18s var(--courbe) both;
+}
+
+.heros-boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  animation: entree 0.9s 0.28s var(--courbe) both;
+}
+
+.heros-boutons.centre {
+  justify-content: center;
+}
+
+.reassurance {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.4rem;
+  margin: 1.8rem 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--doux);
+  font-size: 0.86rem;
+  animation: entree 0.9s 0.38s var(--courbe) both;
+}
+
+.reassurance li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.reassurance app-icone {
+  width: 1rem;
+  height: 1rem;
+  color: #34d399;
+}
+
+@keyframes entree {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(6px);
+  }
+}
+
+/* ---------- La scène 3D ---------- */
+
+.scene {
+  position: relative;
+  min-height: 27rem;
+  perspective: 1400px;
+  animation: entree 1.1s 0.3s var(--courbe) both;
+}
+
+/* La maquette pivote légèrement selon la souris (--sx / --sy entre -1 et 1). */
+.maquette {
+  position: relative;
+  width: min(100%, 29rem);
+  margin: 0 auto;
+  border-radius: 22px;
+  background: linear-gradient(160deg, rgba(20, 34, 78, 0.92), rgba(8, 17, 45, 0.95));
+  border: 1px solid rgba(148, 178, 255, 0.2);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 50px 100px -30px rgba(0, 0, 0, 0.8),
+    0 0 80px -20px rgba(34, 211, 238, 0.35);
+  transform: rotateY(calc(var(--sx) * 7deg - 8deg)) rotateX(calc(var(--sy) * -6deg + 6deg));
+  transform-style: preserve-3d;
+  transition: transform 0.6s var(--courbe);
+}
+
+/* Le reflet lumineux qui glisse sur la vitre. */
+.maquette::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(500px circle at calc(50% + var(--sx) * 40%) calc(30% + var(--sy) * 30%), rgba(255, 255, 255, 0.08), transparent 45%);
+  pointer-events: none;
+}
+
+.maquette-barre {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--ligne);
+}
+
+.maquette-barre span {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.maquette-barre small {
+  margin: 0 auto;
+  padding: 0.2rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--doux);
+  font-size: 0.72rem;
+}
+
+.maquette-corps {
+  padding: 1.2rem;
+}
+
+.maquette-entete {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.maquette-entete strong,
+.maquette-entete small {
+  display: block;
+}
+
+.maquette-entete small {
+  color: var(--doux);
+  font-size: 0.78rem;
+}
+
+.maquette-entete > div {
+  flex: 1;
+}
+
+.m-mono {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--bleu), var(--cyan));
+  font-family: var(--police-titre);
+  font-weight: 800;
+}
+
+.m-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(52, 211, 153, 0.15);
+  color: #6ee7b7;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.m-collecte {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  margin: 1.2rem 0;
+  padding: 1rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--ligne);
+}
+
+.anneau {
+  flex-shrink: 0;
+  width: 5.2rem;
+  height: 5.2rem;
+  transform: rotate(-90deg);
+}
+
+.anneau circle {
+  fill: none;
+  stroke-width: 10;
+}
+
+.anneau .piste {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.anneau .valeur {
+  stroke: var(--cyan);
+  stroke-linecap: round;
+  stroke-dasharray: 327;
+  filter: drop-shadow(0 0 6px rgba(34, 211, 238, 0.7));
+  transition: stroke-dashoffset 1.2s var(--courbe);
+}
+
+.m-collecte-texte small,
+.m-collecte-texte span {
+  display: block;
+  color: var(--doux);
+  font-size: 0.76rem;
+}
+
+.m-collecte-texte strong {
+  display: block;
+  margin: 0.15rem 0;
+  font-family: var(--police-titre);
+  font-size: 1.55rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.m-membres {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+}
+
+.m-membres li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.m-membres em {
+  margin-left: auto;
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.m-membres .ok {
+  background: rgba(52, 211, 153, 0.14);
+  color: #6ee7b7;
+}
+
+.m-membres .attente {
+  background: rgba(251, 191, 36, 0.14);
+  color: #fcd34d;
+}
+
+.m-av {
+  display: inline-grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.t1 {
+  background: linear-gradient(135deg, #7c3aed, #c084fc);
+}
+
+.t2 {
+  background: linear-gradient(135deg, #0891b2, #34d399);
+}
+
+.t3 {
+  background: linear-gradient(135deg, #ea580c, #fbbf24);
+}
+
+.t4 {
+  background: linear-gradient(135deg, #db2777, #f472b6);
+}
+
+.m-barres {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.4rem;
+  height: 3.2rem;
+  margin-top: 1.1rem;
+}
+
+.m-barres span {
+  flex: 1;
+  height: var(--h);
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, rgba(34, 211, 238, 0.9), rgba(59, 130, 246, 0.25));
+  transform-origin: bottom;
+  animation: pousse 1.2s var(--courbe) both;
+}
+
+.m-barres span:nth-child(2) {
+  animation-delay: 0.08s;
+}
+
+.m-barres span:nth-child(3) {
+  animation-delay: 0.16s;
+}
+
+.m-barres span:nth-child(4) {
+  animation-delay: 0.24s;
+}
+
+.m-barres span:nth-child(5) {
+  animation-delay: 0.32s;
+}
+
+.m-barres span:nth-child(6) {
+  animation-delay: 0.4s;
+}
+
+.m-barres span:nth-child(7) {
+  animation-delay: 0.48s;
+}
+
+@keyframes pousse {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+/* Les cartes flottantes : chacune à sa profondeur (bouge plus ou moins avec la souris). */
+.flottante {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem 0.95rem;
+  border-radius: 16px;
+  background: rgba(14, 26, 62, 0.82);
+  border: 1px solid rgba(148, 178, 255, 0.22);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 24px 50px -18px rgba(0, 0, 0, 0.75);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.flottante strong,
+.flottante small {
+  display: block;
+}
+
+.flottante small {
+  color: var(--doux);
+  font-size: 0.74rem;
+}
+
+.f-icone {
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 10px;
+}
+
+.f-icone app-icone {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.f-icone.vert {
+  background: rgba(52, 211, 153, 0.16);
+  color: #6ee7b7;
+}
+
+.f-icone.or {
+  background: linear-gradient(135deg, #fde68a, #f59e0b);
+  color: #3b1d02;
+}
+
+.f-icone.bleu {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+.f1 {
+  top: 1rem;
+  left: -0.5rem;
+  transform: translate(calc(var(--sx) * -22px), calc(var(--sy) * -16px));
+  animation: plane 6s ease-in-out infinite, entree 0.9s 0.9s var(--courbe) both;
+}
+
+.f2 {
+  bottom: 2.2rem;
+  right: -0.5rem;
+  transform: translate(calc(var(--sx) * 28px), calc(var(--sy) * 20px));
+  animation: plane 7s 1s ease-in-out infinite, entree 0.9s 1.15s var(--courbe) both;
+}
+
+.f3 {
+  bottom: -1rem;
+  left: 8%;
+  transform: translate(calc(var(--sx) * -14px), calc(var(--sy) * 12px));
+  animation: plane 8s 2s ease-in-out infinite, entree 0.9s 1.4s var(--courbe) both;
+}
+
+@keyframes plane {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+
+  50% {
+    translate: 0 -10px;
+  }
+}
+
+/* ---------- La bande qui défile ---------- */
+
+.defile-bande {
+  margin-top: 5rem;
+  padding: 1.2rem 0;
+  border-top: 1px solid var(--ligne);
+  border-bottom: 1px solid var(--ligne);
+  background: rgba(255, 255, 255, 0.02);
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.defile-piste {
+  display: flex;
+  align-items: center;
+  gap: 1.8rem;
+  width: max-content;
+  animation: defile 40s linear infinite;
+}
+
+.defile-piste span {
+  color: var(--doux);
+  font-family: var(--police-titre);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.defile-piste i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan);
+}
+
+@keyframes defile {
+  to {
+    transform: translateX(-50%); /* la piste contient 2 fois la liste : boucle sans saut */
+  }
+}
+
+/* ================= Sections ================= */
+
+.section {
+  position: relative;
+  padding: 6rem 0;
+}
+
+.section-sombre {
+  background: linear-gradient(180deg, var(--nuit), var(--nuit-2) 30%, var(--nuit-2) 70%, var(--nuit));
+}
+
+.section-douce {
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(59, 130, 246, 0.1), transparent 70%);
+}
+
+.titre-section {
+  max-width: 44rem;
+  margin: 0 auto 3.5rem;
+  text-align: center;
+}
+
+.sur-titre {
+  display: inline-block;
+  margin: 0 0 1rem;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  background: rgba(34, 211, 238, 0.08);
+  color: var(--cyan);
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+h2 {
+  margin: 0;
+  font-family: var(--police-titre);
+  font-size: clamp(2rem, 3.4vw + 0.8rem, 3.4rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+.titre-section > p:last-child:not(.sur-titre) {
+  margin: 1.1rem auto 0;
+  color: var(--doux);
+  font-size: 1.08rem;
+  line-height: 1.6;
+}
+
+h3 {
+  margin: 0;
+  font-family: var(--police-titre);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* ---------- Étapes ---------- */
+
+.etapes {
+  position: relative;
+  display: grid;
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.etape {
+  position: relative;
+  padding: 2rem 1.6rem 1.8rem;
+  border-radius: 24px;
+  border: 1px solid var(--ligne);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.01));
+  overflow: hidden;
+}
+
+/* Le grand numéro en filigrane. */
+.etape-numero {
+  position: absolute;
+  top: -0.6rem;
+  right: 1rem;
+  font-family: var(--serif);
+  font-size: 6rem;
+  font-style: italic;
+  line-height: 1;
+  color: rgba(148, 178, 255, 0.08);
+}
+
+.etape-icone,
+.case-icone,
+.profil-icone {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1.3rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(34, 211, 238, 0.15));
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  color: var(--cyan);
+  box-shadow: 0 0 30px -8px rgba(34, 211, 238, 0.5);
+}
+
+.etape p,
+.case p,
+.profil p {
+  margin: 0.6rem 0 0;
+  color: var(--doux);
+  line-height: 1.6;
+}
+
+/* ---------- Bento ---------- */
+
+.bento {
+  display: grid;
+  gap: 1rem;
+}
+
+.case {
+  position: relative;
+  padding: 1.7rem;
+  border-radius: 24px;
+  border: 1px solid var(--ligne);
+  background: rgba(255, 255, 255, 0.03);
+  overflow: hidden;
+  transition: border-color 0.3s, transform 0.4s var(--courbe), background 0.3s;
+}
+
+/* Un halo qui s'allume au survol. */
+.case::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(400px circle at 20% 0%, rgba(34, 211, 238, 0.14), transparent 50%);
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+
+.case:hover {
+  border-color: rgba(34, 211, 238, 0.35);
+  transform: translateY(-4px);
+}
+
+.case:hover::before {
+  opacity: 1;
+}
+
+.mini-journal {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.mini-journal div {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--ligne);
+  font-size: 0.85rem;
+}
+
+.mini-journal small {
+  color: var(--doux);
+}
+
+.mini-journal b {
+  margin-left: auto;
+  color: #6ee7b7;
+  font-variant-numeric: tabular-nums;
+}
+
+.mini-caisse {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(29, 78, 216, 0.35), rgba(8, 145, 178, 0.25));
+  border: 1px solid rgba(34, 211, 238, 0.25);
+}
+
+.mini-caisse small {
+  display: block;
+  color: var(--doux);
+  font-size: 0.78rem;
+}
+
+.mini-caisse strong {
+  display: block;
+  margin: 0.2rem 0 0.7rem;
+  font-family: var(--police-titre);
+  font-size: 1.6rem;
+}
+
+.mini-jauge {
+  height: 6px;
+  margin-bottom: 0.6rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.mini-jauge span {
+  display: block;
+  width: 68%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--cyan), #a7f3d0);
+}
+
+/* ---------- Chiffres ---------- */
+
+.bande-chiffres {
+  padding: 3.5rem 0;
+  border-top: 1px solid var(--ligne);
+  border-bottom: 1px solid var(--ligne);
+  background: linear-gradient(90deg, rgba(29, 78, 216, 0.12), rgba(8, 145, 178, 0.08), rgba(109, 40, 217, 0.1));
+}
+
+.chiffres-grille {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem 1rem;
+  text-align: center;
+}
+
+.chiffres-grille strong {
+  display: block;
+  font-family: var(--serif);
+  font-size: clamp(2.8rem, 4vw + 1rem, 4.2rem);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1;
+  background: linear-gradient(180deg, #fff, #93c5fd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.chiffres-grille span {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--doux);
+  font-size: 0.92rem;
+}
+
+/* ---------- Démo du tirage ---------- */
+
+.demo {
+  display: grid;
+  gap: 3rem;
+  align-items: center;
+}
+
+.demo-texte p:not(.sur-titre) {
+  margin: 1.2rem 0 2rem;
+  color: var(--doux);
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+
+.roue {
+  position: relative;
+  padding: 1.5rem;
+  border-radius: 28px;
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(251, 191, 36, 0.12), transparent 60%),
+    rgba(255, 255, 255, 0.03);
+  box-shadow: 0 40px 80px -40px rgba(245, 158, 11, 0.45);
+  overflow: hidden;
+}
+
+.roue-entete {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin-bottom: 1.2rem;
+  color: var(--doux);
+  font-size: 0.86rem;
+}
+
+.roue-entete strong {
+  color: var(--or);
+  font-family: var(--police-titre);
+}
+
+.noms {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.noms li {
+  padding: 0.95rem 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--ligne);
+  background: rgba(255, 255, 255, 0.03);
+  font-weight: 600;
+  text-align: center;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s, color 0.15s;
+}
+
+.noms li.surligne {
+  border-color: rgba(34, 211, 238, 0.7);
+  background: rgba(34, 211, 238, 0.14);
+  transform: scale(1.03);
+}
+
+.noms li.gagne {
+  border-color: transparent;
+  background: linear-gradient(135deg, #fde68a, #f59e0b);
+  color: #3b1d02;
+  transform: scale(1.06);
+  box-shadow: 0 0 40px rgba(251, 191, 36, 0.6);
+}
+
+.resultat {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  margin-top: 1.2rem;
+  padding: 0.9rem;
+  border-radius: 16px;
+  background: rgba(251, 191, 36, 0.1);
+  font-size: 1.05rem;
+  animation: entree 0.6s var(--courbe) both;
+}
+
+.resultat strong {
+  color: var(--or);
+}
+
+.trophee {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fde68a, #f59e0b);
+  color: #3b1d02;
+}
+
+.confettis {
+  position: absolute;
+  inset: -16rem 0 auto;
+  height: 16rem;
+  pointer-events: none;
+}
+
+.confettis i {
+  position: absolute;
+  bottom: 0;
+  left: calc(var(--i) * 3.3%);
+  width: 7px;
+  height: 13px;
+  border-radius: 2px;
+  background: hsl(calc(var(--i) * 41), 90%, 62%);
+  animation: jaillit 1.6s calc(var(--i) * 25ms) var(--courbe) forwards;
+  opacity: 0;
+}
+
+@keyframes jaillit {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+
+  60% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(calc(-8rem - var(--i) * 4px)) translateX(calc((var(--i) - 15) * 6px)) rotate(calc(var(--i) * 60deg));
+  }
+}
+
+/* ---------- Pour qui ---------- */
+
+.profils {
+  display: grid;
+  gap: 1rem;
+}
+
+.profil {
+  padding: 1.8rem;
+  border-radius: 24px;
+  border: 1px solid var(--ligne);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+  transition: transform 0.4s var(--courbe), border-color 0.3s;
+}
+
+.profil:hover {
+  transform: translateY(-4px);
+  border-color: rgba(167, 139, 250, 0.45);
+}
+
+.profil-icone {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(59, 130, 246, 0.15));
+  border-color: rgba(167, 139, 250, 0.3);
+  color: #c4b5fd;
+  box-shadow: 0 0 30px -8px rgba(139, 92, 246, 0.55);
+}
+
+/* ---------- Offre ---------- */
+
+.offres {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 58rem;
+  margin: 0 auto;
+}
+
+.offre {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 2.2rem 1.8rem;
+  border-radius: 28px;
+  border: 1px solid var(--ligne);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* La carte mise en avant : bordure dégradée lumineuse. */
+.offre.vedette {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--nuit-2), var(--nuit-2)) padding-box,
+    linear-gradient(135deg, var(--cyan), var(--violet)) border-box;
+  box-shadow: 0 40px 90px -40px rgba(34, 211, 238, 0.55);
+}
+
+.offre-ruban {
+  position: absolute;
+  top: -0.8rem;
+  left: 1.8rem;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
+  color: #fff;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.offre-nom {
+  margin: 0;
+  color: var(--doux);
+  font-weight: 600;
+}
+
+.offre-prix {
+  margin: 0.4rem 0;
+  font-family: var(--serif);
+  font-size: 2.6rem;
+  font-style: italic;
+  line-height: 1.1;
+}
+
+.offre-texte {
+  margin: 0 0 1.6rem;
+  color: var(--doux);
+}
+
+.offre ul {
+  flex: 1;
+  display: grid;
+  gap: 0.8rem;
+  margin: 0 0 2rem;
+  padding: 1.5rem 0 0;
+  border-top: 1px solid var(--ligne);
+  list-style: none;
+}
+
+.offre li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  line-height: 1.45;
+}
+
+.offre li app-icone {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.1rem;
+  color: var(--cyan);
+}
+
+/* ---------- FAQ ---------- */
+
+.faq {
+  display: grid;
+  gap: 0.75rem;
+}
+
+details {
+  border-radius: 18px;
+  border: 1px solid var(--ligne);
+  background: rgba(255, 255, 255, 0.03);
+  transition: border-color 0.3s, background 0.3s;
+}
+
+details[open] {
+  border-color: rgba(34, 211, 238, 0.35);
+  background: rgba(34, 211, 238, 0.04);
+}
+
+summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.2rem 1.4rem;
+  font-weight: 600;
+  font-size: 1.02rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary app-icone {
+  flex-shrink: 0;
+  color: var(--cyan);
+  transition: transform 0.35s var(--courbe);
+}
+
+details[open] summary app-icone {
+  transform: rotate(45deg);
+}
+
+summary:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: -2px;
+  border-radius: 18px;
+}
+
+details p {
+  margin: 0;
+  padding: 0 1.4rem 1.3rem;
+  color: var(--doux);
+  line-height: 1.65;
+}
+
+/* ---------- Appel final ---------- */
+
+.final {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 7rem 0;
+  text-align: center;
+}
+
+.final-interieur p {
+  max-width: 34rem;
+  margin: 1.2rem auto 2.2rem;
+  color: var(--doux);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.final h2 {
+  font-size: clamp(2.2rem, 4.5vw + 0.8rem, 4.2rem);
+}
+
+/* ---------- Pied de page ---------- */
+
+.pied {
+  padding: 3rem 0 2rem;
+  border-top: 1px solid var(--ligne);
+  background: #030816;
+}
+
+.pied-interieur {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.pied-interieur p {
+  margin: 0.7rem 0 0;
+  color: var(--doux);
+  font-size: 0.9rem;
+}
+
+.pied nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.copyright {
+  margin-top: 2rem;
+  color: rgba(159, 177, 214, 0.6);
+  font-size: 0.82rem;
+}
+
+/* ================= Paliers ================= */
+
+@media (min-width: 720px) {
+  .conteneur,
+  .nav-interieur,
+  .heros-interieur {
+    padding: 0 2rem;
+  }
+
+  .lien-connexion {
+    display: inline;
+  }
+
+  .etapes,
+  .profils {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chiffres-grille {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .offres {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .noms {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1080px) {
+  .liens {
+    display: flex;
+  }
+
+  .burger,
+  .menu-mobile {
+    display: none;
+  }
+
+  .heros {
+    padding-top: 9rem;
+  }
+
+  .heros-interieur {
+    grid-template-columns: 1.05fr 1fr;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .scene {
+    min-height: 32rem;
+  }
+
+  .f1 {
+    left: -2.5rem;
+  }
+
+  .f2 {
+    right: -2rem;
+  }
+
+  /* La grille « bento » : une grande case, une case haute. */
+  .bento {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .case.grande {
+    grid-column: span 2;
+  }
+
+  .case.haute {
+    grid-row: span 2;
+  }
+
+  .case.large {
+    grid-column: span 2;
+  }
+
+  .demo {
+    grid-template-columns: 1fr 1.1fr;
+    gap: 4rem;
+  }
+
+  .section {
+    padding: 8rem 0;
+  }
+}
+
+/* Petits téléphones : la scène se resserre, une carte flottante en moins. */
+@media (max-width: 480px) {
+  .f3 {
+    display: none;
+  }
+
+  .flottante {
+    font-size: 0.74rem;
+  }
+
+  .scene {
+    min-height: 25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .defile-piste {
+    animation: none;
+  }
+
+  .maquette {
+    transform: none;
+  }
+}
