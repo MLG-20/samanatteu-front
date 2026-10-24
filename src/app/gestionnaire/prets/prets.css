@@ -1,0 +1,31 @@
+.bloc {
+  margin-bottom: 1.25rem;
+}
+
+.filtres {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--bordure);
+}
+
+.progression {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 8rem;
+}
+
+.progression .jauge {
+  flex: 1;
+}
+
+.progression small {
+  color: var(--texte-doux);
+}
+
+@media (max-width: 720px) {
+  .progression {
+    width: 55%;
+    min-width: 0;
+  }
+}

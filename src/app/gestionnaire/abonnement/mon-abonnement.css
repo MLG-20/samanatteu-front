@@ -1,0 +1,142 @@
+.carte-abonnement {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  max-width: 40rem;
+  margin-bottom: 1.25rem;
+  padding: 1.6rem 1.6rem 1.4rem;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #0b1f4d 0%, #1d4ed8 55%, #0891b2 100%);
+  color: var(--blanc);
+  box-shadow: 0 30px 60px -28px rgba(30, 58, 138, 0.85);
+  animation: apparait 0.5s var(--courbe) both;
+}
+
+.carte-abonnement.inactive {
+  background: linear-gradient(135deg, #334155, #64748b);
+}
+
+/* Des cercles concentriques très légers, comme sur une carte bancaire. */
+.motif {
+  position: absolute;
+  z-index: -1;
+  right: -6rem;
+  top: -6rem;
+  width: 22rem;
+  height: 22rem;
+  border-radius: 50%;
+  background: repeating-radial-gradient(circle, rgba(255, 255, 255, 0.07) 0 2px, transparent 2px 22px);
+}
+
+.haut {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sur-titre {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent-400);
+}
+
+h2 {
+  margin-top: 0.25rem;
+  font-size: 1.7rem;
+  font-weight: 800;
+}
+
+.prix {
+  margin: 1.2rem 0 1.5rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.prix span {
+  font-family: var(--police-titre);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--blanc);
+}
+
+.periode .ligne {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.3rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.piste {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+}
+
+.piste span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent-400), #a7f3d0);
+}
+
+.quota {
+  padding: 1.15rem 1.2rem;
+}
+
+.quota-haut {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.pastille {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 11px;
+  background: var(--primaire-50);
+  color: var(--primaire-600);
+}
+
+.libelle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--texte-doux);
+}
+
+.valeur {
+  margin: 0.9rem 0 0.6rem;
+  color: var(--texte-doux);
+  font-size: 1rem;
+}
+
+.valeur strong {
+  font-family: var(--police-titre);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--texte);
+}
+
+.quota small {
+  display: block;
+  margin-top: 0.45rem;
+  color: var(--texte-doux);
+  font-size: 0.8rem;
+}
+
+.alerte-quota {
+  border-color: color-mix(in srgb, var(--attention) 40%, var(--bordure));
+}
+
+.note {
+  margin-top: 1.25rem;
+  max-width: 48rem;
+}

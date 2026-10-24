@@ -1,0 +1,89 @@
+@let s = stats();
+<div class="entete-page">
+  <div>
+    <h1>Prêts</h1>
+    <p class="sous-titre">Les prêts accordés sur les caisses de vos tontines. Pour en accorder un, ouvrez la tontine.</p>
+  </div>
+  <div class="actions">
+    <a class="btn btn-secondaire" routerLink="/gestionnaire/tontines"><app-icone nom="tontine" /> Mes tontines</a>
+  </div>
+</div>
+
+<div class="grille-stats bloc">
+  <app-carte-stat icone="pret" libelle="Encours à rembourser" [valeur]="fcfa(s.encours)" [chargement]="chargement()" [aide]="s.nbActifs + ' prêt(s) actif(s)'" />
+  <app-carte-stat icone="alerte" libelle="En retard" [ton]="s.retards ? 'danger' : 'succes'" [valeur]="s.retards" [chargement]="chargement()" />
+  <app-carte-stat icone="tendance" libelle="Intérêts prévus" ton="accent" [valeur]="fcfa(s.interets)" [chargement]="chargement()" aide="reviennent à la caisse" />
+</div>
+
+<section class="carte">
+  <div class="barre-filtres filtres">
+    <div class="segments">
+      @for (f of filtres; track f.valeur) {
+        <button type="button" [class.actif]="filtre() === f.valeur" (click)="filtre.set(f.valeur)">{{ f.libelle }} <span class="compte">{{ compte(f.valeur) }}</span></button>
+      }
+    </div>
+  </div>
+
+  @if (erreur()) {
+    <div class="carte-corps"><div class="alerte alerte-erreur"><app-icone nom="erreur" /><span>{{ erreur() }}</span></div></div>
+  } @else if (chargement()) {
+    <div class="carte-corps">
+      @for (i of [1, 2, 3]; track i) {
+        <span class="squelette" style="height: 3rem; margin-bottom: 0.6rem"></span>
+      }
+    </div>
+  } @else if (visibles().length === 0) {
+    <app-etat-vide icone="pret" titre="Aucun prêt" texte="Accordez un prêt depuis l'onglet « Prêts » d'une tontine qui a une caisse." />
+  } @else {
+    <div class="tableau-conteneur">
+      <table class="tableau tableau-empilable">
+        <thead>
+          <tr>
+            <th>Membre</th>
+            <th>Tontine</th>
+            <th>Remboursé</th>
+            <th>Prochaine échéance</th>
+            <th class="droite">Reste</th>
+            <th>Statut</th>
+            <th class="droite"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (l of visibles(); track l.pret.id) {
+            <tr>
+              <td class="td-principal">
+                <div class="personne">
+                  <div>
+                    <strong>{{ l.membre }}</strong>
+                    <small>{{ l.pret.montant | fcfa }} le {{ l.pret.dateAccord | dateCourte }}</small>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Tontine"><a class="lien-discret" [routerLink]="['/gestionnaire/tontines', l.pret.tontineId]">{{ l.tontine }}</a></td>
+              <td data-label="Remboursé">
+                <div class="progression">
+                  <div class="jauge jauge-succes"><span [style.width.%]="l.part"></span></div>
+                  <small class="chiffres">{{ l.part }} %</small>
+                </div>
+              </td>
+              <td data-label="Prochaine échéance" [class.texte-danger]="l.prochaine?.statut === 'EN_RETARD'">
+                {{ l.prochaine ? (l.prochaine.dateEcheance | dateCourte) : '—' }}
+              </td>
+              <td data-label="Reste" class="montant">{{ l.reste | fcfa }}</td>
+              <td data-label="Statut"><app-statut domaine="pret" [valeur]="l.pret.statut" /></td>
+              <td class="droite">
+                @if (l.pret.statut !== 'REMBOURSE') {
+                  <button type="button" class="btn btn-doux btn-petit" (click)="remboursement.set({ pretId: l.pret.id, membre: l.membre, reste: l.reste, prochaine: l.prochaine ? l.prochaine.montantDu - l.prochaine.montantPaye : null })">
+                    <app-icone nom="portefeuille" /> Encaisser
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+<app-remboursement-pret [cible]="remboursement()" (fermer)="remboursement.set(null)" (fait)="rembourse()" />

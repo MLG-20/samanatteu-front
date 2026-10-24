@@ -1,0 +1,92 @@
+<div class="entete-page">
+  <div>
+    <h1>Mes tontines</h1>
+    <p class="sous-titre">{{ lignes().length }} tontine{{ lignes().length > 1 ? 's' : '' }} sous votre gestion.</p>
+  </div>
+  <div class="actions">
+    <button type="button" class="btn btn-primaire" (click)="creation.set(true)"><app-icone nom="plus" /> Nouvelle tontine</button>
+  </div>
+</div>
+
+<div class="barre-filtres">
+  <div class="recherche saisie">
+    <app-icone nom="recherche" />
+    <input class="entree" type="search" placeholder="Rechercher une tontine…" aria-label="Rechercher" [ngModel]="recherche()" (ngModelChange)="recherche.set($event)" />
+  </div>
+  <div class="segments">
+    @for (f of filtres; track f.valeur) {
+      <button type="button" [class.actif]="filtre() === f.valeur" (click)="filtre.set(f.valeur)">
+        {{ f.libelle }} <span class="compte">{{ compte()[f.valeur] ?? 0 }}</span>
+      </button>
+    }
+  </div>
+</div>
+
+@if (erreur()) {
+  <div class="alerte alerte-erreur"><app-icone nom="erreur" /><span>{{ erreur() }}</span></div>
+}
+
+@if (chargement()) {
+  <div class="grille-cartes">
+    @for (i of [1, 2, 3]; track i) {
+      <div class="carte carte-corps"><span class="squelette" style="height: 12rem"></span></div>
+    }
+  </div>
+} @else if (visibles().length === 0) {
+  <div class="carte">
+    @if (lignes().length === 0) {
+      <app-etat-vide icone="tontine" titre="Créez votre première tontine" texte="Choisissez le montant d'une part et le rythme : SamaNatteu s'occupe des cycles, des rappels et des reçus.">
+        <button type="button" class="btn btn-primaire" (click)="creation.set(true)"><app-icone nom="plus" /> Nouvelle tontine</button>
+      </app-etat-vide>
+    } @else {
+      <app-etat-vide icone="recherche" titre="Aucune tontine ne correspond" texte="Changez de filtre ou de recherche." />
+    }
+  </div>
+} @else {
+  <div class="grille-cartes">
+    @for (t of visibles(); track t.id; let i = $index) {
+      <a class="carte carte-cliquable tontine cascade" [style.--i]="i" [routerLink]="[t.id]" [attr.data-statut]="t.statut">
+        <div class="haut">
+          <span class="monogramme">{{ t.nom.charAt(0) }}</span>
+          <app-statut domaine="tontine" [valeur]="t.statut" />
+        </div>
+        <h2>{{ t.nom }}</h2>
+        <p class="rythme"><app-icone nom="calendrier" /> {{ rythme(t.frequence, t.intervalle) }}</p>
+
+        <div class="chiffres-cles">
+          <div>
+            <small>Part</small>
+            <strong class="chiffres">{{ t.montantPart | fcfa }}</strong>
+          </div>
+          <div>
+            <small>Membres</small>
+            <strong class="chiffres">{{ t.resume?.nombreMembres ?? '—' }}</strong>
+          </div>
+          <div>
+            <small>Caisse</small>
+            <strong class="chiffres">{{ t.soldeCaissePret | fcfa }}</strong>
+          </div>
+        </div>
+
+        @if (t.resume?.numeroCycleEnCours) {
+          <div class="collecte">
+            <div class="ligne">
+              <span>Cycle {{ t.resume?.numeroCycleEnCours }}</span>
+              <span class="chiffres">{{ pourcentage(t.resume?.montantCollecte, t.resume?.montantAttendu) }} %</span>
+            </div>
+            <div class="jauge" [class.jauge-succes]="pourcentage(t.resume?.montantCollecte, t.resume?.montantAttendu) === 100">
+              <span [style.width.%]="pourcentage(t.resume?.montantCollecte, t.resume?.montantAttendu)"></span>
+            </div>
+          </div>
+        } @else {
+          <p class="sans-cycle">
+            {{ t.statut === 'EN_ATTENTE' ? 'Invitez vos membres puis activez la tontine.' : t.statut === 'ACTIVE' ? 'Aucun cycle ouvert pour le moment.' : '' }}
+          </p>
+        }
+        <span class="ouvrir">Ouvrir <app-icone nom="flecheDroite" /></span>
+      </a>
+    }
+  </div>
+}
+
+<app-formulaire-tontine [ouverte]="creation()" (fermer)="creation.set(false)" (enregistree)="creee($event)" />

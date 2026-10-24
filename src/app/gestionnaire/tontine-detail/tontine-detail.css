@@ -1,0 +1,331 @@
+.bloc {
+  margin-bottom: 1.25rem;
+}
+
+/* ================= En-tête ================= */
+
+.entete-tontine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1rem 1.25rem;
+  margin-bottom: 1.4rem;
+  animation: apparait 0.5s var(--courbe) both;
+}
+
+.monogramme {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--primaire-600), var(--accent-400));
+  color: var(--blanc);
+  font-family: var(--police-titre);
+  font-size: 1.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  box-shadow: 0 16px 32px -14px rgba(37, 99, 235, 0.8);
+}
+
+[data-statut='TERMINEE'] .monogramme,
+[data-statut='EN_ATTENTE'] .monogramme {
+  background: var(--surface-3);
+  color: var(--texte-doux);
+  box-shadow: none;
+}
+
+.titre {
+  flex: 1 1 18rem;
+  min-width: 0;
+}
+
+.ligne-titre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.8rem;
+}
+
+h1 {
+  font-size: clamp(1.4rem, 1.4vw + 1rem, 1.9rem);
+  font-weight: 800;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.1rem;
+  margin: 0.45rem 0 0;
+  color: var(--texte-doux);
+  font-size: 0.86rem;
+}
+
+.meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.meta app-icone {
+  width: 1rem;
+  height: 1rem;
+}
+
+.description {
+  max-width: 44rem;
+  margin: 0.6rem 0 0;
+  color: var(--texte-2);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.supprimer:hover {
+  background: var(--erreur-fond);
+  color: var(--erreur);
+}
+
+/* ================= Onglets ================= */
+
+.onglets {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1.4rem;
+  border-bottom: 1px solid var(--bordure);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.onglets button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.8rem 0.95rem;
+  border: none;
+  background: none;
+  color: var(--texte-doux);
+  font-size: 0.92rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.onglets button:hover {
+  color: var(--texte);
+}
+
+.onglets button app-icone {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.onglets button.actif {
+  color: var(--primaire-600);
+}
+
+/* Le soulignement de l'onglet actif. */
+.onglets button.actif::after {
+  content: '';
+  position: absolute;
+  left: 0.6rem;
+  right: 0.6rem;
+  bottom: -1px;
+  height: 2.5px;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(90deg, var(--primaire-600), var(--accent-400));
+}
+
+.onglets .compte {
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  background: var(--surface-3);
+  font-size: 0.72rem;
+}
+
+.onglets .actif .compte {
+  background: var(--primaire-50);
+}
+
+.panneau {
+  animation: apparait 0.35s var(--courbe) both;
+}
+
+/* ================= Aperçu ================= */
+
+.collecte {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.collecte strong {
+  font-family: var(--police-titre);
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.collecte span {
+  color: var(--texte-doux);
+}
+
+.jauge.grosse {
+  height: 0.75rem;
+}
+
+.compteurs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  margin: 0.65rem 0 1.25rem;
+  color: var(--texte-doux);
+  font-size: 0.86rem;
+}
+
+.compteurs strong {
+  color: var(--texte);
+}
+
+.boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.cta p {
+  margin: 0;
+  max-width: 34rem;
+  color: var(--texte-2);
+  line-height: 1.55;
+}
+
+.cta-icone {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 14px;
+  background: var(--primaire-50);
+  color: var(--primaire-600);
+}
+
+.cta-icone.or {
+  background: linear-gradient(135deg, #fde68a, #fbbf24);
+  color: #78350f;
+}
+
+.checklist {
+  margin: 0;
+  padding: 0.5rem 0;
+  list-style: none;
+}
+
+.checklist li {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.85rem 1.25rem;
+}
+
+.checklist li > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.checklist strong,
+.checklist small {
+  display: block;
+}
+
+.checklist small {
+  color: var(--texte-doux);
+  font-size: 0.82rem;
+}
+
+.puce {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--surface-3);
+  color: var(--texte-doux);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.puce app-icone {
+  width: 1rem;
+  height: 1rem;
+}
+
+.fait .puce {
+  background: var(--succes);
+  color: var(--blanc);
+}
+
+.palmares {
+  margin: 0;
+  padding: 0.4rem 0;
+  list-style: none;
+}
+
+.palmares li {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.7rem 1.25rem;
+}
+
+.palmares li > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.palmares strong,
+.palmares small {
+  display: block;
+}
+
+.palmares small {
+  color: var(--texte-doux);
+  font-size: 0.8rem;
+}
+
+.rang {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #92400e;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.palmares li:first-child .rang {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #451a03;
+  box-shadow: 0 6px 14px -6px rgba(245, 158, 11, 0.8);
+}

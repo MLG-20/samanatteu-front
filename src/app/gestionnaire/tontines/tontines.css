@@ -1,0 +1,144 @@
+.tontine {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 1.3rem 1.3rem 1.1rem;
+  color: inherit;
+  text-decoration: none;
+  overflow: hidden;
+}
+
+/* Un liseré de couleur selon le statut, en haut de la carte. */
+.tontine::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: var(--bordure-forte);
+}
+
+.tontine[data-statut='ACTIVE']::before {
+  background: linear-gradient(90deg, var(--primaire-600), var(--accent-400));
+}
+
+.tontine[data-statut='SUSPENDUE']::before {
+  background: var(--attention);
+}
+
+.haut {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.monogramme {
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--primaire-600), var(--accent-400));
+  color: var(--blanc);
+  font-family: var(--police-titre);
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  box-shadow: 0 10px 22px -12px rgba(37, 99, 235, 0.8);
+}
+
+.tontine[data-statut='TERMINEE'] .monogramme,
+.tontine[data-statut='EN_ATTENTE'] .monogramme {
+  background: var(--surface-3);
+  color: var(--texte-doux);
+  box-shadow: none;
+}
+
+h2 {
+  margin-top: 1rem;
+  font-size: 1.12rem;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rythme {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0.3rem 0 1rem;
+  color: var(--texte-doux);
+  font-size: 0.85rem;
+}
+
+.rythme app-icone {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.chiffres-cles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  padding: 0.8rem 0;
+  border-top: 1px solid var(--bordure);
+  border-bottom: 1px solid var(--bordure);
+}
+
+.chiffres-cles small {
+  display: block;
+  color: var(--texte-doux);
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.chiffres-cles strong {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.92rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.collecte {
+  margin-top: 0.95rem;
+}
+
+.collecte .ligne {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--texte-doux);
+}
+
+.sans-cycle {
+  min-height: 2.3rem;
+  margin: 0.95rem 0 0;
+  color: var(--texte-doux);
+  font-size: 0.85rem;
+}
+
+.ouvrir {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 1rem;
+  color: var(--primaire-600);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.ouvrir app-icone {
+  width: 1rem;
+  height: 1rem;
+  transition: transform 0.25s var(--courbe);
+}
+
+.tontine:hover .ouvrir app-icone {
+  transform: translateX(4px);
+}

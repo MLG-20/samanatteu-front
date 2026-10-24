@@ -1,0 +1,194 @@
+@let tt = t();
+<a class="fil" routerLink="/gestionnaire/tontines"><app-icone nom="flecheGauche" /> Mes tontines</a>
+
+@if (etat.chargement()) {
+  <div class="entete-tontine">
+    <span class="squelette" style="width: 4rem; height: 4rem; border-radius: 18px"></span>
+    <div style="flex: 1">
+      <span class="squelette" style="height: 2rem; width: 40%"></span>
+      <span class="squelette" style="height: 1rem; width: 25%; margin-top: 0.6rem"></span>
+    </div>
+  </div>
+  <div class="grille-stats"><span class="squelette" style="height: 7rem"></span><span class="squelette" style="height: 7rem"></span><span class="squelette" style="height: 7rem"></span></div>
+} @else if (etat.erreur() || !tt) {
+  <div class="carte">
+    <app-etat-vide icone="tontine" titre="Tontine introuvable" [texte]="etat.erreur() ?? ''">
+      <a class="btn btn-secondaire" routerLink="/gestionnaire/tontines">Retour à mes tontines</a>
+    </app-etat-vide>
+  </div>
+} @else {
+  <!-- ============ En-tête ============ -->
+  <header class="entete-tontine" [attr.data-statut]="tt.statut">
+    <span class="monogramme">{{ tt.nom.charAt(0) }}</span>
+    <div class="titre">
+      <div class="ligne-titre">
+        <h1>{{ tt.nom }}</h1>
+        <app-statut domaine="tontine" [valeur]="tt.statut" />
+      </div>
+      <p class="meta">
+        <span><app-icone nom="calendrier" /> {{ rythme(tt.frequence, tt.intervalle) }}</span>
+        <span><app-icone nom="portefeuille" /> {{ tt.montantPart | fcfa }} la part</span>
+        <span><app-icone nom="horloge" /> Créée le {{ tt.createdAt | dateCourte }}</span>
+      </p>
+      @if (tt.description) {
+        <p class="description">{{ tt.description }}</p>
+      }
+    </div>
+    <div class="actions">
+      @switch (tt.statut) {
+        @case ('EN_ATTENTE') {
+          <button type="button" class="btn btn-primaire" [disabled]="actionEnCours()" (click)="changerStatut('activer')"><app-icone nom="lecture" /> Activer</button>
+        }
+        @case ('SUSPENDUE') {
+          <button type="button" class="btn btn-primaire" [disabled]="actionEnCours()" (click)="changerStatut('activer')"><app-icone nom="lecture" /> Réactiver</button>
+        }
+        @case ('ACTIVE') {
+          <button type="button" class="btn btn-secondaire" [disabled]="actionEnCours()" (click)="changerStatut('suspendre')"><app-icone nom="pause" /> Suspendre</button>
+          <button type="button" class="btn btn-secondaire" [disabled]="actionEnCours()" (click)="changerStatut('cloturer')"><app-icone nom="drapeau" /> Clôturer</button>
+        }
+      }
+      @if (tt.statut !== 'TERMINEE') {
+        <button type="button" class="btn btn-fantome btn-icone" aria-label="Modifier" (click)="edition.set(true)"><app-icone nom="crayon" /></button>
+      }
+      @if (tt.statut === 'EN_ATTENTE') {
+        <button type="button" class="btn btn-fantome btn-icone supprimer" aria-label="Supprimer" (click)="supprimer()"><app-icone nom="poubelle" /></button>
+      }
+    </div>
+  </header>
+
+  <!-- ============ Onglets ============ -->
+  <nav class="onglets" role="tablist">
+    <button type="button" role="tab" [class.actif]="onglet() === 'apercu'" (click)="onglet.set('apercu')"><app-icone nom="accueil" /> Aperçu</button>
+    <button type="button" role="tab" [class.actif]="onglet() === 'membres'" (click)="onglet.set('membres')">
+      <app-icone nom="utilisateurs" /> Membres <span class="compte">{{ etat.membresActifs().length }}</span>
+    </button>
+    <button type="button" role="tab" [class.actif]="onglet() === 'cycles'" (click)="onglet.set('cycles')">
+      <app-icone nom="rafraichir" /> Cycles <span class="compte">{{ etat.cycles().length }}</span>
+    </button>
+    <button type="button" role="tab" [class.actif]="onglet() === 'prets'" (click)="onglet.set('prets')">
+      <app-icone nom="pret" /> Prêts <span class="compte">{{ etat.prets().length }}</span>
+    </button>
+    <button type="button" role="tab" [class.actif]="onglet() === 'invitations'" (click)="onglet.set('invitations')">
+      <app-icone nom="lien" /> Inviter
+    </button>
+  </nav>
+
+  <div class="panneau">
+    @switch (onglet()) {
+      @case ('apercu') {
+        @let ch = chiffres();
+        <div class="grille-stats bloc">
+          <app-carte-stat icone="utilisateurs" libelle="Membres actifs" [valeur]="etat.membresActifs().length" [aide]="etat.totalParts() + ' parts au total'" />
+          <app-carte-stat icone="cadeau" libelle="Cagnotte par cycle" ton="attention" [valeur]="fcfa(ch.gainParCycle)" aide="remise au gagnant" />
+          <app-carte-stat icone="coffre" libelle="Caisse de prêt" ton="accent" [valeur]="fcfa(tt.soldeCaissePret)" [aide]="fcfa(tt.montantCaissePret) + ' par part et par cycle'" />
+          <app-carte-stat icone="drapeau" libelle="Cycles terminés" ton="info" [valeur]="ch.cyclesFaits + (tt.nbCycles ? ' / ' + tt.nbCycles : '')" />
+        </div>
+
+        <div class="grille-2 grille-2-1">
+          <!-- La prochaine étape : selon où en est la tontine. -->
+          <section class="carte etape">
+            @if (tt.statut === 'EN_ATTENTE') {
+              <div class="carte-entete"><div><h2>Mettre la tontine en route</h2><p class="sous">Deux étapes, et c'est parti.</p></div></div>
+              <ol class="checklist">
+                <li [class.fait]="etat.membresActifs().length > 0">
+                  <span class="puce">@if (etat.membresActifs().length > 0) { <app-icone nom="valider" /> } @else { 1 }</span>
+                  <div>
+                    <strong>Inviter les membres</strong>
+                    <small>{{ etat.membresActifs().length }} membre(s) inscrit(s) pour l'instant.</small>
+                  </div>
+                  <button type="button" class="btn btn-doux btn-petit" (click)="onglet.set('invitations')">Inviter</button>
+                </li>
+                <li>
+                  <span class="puce">2</span>
+                  <div>
+                    <strong>Activer la tontine</strong>
+                    <small>Puis ouvrir le premier cycle de cotisations.</small>
+                  </div>
+                  <button type="button" class="btn btn-primaire btn-petit" [disabled]="actionEnCours() || etat.membresActifs().length === 0" (click)="changerStatut('activer')">Activer</button>
+                </li>
+              </ol>
+            } @else if (avancement(); as av) {
+              <div class="carte-entete">
+                <div>
+                  <h2>Cycle {{ av.cycle.numeroCycle }} en cours</h2>
+                  <p class="sous">Du {{ av.cycle.dateDebut | dateCourte }} au {{ av.cycle.dateFinPrevue | dateCourte }}</p>
+                </div>
+                <app-statut domaine="cycle" [valeur]="av.cycle.statut" />
+              </div>
+              <div class="carte-corps">
+                <div class="collecte">
+                  <strong class="chiffres">{{ av.cycle.montantCollecte | fcfa }}</strong>
+                  <span class="chiffres">sur {{ av.cycle.montantAttendu | fcfa }}</span>
+                </div>
+                <div class="jauge grosse" [class.jauge-succes]="av.part === 100"><span [style.width.%]="av.part"></span></div>
+                <div class="compteurs">
+                  <span><strong>{{ av.payees }}</strong> / {{ av.total }} payées</span>
+                  @if (av.retards) {
+                    <span class="texte-danger"><strong>{{ av.retards }}</strong> en retard</span>
+                  }
+                  <span>{{ av.part }} %</span>
+                </div>
+                <div class="boutons">
+                  <button type="button" class="btn btn-primaire" (click)="onglet.set('cycles')"><app-icone nom="portefeuille" /> Encaisser</button>
+                  <button type="button" class="btn btn-secondaire" [disabled]="actionEnCours()" (click)="cloturerCycle()"><app-icone nom="drapeau" /> Clôturer le cycle</button>
+                </div>
+              </div>
+            } @else if (etat.cycleATirer(); as c) {
+              <div class="carte-entete"><div><h2>Le tirage vous attend</h2><p class="sous">Le cycle {{ c.numeroCycle }} est clôturé.</p></div></div>
+              <div class="carte-corps cta">
+                <span class="cta-icone or"><app-icone nom="cadeau" /></span>
+                <p>{{ c.montantCollecte | fcfa }} collectés. Lancez le tirage pour désigner le gagnant de ce cycle.</p>
+                <button type="button" class="btn btn-primaire" [disabled]="actionEnCours()" (click)="tirer()"><app-icone nom="melanger" /> Tirer au sort</button>
+              </div>
+            } @else if (tt.statut === 'ACTIVE') {
+              <div class="carte-entete"><div><h2>Prêt pour le cycle {{ etat.cycles().length + 1 }}</h2><p class="sous">Aucun cycle n'est ouvert.</p></div></div>
+              <div class="carte-corps cta">
+                <span class="cta-icone"><app-icone nom="rafraichir" /></span>
+                <p>Ouvrir un cycle crée la cotisation de chaque membre ({{ fcfa(ch.parCycle) }} attendus) et envoie les rappels.</p>
+                <button type="button" class="btn btn-primaire" [disabled]="actionEnCours()" (click)="ouvrirCycle()"><app-icone nom="plus" /> Ouvrir le cycle</button>
+              </div>
+            } @else {
+              <app-etat-vide [icone]="tt.statut === 'TERMINEE' ? 'drapeau' : 'pause'" [titre]="tt.statut === 'TERMINEE' ? 'Tontine terminée' : 'Tontine suspendue'" [texte]="tt.statut === 'TERMINEE' ? 'Tous les cycles sont passés. Le palmarès reste consultable.' : 'Réactivez-la pour ouvrir de nouveaux cycles.'" />
+            }
+          </section>
+
+          <!-- Le palmarès : qui a gagné quel cycle. -->
+          <section class="carte">
+            <div class="carte-entete"><div><h2>Palmarès</h2><p class="sous">Les gagnants des tirages</p></div></div>
+            @if (palmares().length === 0) {
+              <app-etat-vide icone="cadeau" titre="Pas encore de gagnant" texte="Le premier tirage a lieu à la fin du premier cycle." [compact]="true" />
+            } @else {
+              <ol class="palmares">
+                @for (p of palmares(); track p.tirage.id) {
+                  <li>
+                    <span class="rang">{{ p.cycle }}</span>
+                    <div>
+                      <strong>{{ p.nom }}</strong>
+                      <small>{{ p.tirage.dateTirage | dateCourte }} · {{ p.tirage.montantGagne | fcfa }}</small>
+                    </div>
+                    <app-statut domaine="tirage" [valeur]="p.tirage.statut" />
+                  </li>
+                }
+              </ol>
+            }
+          </section>
+        </div>
+      }
+      @case ('membres') {
+        <app-onglet-membres (inviter)="onglet.set('invitations')" />
+      }
+      @case ('cycles') {
+        <app-onglet-cycles (ouvrirCycle)="ouvrirCycle()" (cloturerCycle)="cloturerCycle()" (tirer)="tirer()" [occupe]="actionEnCours()" />
+      }
+      @case ('prets') {
+        <app-onglet-prets />
+      }
+      @case ('invitations') {
+        <app-onglet-invitations />
+      }
+    }
+  </div>
+
+  <app-formulaire-tontine [ouverte]="edition()" [tontine]="tt" (fermer)="edition.set(false)" (enregistree)="modifiee($event)" />
+  <app-tirage-celebration [resultat]="resultat()" (fermer)="resultat.set(null)" />
+}

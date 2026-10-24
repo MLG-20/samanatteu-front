@@ -1,0 +1,58 @@
+<div class="entete-page">
+  <div>
+    <h1>Mon abonnement</h1>
+    <p class="sous-titre">Votre formule SamaNatteu et ce que vous en utilisez.</p>
+  </div>
+</div>
+
+@if (erreur()) {
+  <div class="alerte alerte-erreur"><app-icone nom="erreur" /><span>{{ erreur() }}</span></div>
+}
+
+@if (chargement()) {
+  <span class="squelette" style="height: 12rem; border-radius: 22px; margin-bottom: 1.25rem"></span>
+  <div class="grille-stats"><span class="squelette" style="height: 8rem"></span><span class="squelette" style="height: 8rem"></span><span class="squelette" style="height: 8rem"></span></div>
+} @else if (abonnement(); as a) {
+  <!-- La « carte d'abonnement » : comme une carte bancaire premium. -->
+  <section class="carte-abonnement" [class.inactive]="!a.actif">
+    <span class="motif" aria-hidden="true"></span>
+    <div class="haut">
+      <div>
+        <p class="sur-titre">Formule</p>
+        <h2>{{ a.formule }}</h2>
+      </div>
+      <app-statut domaine="abonnement" [valeur]="a.actif ? 'ACTIF' : a.statut" />
+    </div>
+    <p class="prix"><span class="chiffres">{{ a.prixMensuel | fcfa }}</span> / mois</p>
+    <div class="periode">
+      <div class="ligne">
+        <span>Du {{ a.dateDebut | dateCourte }}</span>
+        <span>au {{ a.dateFin | dateCourte }} · fin {{ a.dateFin | dateRelative }}</span>
+      </div>
+      <div class="piste"><span [style.width.%]="periode()"></span></div>
+    </div>
+  </section>
+
+  <div class="grille-stats">
+    @for (q of quotas(); track q.libelle) {
+      <section class="carte quota" [class.alerte-quota]="q.part >= 90">
+        <div class="quota-haut">
+          <span class="pastille"><app-icone [nom]="q.icone" /></span>
+          <span class="libelle">{{ q.libelle }}</span>
+        </div>
+        <p class="valeur chiffres"><strong>{{ q.utilise }}</strong> / {{ q.max }}</p>
+        <div class="jauge" [class.jauge-attention]="q.part >= 80"><span [style.width.%]="q.part"></span></div>
+        <small>{{ q.part >= 100 ? 'Limite atteinte' : (q.max - q.utilise) + ' restant(s)' }}</small>
+      </section>
+    }
+  </div>
+
+  <div class="alerte alerte-info note">
+    <app-icone nom="info" />
+    <span>Pour changer de formule ou prolonger votre abonnement, contactez l'équipe SamaNatteu : l'activation est faite dès réception du paiement (Wave, Orange Money).</span>
+  </div>
+} @else {
+  <div class="carte">
+    <app-etat-vide icone="carte" titre="Aucun abonnement actif" texte="Un abonnement permet de créer vos tontines et d'envoyer les rappels par SMS. Contactez l'équipe SamaNatteu pour l'activer." />
+  </div>
+}

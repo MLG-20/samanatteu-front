@@ -1,0 +1,220 @@
+@let s = synthese();
+
+<!-- ============ Bandeau héros : la collecte du cycle en cours ============ -->
+<section class="heros">
+  <span class="lueur lueur-1" aria-hidden="true"></span>
+  <span class="lueur lueur-2" aria-hidden="true"></span>
+  <div class="heros-texte">
+    <p class="sur-titre">Cycles en cours</p>
+    @if (chargement()) {
+      <span class="squelette clair" style="height: 2.6rem; width: 16rem"></span>
+    } @else {
+      <h1 class="chiffres">{{ s.collecte | fcfa }}</h1>
+    }
+    <p class="sous">
+      collectés sur <strong class="chiffres">{{ s.attendu | fcfa }}</strong> attendus, dans
+      {{ s.actives }} tontine{{ s.actives > 1 ? 's' : '' }} active{{ s.actives > 1 ? 's' : '' }}
+    </p>
+    <div class="heros-jauge" role="progressbar" [attr.aria-valuenow]="s.part" aria-valuemin="0" aria-valuemax="100">
+      <span [style.width.%]="s.part"></span>
+    </div>
+    <p class="part">{{ s.part }} % de l'objectif</p>
+  </div>
+  <div class="heros-actions">
+    <a class="btn btn-blanc" routerLink="/gestionnaire/tontines" [queryParams]="{ nouvelle: 1 }"><app-icone nom="plus" /> Nouvelle tontine</a>
+    <a class="btn btn-verre" routerLink="/gestionnaire/journal"><app-icone nom="recu" /> Journal</a>
+  </div>
+</section>
+
+@if (erreur()) {
+  <div class="alerte alerte-erreur"><app-icone nom="erreur" /><span>{{ erreur() }}</span></div>
+}
+
+<div class="grille-stats bloc">
+  <app-carte-stat icone="utilisateurs" libelle="Membres" [valeur]="s.membres" [chargement]="chargement()" [aide]="tontines().length + ' tontines au total'" />
+  <app-carte-stat icone="alerte" libelle="Retards" [ton]="retards().length ? 'danger' : 'succes'" [valeur]="fcfa(s.retards)" [chargement]="chargement()" [aide]="retards().length + ' cotisation' + (retards().length > 1 ? 's' : '') + ' en retard'" />
+  <app-carte-stat icone="cadeau" libelle="Gains à verser" ton="attention" [valeur]="fcfa(s.gains)" [chargement]="chargement()" [aide]="gains().length + ' gagnant' + (gains().length > 1 ? 's' : '') + ' en attente'" />
+  <app-carte-stat icone="coffre" libelle="Caisses de prêt" ton="accent" [valeur]="fcfa(s.caisse)" [chargement]="chargement()" [aide]="fcfa(s.prets) + ' prêtés en cours'" />
+</div>
+
+<div class="grille-2 grille-2-1 bloc">
+  <!-- ============ Mes tontines ============ -->
+  <section class="carte">
+    <div class="carte-entete">
+      <div>
+        <h2>Mes tontines</h2>
+        <p class="sous">Avancement de la collecte du cycle en cours</p>
+      </div>
+      <a class="btn btn-fantome btn-petit" routerLink="/gestionnaire/tontines">Tout voir <app-icone nom="chevronDroit" /></a>
+    </div>
+    @if (chargement()) {
+      <div class="carte-corps">
+        @for (i of [1, 2, 3]; track i) {
+          <span class="squelette" style="height: 4.2rem; margin-bottom: 0.75rem"></span>
+        }
+      </div>
+    } @else if (tontines().length === 0) {
+      <app-etat-vide icone="tontine" titre="Pas encore de tontine" texte="Créez votre première tontine, puis invitez vos membres par un simple lien WhatsApp.">
+        <a class="btn btn-primaire" routerLink="/gestionnaire/tontines" [queryParams]="{ nouvelle: 1 }"><app-icone nom="plus" /> Créer une tontine</a>
+      </app-etat-vide>
+    } @else {
+      <ul class="tontines">
+        @for (t of tontines(); track t.id; let i = $index) {
+          <li class="cascade" [style.--i]="i">
+            <a [routerLink]="['/gestionnaire/tontines', t.id]">
+              <span class="monogramme">{{ t.nom.charAt(0) }}</span>
+              <div class="infos">
+                <div class="ligne">
+                  <strong>{{ t.nom }}</strong>
+                  <app-statut domaine="tontine" [valeur]="t.statut" />
+                </div>
+                <small>
+                  {{ t.nombreMembres }} membres
+                  @if (t.numeroCycleEnCours) { · cycle {{ t.numeroCycleEnCours }} }
+                </small>
+                <div class="jauge" [class.jauge-succes]="pourcentage(t.montantCollecte, t.montantAttendu) === 100">
+                  <span [style.width.%]="pourcentage(t.montantCollecte, t.montantAttendu)"></span>
+                </div>
+              </div>
+              <div class="montants">
+                <strong class="chiffres">{{ t.montantCollecte | fcfa }}</strong>
+                <small class="chiffres">/ {{ t.montantAttendu | fcfa }}</small>
+              </div>
+            </a>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+
+  <!-- ============ À faire ============ -->
+  <section class="carte a-faire">
+    <div class="carte-entete">
+      <div>
+        <h2>À faire</h2>
+        <p class="sous">{{ nbActions() }} action{{ nbActions() > 1 ? 's' : '' }} en attente</p>
+      </div>
+      @if (nbActions()) {
+        <span class="pastille-compte">{{ nbActions() }}</span>
+      }
+    </div>
+    @if (chargement()) {
+      <div class="carte-corps"><span class="squelette" style="height: 9rem"></span></div>
+    } @else if (nbActions() === 0) {
+      <app-etat-vide icone="succes" titre="Tout est à jour" texte="Aucun tirage à lancer, aucun gain à verser." [compact]="true" />
+    } @else {
+      <ul class="actions-liste">
+        @for (t of tirages(); track t.cycleId) {
+          <li>
+            <span class="action-icone tirage"><app-icone nom="melanger" /></span>
+            <div class="action-texte">
+              <strong>Tirage · {{ t.tontineNom }}</strong>
+              <small>Cycle {{ t.numeroCycle }} clôturé {{ t.dateCloture | dateRelative }} · {{ t.montantCollecte | fcfa }}</small>
+            </div>
+            <button type="button" class="btn btn-primaire btn-petit" [disabled]="tirageEnCours() === t.cycleId" (click)="tirer(t)">
+              @if (tirageEnCours() === t.cycleId) { <span class="rouage"></span> } @else { Tirer }
+            </button>
+          </li>
+        }
+        @for (g of gains(); track g.tirageId) {
+          <li>
+            <span class="action-icone gain"><app-icone nom="cadeau" /></span>
+            <div class="action-texte">
+              <strong>{{ g.gagnantNom }}</strong>
+              <small>{{ g.tontineNom }} · cycle {{ g.numeroCycle }} · reste {{ g.resteAVerser | fcfa }}</small>
+            </div>
+            <button type="button" class="btn btn-doux btn-petit" (click)="ouvrirVersement(g)">Verser</button>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</div>
+
+<div class="grille-2">
+  <!-- ============ Retards ============ -->
+  <section class="carte">
+    <div class="carte-entete">
+      <div>
+        <h2>Cotisations en retard</h2>
+        <p class="sous">Un appel suffit souvent</p>
+      </div>
+    </div>
+    @if (!chargement() && retards().length === 0) {
+      <app-etat-vide icone="succes" titre="Aucun retard" texte="Tous vos membres sont à jour. Bravo !" [compact]="true" />
+    } @else {
+      <div class="tableau-conteneur">
+        <table class="tableau tableau-empilable">
+          <thead>
+            <tr>
+              <th>Membre</th>
+              <th>Tontine</th>
+              <th class="droite">Reste dû</th>
+              <th class="droite"><span class="sr-only">Appeler</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of retards(); track r.cotisationId) {
+              <tr>
+                <td class="td-principal">
+                  <div class="personne">
+                    <div>
+                      <strong>{{ r.membreNom }}</strong>
+                      <small>{{ r.membreTelephone }}</small>
+                    </div>
+                  </div>
+                </td>
+                <td data-label="Tontine">{{ r.tontineNom }} <span class="texte-doux">· cycle {{ r.numeroCycle }}</span></td>
+                <td data-label="Reste dû" class="montant texte-danger">{{ r.resteDu | fcfa }}</td>
+                <td class="droite">
+                  <!-- tel: ouvre le composeur du téléphone. -->
+                  <a class="btn btn-secondaire btn-petit" [href]="'tel:' + r.membreTelephone"><app-icone nom="telephone" /> Appeler</a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+
+  <!-- ============ Prêts ============ -->
+  <section class="carte">
+    <div class="carte-entete">
+      <div>
+        <h2>Prêts en cours</h2>
+        <p class="sous">Remboursements attendus</p>
+      </div>
+      <a class="btn btn-fantome btn-petit" routerLink="/gestionnaire/prets">Gérer <app-icone nom="chevronDroit" /></a>
+    </div>
+    @if (!chargement() && prets().length === 0) {
+      <app-etat-vide icone="pret" titre="Aucun prêt en cours" texte="Les prêts accordés sur la caisse apparaîtront ici." [compact]="true" />
+    } @else {
+      <ul class="prets">
+        @for (p of prets(); track p.pretId) {
+          <li>
+            <div class="ligne">
+              <div>
+                <strong>{{ p.membreNom }}</strong>
+                <small>{{ p.tontineNom }}</small>
+              </div>
+              <app-statut domaine="pret" [valeur]="p.statut" />
+            </div>
+            <div class="jauge" [class.jauge-succes]="true">
+              <span [style.width.%]="100 - pourcentage(p.resteARembourser, p.montantTotal)"></span>
+            </div>
+            <div class="ligne petite">
+              <span class="chiffres">Reste {{ p.resteARembourser | fcfa }} / {{ p.montantTotal | fcfa }}</span>
+              @if (p.prochaineEcheance) {
+                <span>Échéance {{ p.prochaineEcheance | dateCourte }}</span>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</div>
+
+<app-tirage-celebration [resultat]="resultat()" (fermer)="resultat.set(null)" />
+<app-versement-gain [cible]="versement()" (fermer)="versement.set(null)" (fait)="apresVersement()" />
