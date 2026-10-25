@@ -8,6 +8,7 @@ import {
   FicheGestionnaire,
   GainAVerser,
   MaTontine,
+  MesMembres,
   MonGain,
   MonPret,
   PretEnCours,
@@ -25,6 +26,9 @@ export class DashboardApi {
   // ---------- Gestionnaire ----------
   mesTontines(): Observable<TontineResume[]> {
     return this.http.get<TontineResume[]>('/dashboard/gestionnaire/tontines');
+  }
+  mesMembres(): Observable<MesMembres> {
+    return this.http.get<MesMembres>('/dashboard/gestionnaire/membres');
   }
   retards(): Observable<CotisationRetard[]> {
     return this.http.get<CotisationRetard[]>('/dashboard/gestionnaire/retards');

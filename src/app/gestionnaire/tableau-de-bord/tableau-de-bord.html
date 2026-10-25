@@ -31,7 +31,8 @@
 }
 
 <div class="grille-stats bloc">
-  <app-carte-stat icone="utilisateurs" libelle="Membres" [valeur]="s.membres" [chargement]="chargement()" [aide]="tontines().length + ' tontines au total'" />
+  <!-- Des personnes, pas une somme par tontine ; les inscriptions en aide pour comparer. -->
+  <app-carte-stat icone="utilisateurs" libelle="Membres" [valeur]="membres()?.nbMembres ?? '—'" [chargement]="chargement()" [aide]="(membres()?.nbInscriptions ?? 0) + ' inscriptions dans ' + tontines().length + ' tontines'" />
   <app-carte-stat icone="alerte" libelle="Retards" [ton]="retards().length ? 'danger' : 'succes'" [valeur]="fcfa(s.retards)" [chargement]="chargement()" [aide]="retards().length + ' cotisation' + (retards().length > 1 ? 's' : '') + ' en retard'" />
   <app-carte-stat icone="cadeau" libelle="Gains à verser" ton="attention" [valeur]="fcfa(s.gains)" [chargement]="chargement()" [aide]="gains().length + ' gagnant' + (gains().length > 1 ? 's' : '') + ' en attente'" />
   <app-carte-stat icone="coffre" libelle="Caisses de prêt" ton="accent" [valeur]="fcfa(s.caisse)" [chargement]="chargement()" [aide]="fcfa(s.prets) + ' prêtés en cours'" />

@@ -334,6 +334,13 @@ export interface ActivationAbonnement {
 
 // ---------- Tableaux de bord ----------
 
+// GET /dashboard/gestionnaire/membres : des personnes (un membre dans deux
+// tontines compte une fois) et des inscriptions (il compte deux fois).
+export interface MesMembres {
+  nbMembres: number;
+  nbInscriptions: number;
+}
+
 export interface TontineResume {
   id: number;
   nom: string;

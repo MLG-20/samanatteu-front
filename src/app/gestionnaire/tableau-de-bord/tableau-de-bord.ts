@@ -7,7 +7,7 @@ import { TontineApi } from '../../api/tontine.api';
 import { AuthService } from '../../auth/auth.service';
 import { DateCourtePipe, DateRelativePipe, FcfaPipe, fcfa, pourcentage } from '../../core/formatage';
 import { messageErreur } from '../../core/libelles';
-import { CotisationRetard, GainAVerser, PretEnCours, TirageAFaire, TontineResume } from '../../core/modeles';
+import { CotisationRetard, GainAVerser, MesMembres, PretEnCours, TirageAFaire, TontineResume } from '../../core/modeles';
 import { CarteStat } from '../../ui/carte-stat';
 import { ConfirmationService } from '../../ui/confirmation';
 import { EtatVide } from '../../ui/etat-vide';
@@ -53,6 +53,9 @@ export class TableauDeBordGestionnaire {
   protected readonly prets = signal<PretEnCours[]>([]);
   protected readonly tirages = signal<TirageAFaire[]>([]);
   protected readonly gains = signal<GainAVerser[]>([]);
+  // Calculé par le backend : on ne peut pas additionner les membres des
+  // tontines (une personne inscrite dans deux tontines serait comptée deux fois).
+  protected readonly membres = signal<MesMembres | null>(null);
 
   protected readonly tirageEnCours = signal<number | null>(null);
   protected readonly resultat = signal<ResultatTirage | null>(null);
@@ -68,7 +71,6 @@ export class TableauDeBordGestionnaire {
     const attendu = actives.reduce((s, t) => s + (t.montantAttendu ?? 0), 0);
     return {
       actives: actives.length,
-      membres: this.tontines().reduce((s, t) => s + (t.nombreMembres ?? 0), 0),
       collecte,
       attendu,
       part: pourcentage(collecte, attendu),
@@ -89,6 +91,7 @@ export class TableauDeBordGestionnaire {
     // catchError par vue : si UNE vue échoue, les autres s'affichent quand même.
     forkJoin({
       tontines: this.dashboard.mesTontines(),
+      membres: this.dashboard.mesMembres().pipe(catchError(() => of(null))),
       retards: this.dashboard.retards().pipe(catchError(() => of([] as CotisationRetard[]))),
       prets: this.dashboard.pretsEnCours().pipe(catchError(() => of([] as PretEnCours[]))),
       tirages: this.dashboard.tiragesAFaire().pipe(catchError(() => of([] as TirageAFaire[]))),
@@ -98,6 +101,7 @@ export class TableauDeBordGestionnaire {
       .subscribe({
         next: (r) => {
           this.tontines.set(r.tontines);
+          this.membres.set(r.membres);
           this.retards.set(r.retards);
           this.prets.set(r.prets);
           this.tirages.set(r.tirages);
