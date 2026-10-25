@@ -21,9 +21,16 @@
         <p class="sur-titre">Formule</p>
         <h2>{{ a.formule }}</h2>
       </div>
-      <app-statut domaine="abonnement" [valeur]="a.actif ? 'ACTIF' : a.statut" />
+      <app-statut domaine="abonnement" [valeur]="etat(a)" />
     </div>
-    @if (a.prixMensuel) {
+    @if (enEssai()) {
+      <!-- Pendant l'essai, ce qui compte est le temps qui reste, pas le prix. -->
+      <p class="prix essai">
+        <span class="chiffres">{{ joursRestants() }} jour{{ joursRestants() > 1 ? 's' : '' }}</span>
+        d'essai gratuit restant{{ joursRestants() > 1 ? 's' : '' }}
+      </p>
+      <p class="apres-essai">Ensuite : {{ a.prixMensuel | fcfa }} / mois</p>
+    } @else if (a.prixMensuel) {
       <p class="prix"><span class="chiffres">{{ a.prixMensuel | fcfa }}</span> / mois</p>
     } @else {
       <p class="prix"><span class="chiffres">Sur devis</span></p>
@@ -31,7 +38,8 @@
     <div class="periode">
       <div class="ligne">
         <span>Du {{ a.dateDebut | dateCourte }}</span>
-        <span>au {{ a.dateFin | dateCourte }} · fin {{ a.dateFin | dateRelative }}</span>
+        <!-- En essai, les jours restants sont déjà écrits en grand plus haut. -->
+        <span>au {{ a.dateFin | dateCourte }}@if (!enEssai()) { · fin {{ a.dateFin | dateRelative }}}</span>
       </div>
       <div class="piste"><span [style.width.%]="periode()"></span></div>
     </div>
@@ -57,10 +65,22 @@
     }
   </div>
 
+  @if (enEssai()) {
+    <div class="alerte alerte-info note">
+      <app-icone nom="info" />
+      <span>Vous profitez de toute la formule {{ a.formule }} jusqu'au {{ a.dateFin | dateCourte }}. Pour continuer ensuite, contactez l'équipe SamaNatteu : l'activation est faite dès réception du paiement (Wave, Orange Money).</span>
+    </div>
+  } @else if (a.statut === 'ESSAI') {
+    <div class="alerte alerte-attention note">
+      <app-icone nom="alerte" />
+      <span>Votre essai gratuit est terminé : vos tontines en cours continuent, mais vous ne pouvez plus en créer. Contactez l'équipe SamaNatteu pour activer votre abonnement (Wave, Orange Money).</span>
+    </div>
+  } @else {
   <div class="alerte alerte-info note">
     <app-icone nom="info" />
     <span>Pour changer de formule ou prolonger votre abonnement, contactez l'équipe SamaNatteu : l'activation est faite dès réception du paiement (Wave, Orange Money).</span>
   </div>
+  }
 } @else {
   <div class="carte">
     <app-etat-vide icone="carte" titre="Aucun abonnement actif" texte="Un abonnement permet de créer vos tontines et d'envoyer les rappels par SMS. Contactez l'équipe SamaNatteu pour l'activer." />

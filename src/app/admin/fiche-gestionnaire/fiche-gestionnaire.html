@@ -80,7 +80,7 @@
               <span class="formule-nom">{{ a.formule }}</span>
               <span class="formule-prix chiffres">{{ a.prixMensuel | prixMensuel }}</span>
             </div>
-            <app-statut domaine="abonnement" [valeur]="a.statut" />
+            <app-statut domaine="abonnement" [valeur]="etat(a)" />
           </div>
           @if (!a.actif) {
             <div class="alerte alerte-attention"><app-icone nom="alerte" /><span>L'abonnement ne donne plus accès à la plateforme (période dépassée ou suspendu).</span></div>

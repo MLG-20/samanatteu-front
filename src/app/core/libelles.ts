@@ -53,7 +53,12 @@ const STATUTS: Record<string, Libelle> = {
   'import.TERMINE': { texte: 'Terminé', tonalite: 'succes' },
   'import.ECHEC': { texte: 'Échec', tonalite: 'danger' },
   // Abonnements
+  'abonnement.ESSAI': { texte: 'Essai gratuit', tonalite: 'info' },
   'abonnement.ACTIF': { texte: 'Actif', tonalite: 'succes' },
+  // Pas des statuts du backend : des ÉTATS calculés par etatAbonnement() (la
+  // fin de période se déduit de la date, comme Abonnement.estActif() en Java).
+  'abonnement.ESSAI_TERMINE': { texte: 'Essai terminé', tonalite: 'attention' },
+  'abonnement.EXPIRE': { texte: 'Expiré', tonalite: 'neutre' },
   'abonnement.SUSPENDU': { texte: 'Suspendu', tonalite: 'attention' },
   'abonnement.RESILIE': { texte: 'Résilié', tonalite: 'neutre' },
   // Rôles
@@ -65,6 +70,19 @@ const STATUTS: Record<string, Libelle> = {
   'notification.ENVOYE': { texte: 'Envoyée', tonalite: 'succes' },
   'notification.ECHEC': { texte: 'Échec', tonalite: 'danger' },
 };
+
+// Ce qu'on affiche d'un abonnement : le statut ne suffit pas, car un ACTIF ou un
+// ESSAI dont la date de fin est passée ne donne plus accès (actif = false, calculé
+// par le backend). Un seul endroit pour cette règle, lu par les trois écrans.
+export function etatAbonnement(a: { statut: string; actif: boolean }): string {
+  if (a.statut === 'ESSAI') {
+    return a.actif ? 'ESSAI' : 'ESSAI_TERMINE';
+  }
+  if (a.statut === 'ACTIF') {
+    return a.actif ? 'ACTIF' : 'EXPIRE';
+  }
+  return a.statut; // SUSPENDU, RESILIE : une décision de la plateforme
+}
 
 // Le libellé d'un statut, ex. libelle('tontine', 'ACTIVE') → { texte: 'Active', … }.
 // Valeur inconnue (enum ajouté côté Java) : on affiche la valeur brute plutôt que de planter.

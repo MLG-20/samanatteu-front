@@ -10,8 +10,8 @@
 </div>
 
 <div class="grille-stats bloc">
-  <app-carte-stat icone="carte" libelle="Abonnements actifs" ton="succes" [valeur]="s.actifs" [chargement]="chargement()" />
-  <app-carte-stat icone="tendance" libelle="Revenu mensuel" ton="accent" [valeur]="fcfa(s.revenu)" [chargement]="chargement()" />
+  <app-carte-stat icone="carte" libelle="Abonnements actifs" ton="succes" [valeur]="s.actifs" [chargement]="chargement()" [aide]="s.essais ? 'dont ' + s.essais + ' en essai gratuit' : ''" />
+  <app-carte-stat icone="tendance" libelle="Revenu mensuel" ton="accent" [valeur]="fcfa(s.revenu)" [chargement]="chargement()" aide="hors essais gratuits" />
   <app-carte-stat icone="message" libelle="SMS envoyés ce mois" ton="info" [valeur]="s.sms" [chargement]="chargement()" aide="tous gestionnaires confondus" />
 </div>
 
@@ -73,9 +73,14 @@
                   <small class="chiffres">{{ a.smsEnvoyesMois }} / {{ a.smsParMois | quota }}</small>
                 </div>
               </td>
-              <td data-label="Statut"><app-statut domaine="abonnement" [valeur]="a.actif ? 'ACTIF' : a.statut === 'ACTIF' ? 'RESILIE' : a.statut" /></td>
+              <td data-label="Statut"><app-statut domaine="abonnement" [valeur]="etat(a)" /></td>
               <td class="droite">
-                <button type="button" class="btn btn-doux btn-petit" (click)="ouvrir(a)"><app-icone nom="rafraichir" /> Prolonger</button>
+                <!-- Un essai n'est pas « prolongé » : le paiement reçu l'ACTIVE (statut ACTIF). -->
+                @if (a.statut === 'ESSAI') {
+                  <button type="button" class="btn btn-primaire btn-petit" (click)="ouvrir(a)"><app-icone nom="valider" /> Activer</button>
+                } @else {
+                  <button type="button" class="btn btn-doux btn-petit" (click)="ouvrir(a)"><app-icone nom="rafraichir" /> Prolonger</button>
+                }
               </td>
             </tr>
           }

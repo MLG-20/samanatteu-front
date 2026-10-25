@@ -4,7 +4,7 @@ import { finalize } from 'rxjs';
 
 import { DashboardApi } from '../../api/dashboard.api';
 import { DateCourtePipe, PrixMensuelPipe, QuotaPipe, initiales, pourcentage, teinteAvatar } from '../../core/formatage';
-import { messageErreur, rythme } from '../../core/libelles';
+import { etatAbonnement, messageErreur, rythme } from '../../core/libelles';
 import { FicheGestionnaire } from '../../core/modeles';
 import { EtatVide } from '../../ui/etat-vide';
 import { Icone } from '../../ui/icone';
@@ -29,6 +29,7 @@ interface Usage {
 })
 export class FicheGestionnairePage {
   private readonly api = inject(DashboardApi);
+  protected readonly etat = etatAbonnement;
 
   protected readonly fiche = signal<FicheGestionnaire | null>(null);
   protected readonly chargement = signal(true);

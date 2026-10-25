@@ -4,7 +4,7 @@ import { catchError, finalize, forkJoin, of } from 'rxjs';
 
 import { AdminApi } from '../../api/admin.api';
 import { DateCourtePipe, PrixMensuelPipe, QuotaPipe, fcfa, initiales, pourcentage, teinteAvatar } from '../../core/formatage';
-import { messageErreur } from '../../core/libelles';
+import { etatAbonnement, messageErreur } from '../../core/libelles';
 import { Abonnement, Formule, Utilisateur } from '../../core/modeles';
 import { CarteStat } from '../../ui/carte-stat';
 import { EtatVide } from '../../ui/etat-vide';
@@ -41,6 +41,7 @@ export class Abonnements {
   protected readonly teinte = teinteAvatar;
   protected readonly pourcentage = pourcentage;
   protected readonly durees = [1, 3, 6, 12];
+  protected readonly etat = etatAbonnement;
 
   protected readonly filtres = computed(() => {
     const t = this.recherche().trim().toLowerCase();
@@ -51,9 +52,13 @@ export class Abonnements {
 
   protected readonly stats = computed(() => {
     const actifs = this.liste().filter((a) => a.actif);
+    // Un essai en cours donne accès, mais ne rapporte rien : seul un abonnement
+    // PAYÉ (statut ACTIF) compte dans le revenu.
+    const payants = actifs.filter((a) => a.statut === 'ACTIF');
     return {
       actifs: actifs.length,
-      revenu: actifs.reduce((s, a) => s + a.prixMensuel, 0),
+      essais: actifs.length - payants.length,
+      revenu: payants.reduce((s, a) => s + a.prixMensuel, 0),
       sms: actifs.reduce((s, a) => s + a.smsEnvoyesMois, 0),
     };
   });

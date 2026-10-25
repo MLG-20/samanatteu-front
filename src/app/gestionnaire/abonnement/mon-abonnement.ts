@@ -4,7 +4,7 @@ import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { CompteApi } from '../../api/admin.api';
 import { DashboardApi } from '../../api/dashboard.api';
 import { DateCourtePipe, DateRelativePipe, FcfaPipe, pourcentage } from '../../core/formatage';
-import { messageErreur } from '../../core/libelles';
+import { etatAbonnement, messageErreur } from '../../core/libelles';
 import { Abonnement, TontineResume } from '../../core/modeles';
 import { EtatVide } from '../../ui/etat-vide';
 import { Icone, NomIcone } from '../../ui/icone';
@@ -25,6 +25,26 @@ export class MonAbonnement {
   protected readonly erreur = signal<string | null>(null);
   protected readonly abonnement = signal<Abonnement | null>(null);
   private readonly tontines = signal<TontineResume[]>([]);
+  protected readonly etat = etatAbonnement;
+
+  // L'essai gratuit en cours ? (statut ESSAI et date de fin pas encore passée)
+  protected readonly enEssai = computed(() => {
+    const a = this.abonnement();
+    return !!a && a.statut === 'ESSAI' && a.actif;
+  });
+
+  // Les jours qu'il reste, aujourd'hui COMPRIS : dateFin est le dernier jour
+  // couvert (même règle que le backend), d'où le + 1. Un jour = 86 400 000 ms.
+  protected readonly joursRestants = computed(() => {
+    const a = this.abonnement();
+    if (!a) {
+      return 0;
+    }
+    const aujourdhui = new Date();
+    aujourdhui.setHours(0, 0, 0, 0);
+    const fin = new Date(a.dateFin + 'T00:00:00');
+    return Math.max(0, Math.round((fin.getTime() - aujourdhui.getTime()) / 86_400_000) + 1);
+  });
 
   // La progression dans la période (jours écoulés / durée totale).
   protected readonly periode = computed(() => {

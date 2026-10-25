@@ -26,7 +26,7 @@ export type SensTransaction = 'ENTRANT' | 'SORTANT';
 export type StatutInvitation = 'EN_ATTENTE' | 'ACCEPTE' | 'EXPIRE' | 'ANNULEE';
 export type TypeInvitation = 'GROUPE' | 'INDIVIDUELLE';
 export type StatutImportMembre = 'EN_COURS' | 'TERMINE' | 'ECHEC';
-export type StatutAbonnement = 'ACTIF' | 'SUSPENDU' | 'RESILIE';
+export type StatutAbonnement = 'ESSAI' | 'ACTIF' | 'SUSPENDU' | 'RESILIE';
 export type TypeNotification =
   | 'BIENVENUE'
   | 'INVITATION'
