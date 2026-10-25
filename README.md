@@ -35,7 +35,9 @@ Puis <http://localhost:4200>.
 de problème de CORS en développement, et **exactement le même schéma qu'en production** (un
 serveur web sert les fichiers Angular et forwarde l'API).
 
-**Quand vous ajoutez un contrôleur côté Spring, ajoutez son préfixe ici.**
+**Quand vous ajoutez un contrôleur côté Spring, ajoutez son préfixe ici**, et vérifiez qu'il ne
+ressemble à aucune URL de page : le proxy enverrait la page au back (d'où `/messageContact` pour
+l'API du formulaire, la page restant `/contact`).
 
 ## Organisation
 
@@ -47,13 +49,13 @@ src/app/
 ├── app.config.ts          configuration globale (HttpClient + intercepteur, routeur)
 ├── app.routes.ts          table URL → écran, chargement paresseux, guards par rôle
 ├── core/                  modèles (1 interface par DTO), libellés, formatage (FCFA, dates), thème
-├── api/                   un service par domaine (tontine, finance, dashboard, admin)
+├── api/                   un service par domaine (tontine, finance, dashboard, admin, site)
 ├── ui/                    composants réutilisables (icône, modale, toasts, badge, tuile…)
 ├── layout/                la coquille des pages connectées (menu, barre du haut)
 ├── auth/                  session, intercepteur, guards + pages publiques (connexion, inscription…)
-├── public/accueil/        la vitrine (page d'accueil publique)
+├── public/                la vitrine (accueil), contact, à propos + en-tête et footer partagés
 ├── commun/                écrans partagés : profil, notifications, journal
-├── admin/                 vue d'ensemble, utilisateurs, formules, abonnements
+├── admin/                 vue d'ensemble, utilisateurs, formules, abonnements, site, messages
 ├── gestionnaire/          tableau de bord, tontines (+ détail à onglets), prêts, abonnement
 └── membre/                accueil, mes tontines
 ```
@@ -62,10 +64,11 @@ src/app/
 
 | URL | Pour qui | Contenu |
 |---|---|---|
-| `/` | tous | vitrine : présentation, démo du tirage, offre, FAQ |
+| `/` | tous | vitrine : présentation, démo du tirage, offre (les vraies formules), FAQ |
+| `/contact`, `/a-propos` | tous | coordonnées + formulaire, présentation ; contenu piloté par l'ADMIN |
 | `/connexion`, `/inscription`, `/mot-de-passe-oublie` | visiteur | pages publiques (un connecté est renvoyé chez lui) |
 | `/rejoindre/:token` | visiteur, membre | accepter une invitation (pas `/invitation` : préfixe de l'API dans le proxy) |
-| `/admin/…` | ADMIN | vue d'ensemble, utilisateurs, formules, abonnements, profil |
+| `/admin/…` | ADMIN | vue d'ensemble, utilisateurs, formules, abonnements, site public, messages, profil |
 | `/gestionnaire/…` | GESTIONNAIRE | tableau de bord, tontines, détail d'une tontine, prêts, journal, notifications, abonnement, profil |
 | `/membre/…` | MEMBRE | accueil, mes tontines, historique, notifications, profil |
 
@@ -105,6 +108,7 @@ Le backend renvoie un JWT (`POST /auth/login`) : un `accessToken` (15 min) et un
 | `?retour=` accepté seulement s'il commence par `/` (et pas `//`) | Sinon un lien piégé pourrait envoyer l'utilisateur sur un autre site après la connexion. |
 | Store de la page tontine fourni par le composant (`providers`) | Une instance neuve par page ouverte, partagée par ses onglets (≈ `@RequestScope`). |
 | Chargement paresseux de chaque écran (`loadComponent`) | Un membre ne télécharge jamais le code des écrans admin. |
+| Paramètres du site en cache dans un `signal` de `SiteApi` | Footer, Contact et À propos font un seul `GET /site` ; quand l'ADMIN enregistre, le footer change sans recharger. |
 | Budget CSS par composant : 28 kB (avertissement) / 40 kB (erreur) | La vitrine (animations, paliers responsive) fait ~24 kB ; les autres écrans restent bien en dessous. |
 
 ## Tests

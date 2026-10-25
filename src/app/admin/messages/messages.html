@@ -1,0 +1,100 @@
+<div class="entete-page">
+  <div>
+    <h1>Messages</h1>
+    <p class="sous-titre">Les messages envoyés par le formulaire de la page Contact.</p>
+  </div>
+  <div class="segments" role="tablist">
+    <button type="button" role="tab" [class.actif]="filtre() === 'tous'" (click)="filtre.set('tous')">
+      Tous <span class="compte">{{ liste().length }}</span>
+    </button>
+    <button type="button" role="tab" [class.actif]="filtre() === 'nonLus'" (click)="filtre.set('nonLus')">
+      Non lus <span class="compte">{{ nbNonLus() }}</span>
+    </button>
+    <button type="button" role="tab" [class.actif]="filtre() === 'lus'" (click)="filtre.set('lus')">Lus</button>
+  </div>
+</div>
+
+@if (erreur()) {
+  <div class="alerte alerte-erreur"><app-icone nom="erreur" /><span>{{ erreur() }}</span></div>
+}
+
+@if (chargement()) {
+  <div class="carte">
+    @for (i of [1, 2, 3, 4]; track i) {
+      <div class="ligne-squelette"><span class="squelette" style="height: 3.2rem"></span></div>
+    }
+  </div>
+} @else if (visibles().length === 0) {
+  <div class="carte">
+    <app-etat-vide
+      icone="message"
+      [titre]="filtre() === 'nonLus' ? 'Aucun message non lu' : 'Aucun message'"
+      [texte]="filtre() === 'nonLus' ? 'Tout est traité. Bravo !' : 'Les messages envoyés depuis la page Contact apparaîtront ici.'"
+    />
+  </div>
+} @else {
+  <ul class="carte boite">
+    @for (m of visibles(); track m.id; let i = $index) {
+      <li class="cascade" [style.--i]="i">
+        <button type="button" class="message" [class.non-lu]="!m.lu" (click)="ouvrir(m)">
+          <span class="avatar" [attr.data-teinte]="m.id % 5">{{ avatar(m.nom) }}</span>
+          <span class="corps">
+            <span class="haut">
+              <strong>{{ m.nom }}</strong>
+              <time [attr.datetime]="m.createdAt">{{ m.createdAt | dateRelative }}</time>
+            </span>
+            <span class="sujet">{{ m.sujet }}</span>
+            <span class="extrait">{{ m.message }}</span>
+          </span>
+          @if (!m.lu) {
+            <span class="pastille-non-lu" aria-label="Non lu"></span>
+          }
+        </button>
+      </li>
+    }
+  </ul>
+}
+
+<!-- Le message ouvert -->
+<app-modale [ouverte]="ouvert() !== null" [titre]="ouvert()?.sujet ?? ''" [sousTitre]="'Reçu ' + (ouvert()?.createdAt | dateHeure)" [large]="true" (fermer)="ouvert.set(null)">
+  @if (ouvert(); as m) {
+    <div class="expediteur">
+      <span class="avatar avatar-grand" [attr.data-teinte]="m.id % 5">{{ avatar(m.nom) }}</span>
+      <div>
+        <strong>{{ m.nom }}</strong>
+        <div class="coordonnees">
+          @if (m.telephone) {
+            <span><app-icone nom="telephone" /> {{ m.telephone }}</span>
+          }
+          @if (m.email) {
+            <span><app-icone nom="email" /> {{ m.email }}</span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <p class="texte-message">{{ m.message }}</p>
+
+    <div class="repondre">
+      <span class="etiquette">Répondre</span>
+      <div class="boutons-reponse">
+        @if (m.email) {
+          <a class="btn btn-doux btn-petit" [href]="lienEmail(m)"><app-icone nom="email" /> Par email</a>
+        }
+        @if (m.telephone) {
+          <a class="btn btn-doux btn-petit" [href]="lienTel(m)"><app-icone nom="telephone" /> Appeler</a>
+          <a class="btn btn-doux btn-petit" [href]="lienWhatsapp(m)" target="_blank" rel="noopener noreferrer"><app-icone nom="whatsapp" /> WhatsApp</a>
+        }
+      </div>
+    </div>
+  }
+  <div pied>
+    @if (ouvert(); as m) {
+      <button type="button" class="btn btn-fantome texte-danger" (click)="supprimer(m)"><app-icone nom="poubelle" /> Supprimer</button>
+      <button type="button" class="btn btn-secondaire" (click)="changerLu(m, !m.lu)">
+        <app-icone [nom]="m.lu ? 'cloche' : 'valider'" /> {{ m.lu ? 'Marquer non lu' : 'Marquer lu' }}
+      </button>
+      <button type="button" class="btn btn-primaire" (click)="ouvert.set(null)">Fermer</button>
+    }
+  </div>
+</app-modale>

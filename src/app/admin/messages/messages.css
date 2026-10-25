@@ -1,0 +1,174 @@
+/* L'écran « Messages » de l'ADMIN : une boîte de réception. */
+
+.ligne-squelette {
+  padding: 0.9rem 1.2rem;
+}
+
+.boite {
+  margin: 0;
+  padding: 0.35rem;
+  list-style: none;
+}
+
+.message {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  width: 100%;
+  padding: 0.95rem 1rem;
+  border: none;
+  border-radius: 12px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.message:hover {
+  background: var(--surface-2);
+}
+
+.message:focus-visible {
+  outline: 2px solid var(--primaire-500);
+  outline-offset: -2px;
+}
+
+li + li .message::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 1rem;
+  right: 1rem;
+  border-top: 1px solid var(--bordure);
+}
+
+.corps {
+  display: grid;
+  flex: 1;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.haut {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.haut strong {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.haut time {
+  flex: none;
+  color: var(--texte-pale);
+  font-size: 0.8rem;
+}
+
+.sujet {
+  color: var(--texte-2);
+  font-size: 0.92rem;
+}
+
+/* Un aperçu d'une ligne du message. */
+.extrait {
+  overflow: hidden;
+  color: var(--texte-doux);
+  font-size: 0.86rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Non lu : nom et sujet en gras, pastille bleue, date en couleur. */
+.non-lu .haut strong,
+.non-lu .sujet {
+  color: var(--texte);
+  font-weight: 800;
+}
+
+.non-lu .haut time {
+  color: var(--primaire-600);
+  font-weight: 700;
+}
+
+.pastille-non-lu {
+  flex: none;
+  width: 0.6rem;
+  height: 0.6rem;
+  margin-top: 0.4rem;
+  border-radius: 50%;
+  background: var(--primaire-600);
+  box-shadow: 0 0 0 4px var(--primaire-50);
+}
+
+/* ---------- Le message ouvert ---------- */
+
+.expediteur {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid var(--bordure);
+}
+
+.expediteur strong {
+  font-size: 1.05rem;
+}
+
+.coordonnees {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  margin-top: 0.25rem;
+  color: var(--texte-doux);
+  font-size: 0.88rem;
+}
+
+.coordonnees span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  overflow-wrap: anywhere;
+}
+
+.coordonnees app-icone {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+/* pre-line : les retours à la ligne du visiteur sont gardés. */
+.texte-message {
+  margin: 1.2rem 0;
+  color: var(--texte-2);
+  line-height: 1.7;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.repondre {
+  padding: 0.9rem 1rem;
+  border-radius: var(--rayon-champ);
+  background: var(--surface-2);
+}
+
+.repondre .etiquette {
+  display: block;
+  margin-bottom: 0.55rem;
+  color: var(--texte-doux);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.boutons-reponse {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

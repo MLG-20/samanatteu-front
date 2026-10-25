@@ -1,0 +1,72 @@
+<footer class="pied">
+  <!-- Une lueur discrète en haut du footer, dans l'esprit de la vitrine. -->
+  <span class="lueur" aria-hidden="true"></span>
+
+  <div class="conteneur">
+    <div class="grille">
+      <!-- La marque + les réseaux sociaux (pilotés par l'ADMIN). -->
+      <div class="marque">
+        <a class="logo" routerLink="/">
+          <span class="logo-pastille">S</span>
+          <span>SamaNatteu</span>
+        </a>
+        <p>La gestion de tontines, en toute confiance. Cotisations, tirages, prêts et reçus : tout est noté, chacun voit où il en est.</p>
+        @if (reseaux().length) {
+          <ul class="reseaux" aria-label="Nos réseaux sociaux">
+            @for (r of reseaux(); track r.nom) {
+              <li>
+                <!-- rel="noopener" : la page ouverte ne peut pas manipuler la nôtre. -->
+                <a [href]="r.url" target="_blank" rel="noopener noreferrer" [attr.aria-label]="r.nom" [title]="r.nom">
+                  <app-icone [nom]="r.icone" />
+                </a>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+
+      <nav class="colonne" aria-label="Le produit">
+        <p class="titre">Le produit</p>
+        <a routerLink="/" fragment="fonctionnement">Comment ça marche</a>
+        <a routerLink="/" fragment="atouts">Fonctionnalités</a>
+        <a routerLink="/" fragment="offre">Offre et tarifs</a>
+        <a routerLink="/" fragment="faq">Questions fréquentes</a>
+      </nav>
+
+      <nav class="colonne" aria-label="SamaNatteu">
+        <p class="titre">SamaNatteu</p>
+        <a routerLink="/a-propos">À propos</a>
+        <a routerLink="/contact">Contact</a>
+        <a routerLink="/inscription">Créer un compte</a>
+        <a routerLink="/connexion">Se connecter</a>
+      </nav>
+
+      <!-- Les coordonnées : seulement celles que l'ADMIN a renseignées. -->
+      <div class="colonne">
+        <p class="titre">Nous joindre</p>
+        @if (parametres(); as p) {
+          @if (p.contactTelephone) {
+            <a class="coordonnee" [href]="lienTel(p.contactTelephone)"><app-icone nom="telephone" /> {{ p.contactTelephone }}</a>
+          }
+          @if (p.contactWhatsapp) {
+            <a class="coordonnee" [href]="lienWhatsapp(p.contactWhatsapp)" target="_blank" rel="noopener noreferrer">
+              <app-icone nom="whatsapp" /> {{ p.contactWhatsapp }}
+            </a>
+          }
+          @if (p.contactEmail) {
+            <a class="coordonnee" [href]="'mailto:' + p.contactEmail"><app-icone nom="email" /> {{ p.contactEmail }}</a>
+          }
+          @if (p.contactAdresse) {
+            <span class="coordonnee"><app-icone nom="lieu" /> {{ p.contactAdresse }}</span>
+          }
+        }
+        <a class="bouton-message" routerLink="/contact"><app-icone nom="message" /> Écrire un message</a>
+      </div>
+    </div>
+
+    <div class="bas">
+      <p>© {{ annee }} SamaNatteu. Tous droits réservés.</p>
+      <p>Fait avec soin au Sénégal</p>
+    </div>
+  </div>
+</footer>

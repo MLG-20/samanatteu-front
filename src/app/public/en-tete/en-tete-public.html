@@ -1,0 +1,39 @@
+<header class="nav" [class.ouvert]="menuOuvert()">
+  <div class="nav-interieur">
+    <a class="logo" routerLink="/">
+      <span class="logo-pastille">S</span>
+      <span>SamaNatteu</span>
+    </a>
+
+    <nav class="liens" aria-label="Navigation">
+      <a routerLink="/" fragment="fonctionnement">Comment ça marche</a>
+      <a routerLink="/" fragment="offre">Offre</a>
+      <!-- routerLinkActive : la classe « actif » quand on est sur cette page. -->
+      <a routerLink="/a-propos" routerLinkActive="actif">À propos</a>
+      <a routerLink="/contact" routerLinkActive="actif">Contact</a>
+    </nav>
+
+    <div class="nav-actions">
+      @if (monEspace(); as espace) {
+        <a class="bouton-nav" [routerLink]="espace">Mon espace <app-icone nom="flecheDroite" /></a>
+      } @else {
+        <a class="lien-connexion" routerLink="/connexion">Se connecter</a>
+        <a class="bouton-nav" routerLink="/inscription">Commencer</a>
+      }
+      <button type="button" class="burger" [attr.aria-expanded]="menuOuvert()" aria-label="Menu" (click)="menuOuvert.set(!menuOuvert())">
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Le menu déroulant du téléphone. -->
+  <div class="menu-mobile">
+    <a routerLink="/" fragment="fonctionnement">Comment ça marche</a>
+    <a routerLink="/" fragment="offre">Offre</a>
+    <a routerLink="/a-propos">À propos</a>
+    <a routerLink="/contact">Contact</a>
+    @if (!monEspace()) {
+      <a routerLink="/connexion">Se connecter</a>
+    }
+  </div>
+</header>

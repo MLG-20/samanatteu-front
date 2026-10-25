@@ -234,9 +234,7 @@ h2 em {
 
 .liens button,
 .menu-mobile button,
-.menu-mobile a,
-.pied nav button,
-.pied nav a {
+.menu-mobile a {
   padding: 0.5rem 0.8rem;
   border: none;
   border-radius: 999px;
@@ -249,9 +247,7 @@ h2 em {
   transition: color 0.2s, background 0.2s;
 }
 
-.liens button:hover,
-.pied nav button:hover,
-.pied nav a:hover {
+.liens button:hover {
   color: var(--clair);
   background: rgba(255, 255, 255, 0.06);
 }
@@ -1701,40 +1697,6 @@ details p {
 
 .final h2 {
   font-size: clamp(2.2rem, 4.5vw + 0.8rem, 4.2rem);
-}
-
-/* ---------- Pied de page ---------- */
-
-.pied {
-  padding: 3rem 0 2rem;
-  border-top: 1px solid var(--ligne);
-  background: #030816;
-}
-
-.pied-interieur {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 1.5rem;
-}
-
-.pied-interieur p {
-  margin: 0.7rem 0 0;
-  color: var(--doux);
-  font-size: 0.9rem;
-}
-
-.pied nav {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.copyright {
-  margin-top: 2rem;
-  color: rgba(159, 177, 214, 0.6);
-  font-size: 0.82rem;
 }
 
 /* ================= Paliers ================= */

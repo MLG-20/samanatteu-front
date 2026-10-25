@@ -1,0 +1,183 @@
+/* La barre du haut des pages publiques : toujours en verre dépoli (pas de
+   héros plein écran derrière, contrairement à la vitrine). */
+
+.nav {
+  position: fixed;
+  z-index: 50;
+  inset: 0 0 auto;
+  padding: 0.6rem 0;
+  background: rgba(4, 10, 28, 0.72);
+  backdrop-filter: saturate(1.6) blur(16px);
+  border-bottom: 1px solid var(--ligne);
+}
+
+.nav-interieur {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--clair);
+  font-family: var(--police-titre);
+  font-size: 1.12rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.logo-pastille {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 11px;
+  background: linear-gradient(135deg, var(--cyan), #fff);
+  color: #0b1f4d;
+  box-shadow: 0 0 24px rgba(34, 211, 238, 0.45);
+}
+
+.liens {
+  display: none;
+  flex: 1;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.liens a,
+.menu-mobile a {
+  padding: 0.5rem 0.8rem;
+  border-radius: 999px;
+  color: var(--doux);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s, background 0.2s;
+}
+
+.liens a:hover,
+.liens a.actif {
+  color: var(--clair);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-left: auto;
+}
+
+.lien-connexion {
+  display: none;
+  color: var(--clair);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.lien-connexion:hover {
+  color: var(--cyan);
+}
+
+.bouton-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  height: 2.4rem;
+  padding: 0 1.05rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12) inset, 0 12px 34px -10px rgba(34, 211, 238, 0.75);
+  transition: transform 0.25s var(--courbe);
+}
+
+.bouton-nav:hover {
+  transform: translateY(-2px);
+}
+
+.bouton-nav app-icone {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Le burger : deux traits qui deviennent une croix. */
+.burger {
+  display: grid;
+  place-content: center;
+  gap: 6px;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--ligne);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+}
+
+.burger span {
+  width: 1.1rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--clair);
+  transition: transform 0.3s var(--courbe);
+}
+
+.ouvert .burger span:first-child {
+  transform: translateY(4px) rotate(45deg);
+}
+
+.ouvert .burger span:last-child {
+  transform: translateY(-4px) rotate(-45deg);
+}
+
+.menu-mobile {
+  display: grid;
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 1rem;
+  transition: max-height 0.4s var(--courbe), padding 0.4s;
+}
+
+.ouvert .menu-mobile {
+  max-height: 20rem;
+  padding: 0.6rem 1rem 1rem;
+}
+
+.menu-mobile a {
+  padding: 0.85rem 0.4rem;
+  border-radius: 0;
+  border-bottom: 1px solid var(--ligne);
+  font-size: 1rem;
+}
+
+@media (min-width: 720px) {
+  .nav-interieur {
+    padding: 0 2rem;
+  }
+
+  .lien-connexion {
+    display: inline;
+  }
+}
+
+@media (min-width: 1080px) {
+  .liens {
+    display: flex;
+  }
+
+  .burger,
+  .menu-mobile {
+    display: none;
+  }
+}

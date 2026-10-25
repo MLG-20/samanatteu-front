@@ -411,21 +411,5 @@
   </section>
 </main>
 
-<footer class="pied">
-  <div class="conteneur pied-interieur">
-    <div>
-      <a class="logo" routerLink="/" (click)="allerA('haut')">
-        <span class="logo-pastille">S</span>
-        <span>SamaNatteu</span>
-      </a>
-      <p>La gestion de tontines, en toute confiance.</p>
-    </div>
-    <nav aria-label="Liens du pied de page">
-      <button type="button" (click)="allerA('fonctionnement')">Comment ça marche</button>
-      <button type="button" (click)="allerA('offre')">Offre</button>
-      <button type="button" (click)="allerA('faq')">Questions</button>
-      <a routerLink="/connexion">Se connecter</a>
-    </nav>
-  </div>
-  <p class="conteneur copyright">© {{ annee }} SamaNatteu · Fait avec soin au Sénégal</p>
-</footer>
+<!-- Le footer partagé des pages publiques (réseaux et coordonnées pilotés par l'ADMIN). -->
+<app-pied-public />

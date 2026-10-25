@@ -15,6 +15,8 @@
   "/dashboard": { "target": "http://localhost:8080", "secure": false },
   "/abonnement": { "target": "http://localhost:8080", "secure": false },
   "/formule": { "target": "http://localhost:8080", "secure": false },
+  "/site": { "target": "http://localhost:8080", "secure": false },
+  "/messageContact": { "target": "http://localhost:8080", "secure": false },
   "/v3": { "target": "http://localhost:8080", "secure": false },
   "/swagger-ui": { "target": "http://localhost:8080", "secure": false }
 }

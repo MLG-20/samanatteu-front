@@ -1,0 +1,227 @@
+/* L'écran « Site public » de l'ADMIN : formulaire à onglets + panneau latéral. */
+
+.onglets-site {
+  margin-bottom: 1.25rem;
+}
+
+.point-erreur {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--erreur);
+}
+
+.disposition {
+  display: grid;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.carte-titre {
+  margin-bottom: 1.4rem;
+}
+
+.carte-titre h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.carte-titre p {
+  margin: 0.35rem 0 0;
+  color: var(--texte-doux);
+  font-size: 0.9rem;
+}
+
+/* ---------- Réseaux sociaux ---------- */
+
+.ligne-reseau {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+}
+
+.ligne-reseau .champ {
+  flex: 1;
+}
+
+.logo-reseau {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.7rem;
+  height: 2.7rem;
+  margin-top: 1.55rem;
+  border-radius: 12px;
+  border: 1px solid var(--bordure);
+  background: var(--surface-2);
+  color: var(--texte-pale);
+  transition: background 0.25s, color 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+
+/* Un réseau rempli s'allume : il apparaîtra dans le footer. */
+.logo-reseau.rempli {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--primaire-600), var(--accent-600));
+  color: var(--blanc);
+  box-shadow: 0 8px 20px -10px rgba(37, 99, 235, 0.8);
+}
+
+.logo-reseau app-icone {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+/* ---------- Contact ---------- */
+
+.entree.avec-icone {
+  padding-left: 2.6rem;
+}
+
+/* ---------- À propos ---------- */
+
+.etiquette-icone {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.etiquette-icone app-icone {
+  width: 1rem;
+  height: 1rem;
+  color: var(--primaire-600);
+}
+
+textarea.entree {
+  min-height: 7.5rem;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.compteur {
+  align-self: flex-end;
+  color: var(--texte-pale);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.compteur.depasse {
+  color: var(--erreur);
+}
+
+/* ---------- Le panneau latéral ---------- */
+
+.panneau {
+  display: grid;
+  gap: 1rem;
+}
+
+.apercu-titre {
+  margin: 0 0 0.8rem;
+  color: var(--texte-doux);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Une miniature du footer public (toujours sombre, comme la vitrine). */
+.apercu-pied {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.1rem;
+  border-radius: 14px;
+  background: #030816;
+  color: #eaf0ff;
+}
+
+.apercu-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 800;
+}
+
+.apercu-logo span {
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #22d3ee, #fff);
+  color: #0b1f4d;
+  font-size: 0.8rem;
+}
+
+.apercu-reseaux {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.apercu-reseaux span {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9px;
+  border: 1px solid rgba(148, 178, 255, 0.14);
+  color: #9fb1d6;
+  animation: apparait 0.35s var(--courbe) both;
+}
+
+.apercu-reseaux app-icone {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.apercu-pied small {
+  color: #9fb1d6;
+}
+
+.enregistrer {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.enregistrer p {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.3rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.modifie {
+  color: var(--attention-texte);
+}
+
+.modifie .point {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--attention);
+  box-shadow: 0 0 0 4px var(--attention-fond);
+}
+
+.a-jour {
+  color: var(--succes-texte);
+}
+
+.a-jour app-icone {
+  width: 1rem;
+  height: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .disposition {
+    grid-template-columns: minmax(0, 1fr) 19rem;
+  }
+
+  /* Le panneau reste visible pendant qu'on fait défiler un long formulaire. */
+  .panneau {
+    position: sticky;
+    top: 1.5rem;
+  }
+}

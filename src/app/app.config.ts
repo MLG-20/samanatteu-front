@@ -12,7 +12,9 @@ export const appConfig: ApplicationConfig = {
     provideRouter(
       routes,
       // Chaque nouvelle page s'ouvre en haut (et non au niveau de défilement de la précédente).
-      withInMemoryScrolling({ scrollPositionRestoration: 'top' }),
+      // anchorScrolling : un lien vers « /#offre » descend jusqu'à la section
+      // (les liens du footer, depuis n'importe quelle page publique).
+      withInMemoryScrolling({ scrollPositionRestoration: 'top', anchorScrolling: 'enabled' }),
       // Fondu doux entre deux pages (API « View Transitions » du navigateur ;
       // sans effet, et sans erreur, là où elle n'existe pas).
       withViewTransitions(),

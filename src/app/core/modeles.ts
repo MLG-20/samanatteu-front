@@ -407,3 +407,49 @@ export interface StatsTontines {
   nbSuspendue: number;
   nbTerminee: number;
 }
+
+// ---------- Le site public (piloté par l'ADMIN) ----------
+
+// Les paramètres du site (GET /site, public ; PUT /site, ADMIN).
+// null = rien à afficher (le réseau n'a pas d'icône, la ligne de contact disparaît).
+export interface ParametreSite {
+  facebook: string | null;
+  instagram: string | null;
+  tiktok: string | null;
+  whatsapp: string | null;
+  linkedin: string | null;
+  youtube: string | null;
+  x: string | null;
+  contactTelephone: string | null;
+  contactWhatsapp: string | null;
+  contactEmail: string | null;
+  contactAdresse: string | null;
+  contactHoraires: string | null;
+  aproposAccroche: string | null;
+  aproposHistoire: string | null;
+  aproposMission: string | null;
+  aproposValeurs: string | null;
+}
+
+// Ce que le visiteur envoie depuis la page Contact (POST /messageContact, public).
+// siteWeb : le « pot de miel » anti-robot, toujours vide pour un humain.
+export interface EnvoiMessageContact {
+  nom: string;
+  telephone: string;
+  email: string;
+  sujet: string;
+  message: string;
+  siteWeb: string;
+}
+
+// Un message reçu, vu par l'ADMIN (GET /messageContact).
+export interface MessageContact {
+  id: number;
+  nom: string;
+  telephone: string | null;
+  email: string | null;
+  sujet: string;
+  message: string;
+  lu: boolean;
+  createdAt: string;
+}

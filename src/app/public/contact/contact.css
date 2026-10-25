@@ -1,0 +1,333 @@
+/* La page Contact. Les bases (couleurs, titres, boutons) viennent de vitrine.css. */
+
+.grille-contact {
+  display: grid;
+  gap: 1.5rem;
+  padding-bottom: 6rem;
+}
+
+/* ---------- Les coordonnées ---------- */
+
+.coordonnees {
+  display: grid;
+  align-content: start;
+  gap: 0.8rem;
+}
+
+.coordonnee {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.2rem;
+  color: var(--clair);
+  text-decoration: none;
+  transition: border-color 0.25s, background 0.25s, transform 0.25s var(--courbe);
+}
+
+a.coordonnee:hover {
+  border-color: rgba(34, 211, 238, 0.45);
+  background: rgba(34, 211, 238, 0.05);
+  transform: translateY(-2px);
+}
+
+.coordonnee small {
+  display: block;
+  color: var(--doux);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.coordonnee strong {
+  display: block;
+  margin-top: 0.15rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.pastille {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 14px;
+  background: rgba(34, 211, 238, 0.12);
+  color: var(--cyan);
+}
+
+.pastille app-icone {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.fleche {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-left: auto;
+  color: var(--doux);
+  transition: transform 0.25s var(--courbe), color 0.25s;
+}
+
+a.coordonnee:hover .fleche {
+  color: var(--cyan);
+  transform: translateX(3px);
+}
+
+.rassurance {
+  display: flex;
+  gap: 0.7rem;
+  margin-top: 0.6rem;
+  padding: 0 0.3rem;
+  color: var(--doux);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.rassurance app-icone {
+  flex: none;
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.1rem;
+  color: var(--cyan);
+}
+
+.rassurance p {
+  margin: 0;
+}
+
+/* ---------- Le formulaire ---------- */
+
+.carte-formulaire {
+  padding: 1.6rem 1.25rem;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--nuit-2), var(--nuit-2)) padding-box,
+    linear-gradient(135deg, rgba(34, 211, 238, 0.55), rgba(139, 92, 246, 0.55)) border-box;
+  box-shadow: 0 40px 90px -50px rgba(34, 211, 238, 0.55);
+}
+
+form {
+  display: grid;
+  gap: 1.1rem;
+}
+
+h2 {
+  margin: 0 0 0.3rem;
+  font-family: var(--police-titre);
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.champ {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.deux-champs {
+  display: grid;
+  gap: 1.1rem;
+}
+
+label {
+  color: var(--clair);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 0.8rem 0.95rem;
+  border: 1px solid var(--ligne);
+  border-radius: 14px;
+  background: rgba(4, 10, 28, 0.6);
+  color: var(--clair);
+  font: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 9rem;
+  line-height: 1.5;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(159, 177, 214, 0.55);
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.15);
+}
+
+.invalide {
+  border-color: #f87171;
+}
+
+.erreur {
+  color: #fca5a5;
+  font-size: 0.82rem;
+}
+
+.aide {
+  margin-top: -0.6rem;
+  color: var(--doux);
+  font-size: 0.82rem;
+}
+
+.deux-champs + .erreur {
+  margin-top: -0.6rem;
+}
+
+.sujets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.puce {
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--ligne);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--doux);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.puce:hover {
+  color: var(--clair);
+  border-color: rgba(34, 211, 238, 0.45);
+}
+
+.puce.choisie {
+  border-color: transparent;
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  color: #fff;
+}
+
+.sous-message {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.compteur {
+  color: var(--doux);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.compteur.depasse {
+  color: #fca5a5;
+}
+
+.alerte {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  background: rgba(248, 113, 113, 0.08);
+  color: #fecaca;
+  font-size: 0.9rem;
+}
+
+.alerte app-icone {
+  flex: none;
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+/* Le pot de miel : hors de l'écran (pas display:none, que certains robots repèrent). */
+.pot-de-miel {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.envoyer {
+  justify-self: stretch;
+  margin-top: 0.3rem;
+}
+
+/* ---------- Le message envoyé ---------- */
+
+.succes {
+  display: grid;
+  justify-items: center;
+  gap: 0.9rem;
+  padding: 2.5rem 0.5rem;
+  text-align: center;
+}
+
+.succes p {
+  max-width: 26rem;
+  margin: 0 0 0.6rem;
+  color: var(--doux);
+  line-height: 1.6;
+}
+
+.succes-icone {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  color: #fff;
+  box-shadow: 0 0 40px rgba(34, 211, 238, 0.5);
+  animation: rebond 0.6s var(--courbe) both;
+}
+
+.succes-icone app-icone {
+  width: 1.8rem;
+  height: 1.8rem;
+  --epaisseur: 2.6;
+}
+
+@keyframes rebond {
+  from {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+}
+
+/* ================= Paliers ================= */
+
+@media (min-width: 720px) {
+  .carte-formulaire {
+    padding: 2.2rem 2rem;
+  }
+
+  .deux-champs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1080px) {
+  .grille-contact {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 2rem;
+    align-items: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .succes-icone {
+    animation: none;
+  }
+}

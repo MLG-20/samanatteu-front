@@ -34,6 +34,13 @@ const MENUS: Record<Role, { section: string; liens: Lien[] }[]> = {
         { libelle: 'Abonnements', icone: 'carte', chemin: '/admin/abonnements' },
       ],
     },
+    {
+      section: 'Site public',
+      liens: [
+        { libelle: 'Site', icone: 'partager', chemin: '/admin/site' },
+        { libelle: 'Messages', icone: 'message', chemin: '/admin/messages' },
+      ],
+    },
   ],
   GESTIONNAIRE: [
     {

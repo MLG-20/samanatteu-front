@@ -1,0 +1,141 @@
+<app-en-tete-public />
+
+<main>
+  <section class="entete-page">
+    <div class="conteneur">
+      <p class="sur-titre">Contact</p>
+      <h1>Parlons de <em>votre tontine.</em></h1>
+      <p class="chapeau">Une question sur les formules, un abonnement à activer, un souci avec l'application ? Écrivez-nous, l'équipe SamaNatteu vous répond.</p>
+    </div>
+  </section>
+
+  <section class="conteneur grille-contact">
+    <!-- ===== Les coordonnées (pilotées par l'ADMIN) ===== -->
+    <aside class="coordonnees">
+      @if (!parametres() && !echec()) {
+        @for (i of [0, 1, 2]; track i) {
+          <span class="squelette-vitrine" style="height: 5.2rem"></span>
+        }
+      } @else {
+        @for (c of coordonnees(); track c.libelle) {
+          @if (c.lien) {
+            <a class="coordonnee carte-verre" [href]="c.lien" [attr.target]="c.externe ? '_blank' : null" [attr.rel]="c.externe ? 'noopener noreferrer' : null">
+              <span class="pastille"><app-icone [nom]="c.icone" /></span>
+              <span><small>{{ c.libelle }}</small><strong>{{ c.valeur }}</strong></span>
+              <app-icone class="fleche" nom="flecheDroite" />
+            </a>
+          } @else {
+            <div class="coordonnee carte-verre">
+              <span class="pastille"><app-icone [nom]="c.icone" /></span>
+              <span><small>{{ c.libelle }}</small><strong>{{ c.valeur }}</strong></span>
+            </div>
+          }
+        } @empty {
+          <div class="coordonnee carte-verre">
+            <span class="pastille"><app-icone nom="message" /></span>
+            <span><small>Le plus simple</small><strong>Utilisez le formulaire : nous vous recontactons.</strong></span>
+          </div>
+        }
+      }
+
+      <div class="rassurance">
+        <app-icone nom="bouclier" />
+        <p>Vos coordonnées ne servent qu'à vous répondre. Elles ne sont ni partagées, ni utilisées pour de la publicité.</p>
+      </div>
+    </aside>
+
+    <!-- ===== Le formulaire ===== -->
+    <div class="carte-formulaire carte-verre">
+      @if (envoye()) {
+        <div class="succes" role="status">
+          <span class="succes-icone"><app-icone nom="valider" /></span>
+          <h2>Message <em>envoyé.</em></h2>
+          <p>Merci ! Nous l'avons bien reçu et nous vous répondrons dès que possible, par téléphone ou par email.</p>
+          <button type="button" class="bouton bouton-contour" (click)="nouveauMessage()">Envoyer un autre message</button>
+        </div>
+      } @else {
+        <form [formGroup]="formulaire" (ngSubmit)="envoyer()" novalidate>
+          <h2>Écrivez-<em>nous</em></h2>
+
+          @if (erreur()) {
+            <p class="alerte" role="alert"><app-icone nom="erreur" /> {{ erreur() }}</p>
+          }
+
+          <div class="champ">
+            <label for="nom">Votre nom</label>
+            <input id="nom" type="text" formControlName="nom" autocomplete="name" placeholder="Awa Diop" [class.invalide]="invalide('nom')" />
+            @if (invalide('nom')) {
+              <small class="erreur">Indiquez votre nom.</small>
+            }
+          </div>
+
+          <div class="deux-champs">
+            <div class="champ">
+              <label for="telephone">Téléphone</label>
+              <input id="telephone" type="tel" formControlName="telephone" autocomplete="tel" placeholder="77 123 45 67"
+                [class.invalide]="invalide('telephone') || (tente() && formulaire.hasError('moyenDeReponse'))" />
+              @if (invalide('telephone')) {
+                <small class="erreur">Chiffres, espaces et + seulement.</small>
+              }
+            </div>
+            <div class="champ">
+              <label for="email">Email</label>
+              <input id="email" type="email" formControlName="email" autocomplete="email" placeholder="awa@exemple.sn"
+                [class.invalide]="invalide('email') || (tente() && formulaire.hasError('moyenDeReponse'))" />
+              @if (invalide('email')) {
+                <small class="erreur">Cet email n'est pas valide.</small>
+              }
+            </div>
+          </div>
+          @if (tente() && formulaire.hasError('moyenDeReponse')) {
+            <small class="erreur">Laissez au moins un téléphone ou un email pour qu'on puisse vous répondre.</small>
+          } @else {
+            <small class="aide">Un téléphone ou un email : au moins l'un des deux.</small>
+          }
+
+          <div class="champ">
+            <label for="sujet">Sujet</label>
+            <div class="sujets">
+              @for (s of sujets; track s) {
+                <button type="button" class="puce" [class.choisie]="formulaire.controls.sujet.value === s" (click)="choisirSujet(s)">{{ s }}</button>
+              }
+            </div>
+            <input id="sujet" type="text" formControlName="sujet" placeholder="Ou écrivez votre sujet" [class.invalide]="invalide('sujet')" />
+            @if (invalide('sujet')) {
+              <small class="erreur">Choisissez ou écrivez un sujet.</small>
+            }
+          </div>
+
+          <div class="champ">
+            <label for="message">Votre message</label>
+            <textarea id="message" rows="6" formControlName="message" placeholder="Dites-nous tout…" [class.invalide]="invalide('message')"></textarea>
+            <div class="sous-message">
+              @if (invalide('message')) {
+                <small class="erreur">{{ longueur() > maxMessage ? 'Message trop long.' : 'Écrivez votre message.' }}</small>
+              } @else {
+                <span></span>
+              }
+              <small class="compteur" [class.depasse]="longueur() > maxMessage">{{ longueur() }} / {{ maxMessage }}</small>
+            </div>
+          </div>
+
+          <!-- Le pot de miel : invisible pour un humain (et ignoré par les lecteurs d'écran). -->
+          <div class="pot-de-miel" aria-hidden="true">
+            <label for="siteWeb">Ne pas remplir</label>
+            <input id="siteWeb" type="text" formControlName="siteWeb" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <button type="submit" class="bouton bouton-lumineux grand envoyer" [disabled]="envoi()">
+            @if (envoi()) {
+              Envoi en cours…
+            } @else {
+              Envoyer le message <app-icone nom="flecheDroite" />
+            }
+          </button>
+        </form>
+      }
+    </div>
+  </section>
+</main>
+
+<app-pied-public />

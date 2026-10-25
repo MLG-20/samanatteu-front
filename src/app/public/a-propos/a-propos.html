@@ -1,0 +1,50 @@
+<app-en-tete-public />
+
+<main>
+  <section class="entete-page">
+    <div class="conteneur">
+      <p class="sur-titre">À propos</p>
+      @if (parametres() || echec()) {
+        <h1>{{ accroche() }}</h1>
+      } @else {
+        <span class="squelette-vitrine titre-attente"></span>
+      }
+      <p class="chapeau">SamaNatteu accompagne les tontines du Sénégal : entre amies, en famille, entre collègues, au quartier.</p>
+    </div>
+  </section>
+
+  <section class="conteneur">
+    <div class="blocs">
+      @if (!parametres() && !echec()) {
+        <span class="squelette-vitrine large" style="height: 14rem"></span>
+        <span class="squelette-vitrine" style="height: 14rem"></span>
+        <span class="squelette-vitrine" style="height: 14rem"></span>
+      } @else {
+        @for (b of blocs(); track b.titre; let i = $index) {
+          <article class="bloc carte-verre" [class]="b.classe" appApparition [style.--delai]="i * 100 + 'ms'">
+            <span class="numero" aria-hidden="true">0{{ i + 1 }}</span>
+            <span class="pastille"><app-icone [nom]="b.icone" /></span>
+            <h2>{{ b.titre }}</h2>
+            <!-- white-space: pre-line (CSS) : les retours à la ligne de l'ADMIN sont gardés. -->
+            <p>{{ b.texte }}</p>
+          </article>
+        }
+      }
+    </div>
+  </section>
+
+  <!-- L'appel à l'action de fin de page. -->
+  <section class="conteneur">
+    <div class="appel carte-verre" appApparition>
+      <span class="appel-lueur" aria-hidden="true"></span>
+      <h2>Prêt à lancer <em>votre tontine ?</em></h2>
+      <p>Créez votre compte en une minute, ou posez-nous vos questions.</p>
+      <div class="appel-actions">
+        <a class="bouton bouton-lumineux grand" routerLink="/inscription">Commencer <app-icone nom="flecheDroite" /></a>
+        <a class="bouton bouton-contour grand" routerLink="/contact">Nous contacter</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<app-pied-public />

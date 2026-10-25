@@ -7,6 +7,7 @@ import { fcfa, prixFormule, quota } from '../../core/formatage';
 import { Formule } from '../../core/modeles';
 import { Apparition } from '../../ui/apparition';
 import { Icone, NomIcone } from '../../ui/icone';
+import { PiedPublic } from '../pied/pied-public';
 
 interface Etape {
   numero: string;
@@ -33,7 +34,7 @@ interface Atout {
  */
 @Component({
   selector: 'app-accueil-public',
-  imports: [RouterLink, Icone, Apparition],
+  imports: [RouterLink, Icone, Apparition, PiedPublic],
   templateUrl: './accueil-public.html',
   styleUrl: './accueil-public.css',
   // host : des liaisons sur la balise <app-accueil-public> elle-même. Les
@@ -57,7 +58,6 @@ export class AccueilPublic {
   protected readonly fcfa = fcfa;
   protected readonly quota = quota;
   protected readonly prixFormule = prixFormule;
-  protected readonly annee = new Date().getFullYear();
 
   // ---------- La barre de navigation ----------
   protected readonly defile = signal(false); // la page a défilé : la barre devient « verre »

@@ -1,0 +1,165 @@
+<div class="entete-page">
+  <div>
+    <h1>Site public</h1>
+    <p class="sous-titre">Les réseaux sociaux du footer, les coordonnées de la page Contact et les textes de la page À propos.</p>
+  </div>
+  <div class="actions">
+    <a class="btn btn-secondaire" href="/" target="_blank" rel="noopener"><app-icone nom="oeil" /> Voir le site</a>
+  </div>
+</div>
+
+@if (erreur()) {
+  <div class="alerte alerte-erreur"><app-icone nom="erreur" /><span>{{ erreur() }}</span></div>
+}
+
+<div class="segments onglets-site" role="tablist">
+  <button type="button" role="tab" [class.actif]="onglet() === 'reseaux'" (click)="onglet.set('reseaux')">
+    <app-icone nom="partager" /> Réseaux sociaux
+    @if (ongletsEnErreur().reseaux) { <span class="point-erreur" aria-label="Erreur"></span> }
+  </button>
+  <button type="button" role="tab" [class.actif]="onglet() === 'contact'" (click)="onglet.set('contact')">
+    <app-icone nom="telephone" /> Contact
+    @if (ongletsEnErreur().contact) { <span class="point-erreur" aria-label="Erreur"></span> }
+  </button>
+  <button type="button" role="tab" [class.actif]="onglet() === 'apropos'" (click)="onglet.set('apropos')">
+    <app-icone nom="info" /> À propos
+    @if (ongletsEnErreur().apropos) { <span class="point-erreur" aria-label="Erreur"></span> }
+  </button>
+</div>
+
+@if (chargement()) {
+  <div class="carte carte-corps"><span class="squelette" style="height: 22rem"></span></div>
+} @else {
+  <form [formGroup]="formulaire" (ngSubmit)="enregistrer()" class="disposition">
+    <div class="carte carte-corps">
+      <!-- ===== Réseaux sociaux ===== -->
+      @if (onglet() === 'reseaux') {
+        <div class="carte-titre">
+          <h2>Réseaux sociaux</h2>
+          <p>Collez l'adresse complète de vos pages. Un champ vide = le réseau n'apparaît pas dans le footer.</p>
+        </div>
+        @for (r of reseaux; track r.champ) {
+          <div class="ligne-reseau">
+            <span class="logo-reseau" [class.rempli]="formulaire.controls[r.champ].value"><app-icone [nom]="r.icone" /></span>
+            <div class="champ">
+              <label [for]="'r-' + r.champ">{{ r.nom }}</label>
+              <input [id]="'r-' + r.champ" class="entree" type="url" [formControlName]="r.champ" [placeholder]="r.exemple" />
+              @if (invalide(r.champ)) {
+                <span class="aide-erreur">Le lien doit commencer par https://</span>
+              }
+            </div>
+          </div>
+        }
+      }
+
+      <!-- ===== Contact ===== -->
+      @if (onglet() === 'contact') {
+        <div class="carte-titre">
+          <h2>Coordonnées</h2>
+          <p>Affichées sur la page Contact et dans le footer. Un champ vide n'est pas affiché.</p>
+        </div>
+        <div class="ligne-champs">
+          <div class="champ">
+            <label for="c-tel">Téléphone</label>
+            <div class="saisie">
+              <app-icone nom="telephone" />
+              <input id="c-tel" class="entree avec-icone" formControlName="contactTelephone" placeholder="+221 77 123 45 67" />
+            </div>
+            @if (invalide('contactTelephone')) {
+              <span class="aide-erreur">Chiffres, espaces et + seulement.</span>
+            }
+          </div>
+          <div class="champ">
+            <label for="c-wa">WhatsApp</label>
+            <div class="saisie">
+              <app-icone nom="whatsapp" />
+              <input id="c-wa" class="entree avec-icone" formControlName="contactWhatsapp" placeholder="77 123 45 67" />
+            </div>
+            @if (invalide('contactWhatsapp')) {
+              <span class="aide-erreur">Chiffres, espaces et + seulement.</span>
+            } @else {
+              <span class="aide">Un numéro à 9 chiffres reçoit l'indicatif +221.</span>
+            }
+          </div>
+        </div>
+        <div class="champ">
+          <label for="c-email">Email</label>
+          <div class="saisie">
+            <app-icone nom="email" />
+            <input id="c-email" class="entree avec-icone" type="email" formControlName="contactEmail" placeholder="contact@samanatteu.sn" />
+          </div>
+          @if (invalide('contactEmail')) {
+            <span class="aide-erreur">Cet email n'est pas valide.</span>
+          }
+        </div>
+        <div class="champ">
+          <label for="c-adresse">Adresse</label>
+          <div class="saisie">
+            <app-icone nom="lieu" />
+            <input id="c-adresse" class="entree avec-icone" formControlName="contactAdresse" placeholder="Dakar, Sénégal" />
+          </div>
+        </div>
+        <div class="champ">
+          <label for="c-horaires">Horaires</label>
+          <div class="saisie">
+            <app-icone nom="horloge" />
+            <input id="c-horaires" class="entree avec-icone" formControlName="contactHoraires" placeholder="Du lundi au samedi, 9h à 18h" />
+          </div>
+        </div>
+      }
+
+      <!-- ===== À propos ===== -->
+      @if (onglet() === 'apropos') {
+        <div class="carte-titre">
+          <h2>Page À propos</h2>
+          <p>Le titre de la page, puis trois blocs. Les retours à la ligne sont conservés ; un bloc vide n'est pas affiché.</p>
+        </div>
+        <div class="champ">
+          <label for="a-accroche">Titre (accroche)</label>
+          <input id="a-accroche" class="entree" formControlName="aproposAccroche" placeholder="La tontine, telle qu'on la pratique, avec la confiance en plus." />
+        </div>
+        @for (b of blocsApropos; track b.champ) {
+          <div class="champ">
+            <label [for]="'a-' + b.champ" class="etiquette-icone"><app-icone [nom]="b.icone" /> {{ b.titre }}</label>
+            <textarea [id]="'a-' + b.champ" class="entree" rows="5" [formControlName]="b.champ"></textarea>
+            <span class="compteur" [class.depasse]="compte(b.champ) > maxTexte">{{ compte(b.champ) }} / {{ maxTexte }}</span>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- ===== Le panneau latéral : aperçu + enregistrement ===== -->
+    <aside class="panneau">
+      <div class="carte carte-corps apercu">
+        <p class="apercu-titre">Aperçu du footer</p>
+        <div class="apercu-pied">
+          <span class="apercu-logo"><span>S</span> SamaNatteu</span>
+          @if (apercu().length) {
+            <div class="apercu-reseaux">
+              @for (r of apercu(); track r.champ) {
+                <span [title]="r.nom"><app-icone [nom]="r.icone" /></span>
+              }
+            </div>
+          } @else {
+            <small>Aucun réseau : la ligne d'icônes est masquée.</small>
+          }
+        </div>
+      </div>
+
+      <div class="carte carte-corps enregistrer">
+        @if (formulaire.dirty) {
+          <p class="modifie"><span class="point"></span> Modifications non enregistrées</p>
+        } @else {
+          <p class="a-jour"><app-icone nom="valider" /> Tout est enregistré</p>
+        }
+        <button type="submit" class="btn btn-primaire btn-bloc" [disabled]="envoi() || !formulaire.dirty">
+          @if (envoi()) { <span class="rouage"></span> }
+          Enregistrer
+        </button>
+        @if (formulaire.dirty) {
+          <button type="button" class="btn btn-fantome btn-bloc" (click)="annuler()">Annuler les modifications</button>
+        }
+      </div>
+    </aside>
+  </form>
+}

@@ -21,6 +21,19 @@ export const routes: Routes = [
     loadComponent: () => import('./public/accueil/accueil-public').then((m) => m.AccueilPublic),
   },
 
+  // Les pages publiques de la vitrine : leur contenu (coordonnées, textes)
+  // est piloté par l'ADMIN depuis son back-office (GET /site).
+  {
+    path: 'contact',
+    title: 'Contact · SamaNatteu',
+    loadComponent: () => import('./public/contact/contact').then((m) => m.Contact),
+  },
+  {
+    path: 'a-propos',
+    title: 'À propos · SamaNatteu',
+    loadComponent: () => import('./public/a-propos/a-propos').then((m) => m.APropos),
+  },
+
   // ---------- Pages publiques ----------
   // inviteGuard : un utilisateur déjà connecté est renvoyé vers son tableau de bord.
   { path: 'connexion', component: Login, canActivate: [inviteGuard], title: 'Connexion · SamaNatteu' },
@@ -69,6 +82,16 @@ export const routes: Routes = [
         path: 'abonnements',
         title: 'Abonnements · SamaNatteu',
         loadComponent: () => import('./admin/abonnements/abonnements').then((m) => m.Abonnements),
+      },
+      {
+        path: 'site',
+        title: 'Site public · SamaNatteu',
+        loadComponent: () => import('./admin/site/site').then((m) => m.Site),
+      },
+      {
+        path: 'messages',
+        title: 'Messages · SamaNatteu',
+        loadComponent: () => import('./admin/messages/messages').then((m) => m.Messages),
       },
       {
         path: 'profil',
