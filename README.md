@@ -55,7 +55,7 @@ src/app/
 ├── auth/                  session, intercepteur, guards + pages publiques (connexion, inscription…)
 ├── public/                la vitrine (accueil), contact, à propos + en-tête et footer partagés
 ├── commun/                écrans partagés : profil, notifications, journal
-├── admin/                 vue d'ensemble, utilisateurs, formules, abonnements, site, messages
+├── admin/                 vue d'ensemble, gestionnaires + fiche, formules, abonnements, site, messages
 ├── gestionnaire/          tableau de bord, tontines (+ détail à onglets), prêts, abonnement
 └── membre/                accueil, mes tontines
 ```
@@ -68,7 +68,7 @@ src/app/
 | `/contact`, `/a-propos` | tous | coordonnées + formulaire, présentation ; contenu piloté par l'ADMIN |
 | `/connexion`, `/inscription`, `/mot-de-passe-oublie` | visiteur | pages publiques (un connecté est renvoyé chez lui) |
 | `/rejoindre/:token` | visiteur, membre | accepter une invitation (pas `/invitation` : préfixe de l'API dans le proxy) |
-| `/admin/…` | ADMIN | vue d'ensemble, utilisateurs, formules, abonnements, site public, messages, profil |
+| `/admin/…` | ADMIN | vue d'ensemble, gestionnaires (et leur fiche : aucun membre nommé, seulement leur nombre), formules, abonnements, site public, messages, profil |
 | `/gestionnaire/…` | GESTIONNAIRE | tableau de bord, tontines, détail d'une tontine, prêts, journal, notifications, abonnement, profil |
 | `/membre/…` | MEMBRE | accueil, mes tontines, historique, notifications, profil |
 
@@ -109,6 +109,8 @@ Le backend renvoie un JWT (`POST /auth/login`) : un `accessToken` (15 min) et un
 | Store de la page tontine fourni par le composant (`providers`) | Une instance neuve par page ouverte, partagée par ses onglets (≈ `@RequestScope`). |
 | Chargement paresseux de chaque écran (`loadComponent`) | Un membre ne télécharge jamais le code des écrans admin. |
 | Paramètres du site en cache dans un `signal` de `SiteApi` | Footer, Contact et À propos font un seul `GET /site` ; quand l'ADMIN enregistre, le footer change sans recharger. |
+| L'admin ne voit aucun membre, seulement leur nombre par gestionnaire | Frontière SaaS. Appliquée par l'**API** (elle n'envoie pas les membres), pas seulement par l'écran : une donnée masquée dans le front resterait lisible dans l'onglet Réseau. |
+| `allowedHosts` ngrok dans la config `development` | Ouvrir le serveur de dev sur un téléphone via `ngrok http 4200` ; le proxy transmet l'API, donc un seul tunnel suffit. |
 | Budget CSS par composant : 28 kB (avertissement) / 40 kB (erreur) | La vitrine (animations, paliers responsive) fait ~24 kB ; les autres écrans restent bien en dessous. |
 
 ## Tests
