@@ -60,6 +60,10 @@ export class CompteApi {
       catchError((e: unknown) => (e instanceof HttpErrorResponse && e.status === 404 ? of(null) : throwError(() => e))),
     );
   }
+  // Public : les formules à la vente (la grille tarifaire de la vitrine).
+  formulesDisponibles(): Observable<Formule[]> {
+    return this.http.get<Formule[]>('/formule/disponibles');
+  }
   // Public : ce qu'un lien d'invitation propose.
   lienInvitation(token: string): Observable<LienInvitation> {
     return this.http.get<LienInvitation>(`/invitation/${token}`);

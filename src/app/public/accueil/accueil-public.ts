@@ -1,8 +1,10 @@
 import { Component, DestroyRef, HostListener, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { CompteApi } from '../../api/admin.api';
 import { AuthService, PAGE_PAR_ROLE } from '../../auth/auth.service';
-import { fcfa } from '../../core/formatage';
+import { fcfa, prixFormule, quota } from '../../core/formatage';
+import { Formule } from '../../core/modeles';
 import { Apparition } from '../../ui/apparition';
 import { Icone, NomIcone } from '../../ui/icone';
 
@@ -22,8 +24,9 @@ interface Atout {
 
 /**
  * La page d'accueil publique (la « vitrine ») : la première chose que voit un
- * visiteur. Elle n'appelle aucune API : tout est du contenu, plus trois
- * animations pilotées par des signaux :
+ * visiteur. Une seule API : les formules à la vente (GET /formule/disponibles,
+ * public), pour que les tarifs affichés soient ceux de la base. Le reste est du
+ * contenu, plus trois animations pilotées par des signaux :
  *   - le mot qui change dans le titre (« entre amies », « en famille »…) ;
  *   - la cagnotte de la maquette qui se remplit ;
  *   - la démo de tirage au sort que le visiteur lance lui-même.
@@ -52,6 +55,8 @@ export class AccueilPublic {
   });
 
   protected readonly fcfa = fcfa;
+  protected readonly quota = quota;
+  protected readonly prixFormule = prixFormule;
   protected readonly annee = new Date().getFullYear();
 
   // ---------- La barre de navigation ----------
@@ -144,6 +149,31 @@ export class AccueilPublic {
     { titre: 'Collègues & commerçants', texte: 'Des cotisations rapprochées, des prêts dépannage, des reçus pour tout le monde.', icone: 'portefeuille' },
   ];
 
+  // ---------- L'offre : les formules de la base ----------
+  private readonly compteApi = inject(CompteApi);
+  protected readonly formules = signal<Formule[]>([]);
+  protected readonly chargementFormules = signal(true);
+  protected readonly erreurFormules = signal(false);
+
+  // Par prix croissant, mais « sur devis » (prix 0) en dernier : c'est la plus
+  // grande formule, pas la moins chère.
+  protected readonly formulesTriees = computed(() =>
+    [...this.formules()].sort((a, b) => (a.prixMensuel || Infinity) - (b.prixMensuel || Infinity)),
+  );
+  // Celle du milieu est mise en avant (même règle que l'écran admin).
+  protected readonly vedette = computed(() => {
+    const liste = this.formulesTriees();
+    return liste.length >= 3 ? liste[Math.floor(liste.length / 2)].id : null;
+  });
+
+  // Une phrase d'accroche déduite des quotas (le backend ne stocke pas de texte).
+  protected accroche(f: Formule): string {
+    if (!f.nbTontinesMax) {
+      return 'Pour les grandes associations, sans aucune limite.';
+    }
+    return f.nbTontinesMax === 1 ? 'Pour lancer votre première tontine.' : 'Pour gérer plusieurs tontines en même temps.';
+  }
+
   protected readonly faq: { question: string; reponse: string }[] = [
     {
       question: 'Est-ce que SamaNatteu encaisse l’argent ?',
@@ -174,6 +204,18 @@ export class AccueilPublic {
   constructor() {
     // Si un token est en mémoire (visiteur déjà connecté), on reconnaît l'utilisateur.
     this.auth.restaurerSession().subscribe();
+
+    // Les tarifs : en cas de panne, la section l'indique sans casser la page.
+    this.compteApi.formulesDisponibles().subscribe({
+      next: (liste) => {
+        this.formules.set(liste);
+        this.chargementFormules.set(false);
+      },
+      error: () => {
+        this.erreurFormules.set(true);
+        this.chargementFormules.set(false);
+      },
+    });
 
     // setInterval ≈ un ScheduledExecutorService : une tâche répétée.
     // On garde chaque minuteur pour l'arrêter quand on quitte la page.

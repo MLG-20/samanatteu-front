@@ -60,6 +60,18 @@ export function pourcentage(partie: number | null | undefined, total: number | n
   return Math.max(0, Math.min(100, Math.round((partie / total) * 100)));
 }
 
+// ---------- Les formules d'abonnement (mêmes conventions que le backend) ----------
+
+// Un quota de formule : 0 = sans plafond (formule MAX).
+export function quota(max: number | null | undefined): string {
+  return max ? NOMBRE.format(max) : 'Illimité';
+}
+
+// Le prix mensuel d'une formule : 0 = « sur devis ».
+export function prixFormule(prix: number | null | undefined): string {
+  return prix ? fcfa(prix) : 'Sur devis';
+}
+
 // Les initiales pour l'avatar : « Fatou Ndiaye » → « FN ».
 export function initiales(prenom: string | null | undefined, nom: string | null | undefined): string {
   return `${(prenom ?? '').charAt(0)}${(nom ?? '').charAt(0)}`.toUpperCase() || '?';

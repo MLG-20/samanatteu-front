@@ -1372,8 +1372,133 @@ h3 {
 .offres {
   display: grid;
   gap: 1.25rem;
-  max-width: 58rem;
+  max-width: 26rem;
+  margin: 2.5rem auto 0;
+}
+
+/* ---- Le bandeau « Membre : gratuit » ---- */
+.offre-membre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.25rem;
+  max-width: 72rem;
   margin: 0 auto;
+  padding: 1.1rem 1.4rem;
+  border-radius: 22px;
+  border: 1px solid var(--ligne);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.offre-membre > div {
+  flex: 1 1 18rem;
+}
+
+.offre-membre p {
+  margin: 0;
+  color: var(--doux);
+  line-height: 1.5;
+}
+
+.offre-membre strong {
+  color: var(--clair);
+}
+
+.offre-membre-icone {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 14px;
+  background: rgba(34, 211, 238, 0.12);
+  color: var(--cyan);
+}
+
+.offre-membre-icone app-icone {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+/* ---- Pendant le chargement / si l'API ne répond pas ---- */
+.offre-squelette {
+  min-height: 26rem;
+  background: linear-gradient(100deg, rgba(255, 255, 255, 0.03) 30%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.03) 70%);
+  background-size: 300% 100%;
+  animation: reflet-offre 1.6s ease-in-out infinite;
+}
+
+@keyframes reflet-offre {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+.offre-indisponible {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 1.4rem;
+  border-radius: 22px;
+  border: 1px dashed var(--ligne);
+  color: var(--doux);
+}
+
+.offre-indisponible app-icone {
+  flex: none;
+  width: 1.2rem;
+  height: 1.2rem;
+  color: var(--cyan);
+}
+
+/* ---- Ce que toutes les formules incluent ---- */
+.offre-inclus {
+  max-width: 72rem;
+  margin: 2rem auto 0;
+  text-align: center;
+}
+
+.offre-inclus p {
+  margin: 0 0 0.9rem;
+  color: var(--doux);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.offre-inclus ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 0 0 1.1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.offre-inclus li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--ligne);
+  font-size: 0.9rem;
+}
+
+.offre-inclus li app-icone {
+  width: 1rem;
+  height: 1rem;
+  color: var(--cyan);
+}
+
+.offre-inclus small {
+  color: var(--doux);
 }
 
 .offre {
@@ -1384,6 +1509,44 @@ h3 {
   border-radius: 28px;
   border: 1px solid var(--ligne);
   background: rgba(255, 255, 255, 0.03);
+  transition: background 0.35s, box-shadow 0.35s;
+}
+
+/* Au survol, une carte prend l'allure de la carte vedette. Le dégradé de la
+   bordure est un calque (::before) qui apparaît en fondu : un dégradé ne
+   s'anime pas, son opacité si. Le masque ne laisse voir que le bord de 1px. */
+.offre:not(.vedette):not(.offre-squelette)::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.35s;
+  pointer-events: none;
+}
+
+.offre:not(.vedette):not(.offre-squelette):hover {
+  background: var(--nuit-2);
+  box-shadow: 0 40px 90px -40px rgba(34, 211, 238, 0.55);
+}
+
+.offre:not(.vedette):hover::before {
+  opacity: 1;
+}
+
+/* Et son bouton devient lumineux, comme celui de la vedette. */
+.offre:not(.vedette):hover .bouton-contour {
+  border-color: transparent;
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  color: #fff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12) inset, 0 12px 34px -10px rgba(34, 211, 238, 0.75);
 }
 
 /* La carte mise en avant : bordure dégradée lumineuse. */
@@ -1410,7 +1573,10 @@ h3 {
 .offre-nom {
   margin: 0;
   color: var(--doux);
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .offre-prix {
@@ -1419,6 +1585,13 @@ h3 {
   font-size: 2.6rem;
   font-style: italic;
   line-height: 1.1;
+}
+
+.offre-prix small {
+  font-family: inherit;
+  font-size: 1rem;
+  font-style: normal;
+  color: var(--doux);
 }
 
 .offre-texte {
@@ -1590,9 +1763,6 @@ details p {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .offres {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 
   .noms {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1600,6 +1770,12 @@ details p {
 }
 
 @media (min-width: 1080px) {
+  .offres {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 72rem;
+    align-items: stretch;
+  }
+
   .liens {
     display: flex;
   }
@@ -1674,7 +1850,8 @@ details p {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .defile-piste {
+  .defile-piste,
+  .offre-squelette {
     animation: none;
   }
 

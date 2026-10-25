@@ -295,33 +295,80 @@
         <p class="sur-titre">L'offre</p>
         <h2>Gratuit pour cotiser. <em>Simple pour organiser.</em></h2>
       </div>
+      <!-- Le membre : gratuit, toujours. Un bandeau, pas une « formule ». -->
+      <div class="offre-membre" appApparition>
+        <span class="offre-membre-icone"><app-icone nom="utilisateurs" /></span>
+        <div>
+          <p><strong>Membre : gratuit.</strong> Rejoindre une tontine, cotiser, suivre son historique et télécharger ses reçus ne coûte rien.</p>
+        </div>
+        <a class="bouton bouton-contour" routerLink="/inscription">Créer mon compte</a>
+      </div>
+
+      <!-- Le gestionnaire : les formules de la BASE (l'ADMIN les modifie, la page suit). -->
       <div class="offres">
-        <article class="offre" appApparition>
-          <p class="offre-nom">Membre</p>
-          <p class="offre-prix">Gratuit</p>
-          <p class="offre-texte">Pour rejoindre une ou plusieurs tontines.</p>
-          <ul>
-            <li><app-icone nom="valider" /> Vos cotisations et votre historique</li>
-            <li><app-icone nom="valider" /> Vos reçus PDF à tout moment</li>
-            <li><app-icone nom="valider" /> Rappels et résultats par SMS</li>
-            <li><app-icone nom="valider" /> Vos gains et vos prêts</li>
-          </ul>
-          <a class="bouton bouton-contour grand" routerLink="/inscription">Créer mon compte</a>
-        </article>
-        <article class="offre vedette" appApparition style="--delai: 120ms">
-          <span class="offre-ruban">Pour les organisateurs</span>
-          <p class="offre-nom">Gestionnaire</p>
-          <p class="offre-prix">Formule mensuelle</p>
-          <p class="offre-texte">Selon le nombre de tontines et de membres que vous gérez.</p>
-          <ul>
-            <li><app-icone nom="valider" /> Tontines, cycles et tirages illimités dans votre formule</li>
-            <li><app-icone nom="valider" /> Invitations WhatsApp et import Excel</li>
-            <li><app-icone nom="valider" /> Caisse de prêt avec échéancier</li>
-            <li><app-icone nom="valider" /> Journal financier et reçus</li>
-            <li><app-icone nom="valider" /> SMS inclus chaque mois</li>
-          </ul>
-          <a class="bouton bouton-lumineux grand" routerLink="/inscription">Lancer ma tontine <app-icone nom="flecheDroite" /></a>
-        </article>
+        @if (chargementFormules()) {
+          @for (i of [0, 1, 2]; track i) {
+            <div class="offre offre-squelette" aria-hidden="true"></div>
+          }
+        } @else if (erreurFormules() || formulesTriees().length === 0) {
+          <p class="offre-indisponible">
+            <app-icone nom="info" /> Les tarifs ne sont pas disponibles pour le moment. Créez votre compte : l'équipe SamaNatteu vous présentera les formules.
+          </p>
+        } @else {
+          @for (f of formulesTriees(); track f.id; let i = $index) {
+            <article class="offre" [class.vedette]="f.id === vedette()" appApparition [style.--delai]="i * 120 + 'ms'">
+              @if (f.id === vedette()) {
+                <span class="offre-ruban">Recommandée</span>
+              }
+              <p class="offre-nom">{{ f.nom }}</p>
+              <p class="offre-prix">
+                {{ prixFormule(f.prixMensuel) }}
+                @if (f.prixMensuel) {
+                  <small>/ mois</small>
+                }
+              </p>
+              <p class="offre-texte">{{ accroche(f) }}</p>
+              <!-- 0 = sans plafond : la même convention que le backend. -->
+              <ul>
+                <li>
+                  <app-icone nom="tontine" />
+                  @if (f.nbTontinesMax) {
+                    <span><strong>{{ quota(f.nbTontinesMax) }}</strong> tontine{{ f.nbTontinesMax > 1 ? 's' : '' }} en cours</span>
+                  } @else {
+                    <span><strong>Tontines illimitées</strong></span>
+                  }
+                </li>
+                <li>
+                  <app-icone nom="utilisateurs" />
+                  @if (f.nbMembresMax) {
+                    <span>Jusqu'à <strong>{{ quota(f.nbMembresMax) }}</strong> membres par tontine</span>
+                  } @else {
+                    <span><strong>Membres illimités</strong></span>
+                  }
+                </li>
+                <li>
+                  <app-icone nom="message" />
+                  <span><strong>{{ quota(f.smsParMois) }}</strong> SMS par mois</span>
+                </li>
+              </ul>
+              <a class="bouton grand" [class.bouton-lumineux]="f.id === vedette()" [class.bouton-contour]="f.id !== vedette()" routerLink="/inscription">
+                {{ f.prixMensuel ? 'Choisir ' + f.nom : 'Demander un devis' }}
+              </a>
+            </article>
+          }
+        }
+      </div>
+
+      <!-- Ce que TOUTES les formules contiennent : dit une fois, pas répété sur chaque carte. -->
+      <div class="offre-inclus" appApparition>
+        <p>Dans toutes les formules</p>
+        <ul>
+          <li><app-icone nom="valider" /> Cycles et tirages au sort</li>
+          <li><app-icone nom="valider" /> Invitations WhatsApp et import Excel</li>
+          <li><app-icone nom="valider" /> Caisse de prêt avec échéancier</li>
+          <li><app-icone nom="valider" /> Journal financier et reçus PDF</li>
+        </ul>
+        <small>Une tontine terminée ne compte plus dans votre formule. Paiement par Wave ou Orange Money, activation par l'équipe SamaNatteu.</small>
       </div>
     </div>
   </section>
