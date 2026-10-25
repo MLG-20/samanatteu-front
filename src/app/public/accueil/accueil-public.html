@@ -76,7 +76,7 @@
         </p>
         <div class="heros-boutons">
           <a class="bouton bouton-lumineux grand" routerLink="/inscription">
-            Créer ma tontine gratuitement
+            Essayer 30 jours gratuitement
             <app-icone nom="flecheDroite" />
           </a>
           <button type="button" class="bouton bouton-verre grand" (click)="allerA('demo')">
@@ -84,9 +84,10 @@
           </button>
         </div>
         <ul class="reassurance">
+          <!-- L'essai concerne le gestionnaire ; le membre, lui, ne paie jamais. -->
+          <li><app-icone nom="valider" /> Sans paiement à l'inscription</li>
           <li><app-icone nom="valider" /> Gratuit pour les membres</li>
           <li><app-icone nom="valider" /> Wave, Orange Money, espèces</li>
-          <li><app-icone nom="valider" /> Reçus PDF automatiques</li>
         </ul>
       </div>
 
@@ -301,7 +302,9 @@
         <div>
           <p><strong>Membre : gratuit.</strong> Rejoindre une tontine, cotiser, suivre son historique et télécharger ses reçus ne coûte rien.</p>
         </div>
-        <a class="bouton bouton-contour" routerLink="/inscription">Créer mon compte</a>
+        <!-- Pas de bouton d'inscription : un membre entre par le lien d'invitation
+             de son gestionnaire (/inscription ne crée que des gestionnaires). -->
+        <p class="offre-membre-lien">Il entre par le <strong>lien d'invitation</strong> de son gestionnaire.</p>
       </div>
 
       <!-- Le gestionnaire : les formules de la BASE (l'ADMIN les modifie, la page suit). -->
@@ -410,9 +413,10 @@
     </div>
     <div class="conteneur final-interieur" appApparition>
       <h2>Votre prochaine tontine <em>commence ici.</em></h2>
-      <p>Créez-la en une minute, invitez votre groupe en un lien. Le reste, SamaNatteu s'en charge.</p>
+      <p>Créez-la en une minute, invitez votre groupe en un lien. Le reste, SamaNatteu s'en charge.
+        30 jours d'essai, sans paiement à l'inscription.</p>
       <div class="heros-boutons centre">
-        <a class="bouton bouton-lumineux grand" routerLink="/inscription">Commencer gratuitement <app-icone nom="flecheDroite" /></a>
+        <a class="bouton bouton-lumineux grand" routerLink="/inscription">Essayer 30 jours gratuitement <app-icone nom="flecheDroite" /></a>
         <a class="bouton bouton-verre grand" routerLink="/connexion">J'ai déjà un compte</a>
       </div>
     </div>

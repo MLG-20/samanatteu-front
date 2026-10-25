@@ -1415,6 +1415,14 @@ h3 {
   height: 1.3rem;
 }
 
+/* À la place d'un bouton : où le membre entre (le lien de son gestionnaire). */
+.offre-membre .offre-membre-lien {
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  border: 1px dashed var(--ligne);
+  font-size: 0.85rem;
+}
+
 /* ---- Pendant le chargement / si l'API ne répond pas ---- */
 .offre-squelette {
   min-height: 26rem;
