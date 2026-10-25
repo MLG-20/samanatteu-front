@@ -157,6 +157,23 @@
   background: var(--surface-2);
 }
 
+/* La ligne et son bouton « Inviter » côte à côte. */
+.tontines li {
+  display: flex;
+  align-items: center;
+}
+
+.tontines li > a:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.tontines a.inviter {
+  flex-shrink: 0;
+  margin-right: 1.25rem;
+  padding: 0.35rem 0.75rem;
+}
+
 .monogramme {
   flex-shrink: 0;
   display: grid;

@@ -142,3 +142,15 @@ h2 {
 .tontine:hover .ouvrir app-icone {
   transform: translateX(4px);
 }
+
+/* La carte et son bouton « Inviter », posé en bas à droite, en face de « Ouvrir ». */
+.bloc-tontine {
+  position: relative;
+  display: grid;
+}
+
+.inviter {
+  position: absolute;
+  right: 1.3rem;
+  bottom: 0.85rem;
+}

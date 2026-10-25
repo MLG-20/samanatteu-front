@@ -45,7 +45,9 @@
 } @else {
   <div class="grille-cartes">
     @for (t of visibles(); track t.id; let i = $index) {
-      <a class="carte carte-cliquable tontine cascade" [style.--i]="i" [routerLink]="[t.id]" [attr.data-statut]="t.statut">
+      <!-- La carte est un lien : « Inviter » se pose à côté (pas dedans), par-dessus. -->
+      <div class="bloc-tontine cascade" [style.--i]="i">
+      <a class="carte carte-cliquable tontine" [routerLink]="[t.id]" [attr.data-statut]="t.statut">
         <div class="haut">
           <span class="monogramme">{{ t.nom.charAt(0) }}</span>
           <app-statut domaine="tontine" [valeur]="t.statut" />
@@ -85,6 +87,10 @@
         }
         <span class="ouvrir">Ouvrir <app-icone nom="flecheDroite" /></span>
       </a>
+      @if (t.statut === 'EN_ATTENTE') {
+        <a class="btn btn-doux btn-petit inviter" [routerLink]="[t.id]" [queryParams]="{ onglet: 'invitations' }"><app-icone nom="lien" /> Inviter</a>
+      }
+      </div>
     }
   </div>
 }

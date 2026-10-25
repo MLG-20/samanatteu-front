@@ -20,7 +20,9 @@ import { OngletMembres } from './onglet-membres';
 import { OngletPrets } from './onglet-prets';
 import { TontineCourante } from './tontine-courante';
 
-type Onglet = 'apercu' | 'membres' | 'cycles' | 'prets' | 'invitations';
+// La liste existe à l'exécution (pour valider ?onglet=…) ; le type en est déduit.
+const ONGLETS = ['apercu', 'membres', 'cycles', 'prets', 'invitations'] as const;
+type Onglet = (typeof ONGLETS)[number];
 
 /**
  * La page d'une tontine : en-tête (statut, actions du cycle de vie) + onglets.
@@ -105,8 +107,15 @@ export class TontineDetail {
   );
 
   constructor() {
+    const route = inject(ActivatedRoute).snapshot;
     // Number(…) : le paramètre d'URL est une chaîne (≈ Long.parseLong).
-    this.etat.charger(Number(inject(ActivatedRoute).snapshot.paramMap.get('id')));
+    this.etat.charger(Number(route.paramMap.get('id')));
+    // ?onglet=invitations (bouton « Inviter » des listes) : on ouvre directement
+    // le bon onglet. Une valeur inconnue est ignorée (on reste sur l'aperçu).
+    const demande = route.queryParamMap.get('onglet');
+    if (demande && ONGLETS.includes(demande as Onglet)) {
+      this.onglet.set(demande as Onglet);
+    }
   }
 
   // ---------- Cycle de vie de la tontine ----------

@@ -23,8 +23,10 @@ import { TontineCourante } from './tontine-courante';
   imports: [ReactiveFormsModule, Icone, Statut, EtatVide, DateCourtePipe, DateHeurePipe],
   template: `
     @let tt = etat.tontine();
-    @if (tt && tt.statut !== 'EN_ATTENTE' && tt.statut !== 'ACTIVE') {
-      <div class="alerte alerte-attention"><app-icone nom="info" /><span>Cette tontine n'accepte plus de nouveaux membres.</span></div>
+    <!-- Même règle que le backend (verifierInscriptionsOuvertes) : on ne rejoint
+         qu'une tontine EN_ATTENTE ; après le démarrage, le tirage serait faussé. -->
+    @if (tt && tt.statut !== 'EN_ATTENTE') {
+      <div class="alerte alerte-attention"><app-icone nom="info" /><span>Cette tontine a démarré : elle n'accepte plus de nouveaux membres (le tirage serait faussé). Les liens ne permettront pas de la rejoindre.</span></div>
     }
 
     <div class="grille-2">

@@ -82,6 +82,11 @@
                 <small class="chiffres">/ {{ t.montantAttendu | fcfa }}</small>
               </div>
             </a>
+            <!-- À côté du lien, pas dedans (un lien dans un lien est interdit en HTML).
+                 Seulement en préparation : après le démarrage, on ne rejoint plus. -->
+            @if (t.statut === 'EN_ATTENTE') {
+              <a class="btn btn-doux btn-petit inviter" [routerLink]="['/gestionnaire/tontines', t.id]" [queryParams]="{ onglet: 'invitations' }"><app-icone nom="lien" /> Inviter</a>
+            }
           </li>
         }
       </ul>
