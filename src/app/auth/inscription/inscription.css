@@ -61,3 +61,159 @@
 .envoi {
   margin-top: 0.5rem;
 }
+
+/* ---------- Le choix de la formule ---------- */
+.formules {
+  margin: 0 0 1.4rem;
+  padding: 0;
+  border: 0;
+}
+
+.formules legend {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* auto-fit : autant de colonnes que la largeur le permet (2 côte à côte,
+   1 seule sur téléphone). */
+.formules-liste {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.7rem;
+}
+
+/* La carte EST le <label> : cliquer n'importe où coche le bouton radio. */
+.formule {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.85rem 1rem;
+  border: 1.5px solid var(--bordure);
+  border-radius: 12px;
+  background: var(--surface);
+  cursor: pointer;
+  transition:
+    border-color 0.2s var(--courbe),
+    box-shadow 0.2s var(--courbe),
+    transform 0.2s var(--courbe);
+}
+
+.formule:hover {
+  border-color: var(--bordure-forte);
+  transform: translateY(-1px);
+}
+
+.formule.choisie {
+  border-color: var(--primaire-500);
+  background: var(--primaire-50);
+  box-shadow: var(--anneau);
+}
+
+/* Le vrai bouton radio reste dans la page (clavier, lecteur d'écran) mais
+   prend la place d'une pastille en haut à droite. */
+.formule input {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  margin: 0;
+  accent-color: var(--primaire-600);
+}
+
+.formule-nom {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.formule-prix {
+  font-family: var(--police-titre);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--texte);
+}
+
+.formule-prix small {
+  font-family: var(--police);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--texte-pale);
+}
+
+.formule-quotas {
+  font-size: 0.78rem;
+  color: var(--texte-2);
+}
+
+.formule-squelette {
+  min-height: 5.6rem;
+  border: 0;
+  cursor: default;
+}
+
+.formules-note {
+  margin: 0.6rem 0 0;
+  font-size: 0.78rem;
+  color: var(--texte-2);
+  line-height: 1.45;
+}
+
+.formules-note a {
+  font-weight: 600;
+}
+
+/* ---------- « Vérifiez votre boîte mail » ---------- */
+.boite-mail {
+  text-align: center;
+  animation: apparait 0.5s var(--courbe) both;
+}
+
+.boite-mail-icone {
+  display: inline-grid;
+  place-items: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  margin-bottom: 0.9rem;
+  border-radius: 18px;
+  background: var(--primaire-50);
+  color: var(--primaire-600);
+  box-shadow: 0 0 0 6px var(--primaire-100);
+}
+
+.boite-mail-icone app-icone {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.boite-mail-conseils {
+  display: grid;
+  gap: 0.4rem;
+  margin: 1.1rem 0 1.3rem;
+  padding: 0.8rem 1rem;
+  list-style: none;
+  border-radius: 12px;
+  background: var(--surface-2);
+  font-size: 0.84rem;
+  color: var(--texte-2);
+  text-align: left;
+}
+
+.boite-mail-conseils li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.boite-mail-conseils app-icone {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  color: var(--primaire-600);
+}
+
+.boite-mail .alerte {
+  text-align: left;
+}

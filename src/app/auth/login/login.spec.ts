@@ -182,4 +182,41 @@ describe('Login', () => {
     expect(texte()).toContain('Téléphone ou mot de passe incorrect.');
     expect(navigateByUrl).not.toHaveBeenCalled();
   });
+
+  // Règle : 403 au login = bon mot de passe, email pas encore confirmé. On ne
+  // dit pas « mot de passe incorrect » : on propose de renvoyer l'email.
+  it('propose de renvoyer l email si le compte n est pas encore confirme', () => {
+    saisir('telephone', '771110002');
+    saisir('motDePasse', 'motdepasse123');
+    envoyer();
+
+    controller
+      .expectOne('/auth/login')
+      .flush("Confirmez d'abord votre adresse email.", { status: 403, statusText: 'Forbidden' });
+    fixture.detectChanges();
+
+    expect(texte()).toContain("Confirmez d'abord votre adresse email");
+    expect(texte()).not.toContain('Téléphone ou mot de passe incorrect.');
+    controller.expectNone('/auth/me');
+    expect(navigateByUrl).not.toHaveBeenCalled();
+  });
+
+  // Règle : « Renvoyer l'email » envoie le numéro tapé, puis se grise (60 s).
+  it('renvoie l email de verification avec le numero tape', () => {
+    saisir('telephone', '771110002');
+    saisir('motDePasse', 'motdepasse123');
+    envoyer();
+    controller.expectOne('/auth/login').flush('', { status: 403, statusText: 'Forbidden' });
+    fixture.detectChanges();
+
+    const bouton: HTMLButtonElement = fixture.nativeElement.querySelector('.encart-verif button');
+    bouton.click();
+    const requete = controller.expectOne('/auth/renvoyer-verification');
+    expect(requete.request.body).toEqual({ telephone: '771110002' });
+    requete.flush(null, { status: 204, statusText: 'No Content' });
+    fixture.detectChanges();
+
+    expect(texte()).toContain("C'est envoyé");
+    expect(bouton.disabled).toBe(true);
+  });
 });

@@ -28,6 +28,28 @@
       </div>
     }
 
+    <!-- Compte créé mais email pas encore confirmé (403 du backend). -->
+    @if (nonVerifie()) {
+      <div class="encart-verif" role="alert">
+        <span class="encart-verif-icone"><app-icone nom="email" /></span>
+        <div>
+          <strong>Confirmez d'abord votre adresse email</strong>
+          <p>Ouvrez le lien que nous vous avons envoyé à l'inscription : il active votre espace et démarre vos 30 jours d'essai.</p>
+          @if (renvoye()) {
+            <p class="encart-verif-ok"><app-icone nom="succes" /> C'est envoyé : regardez votre boîte mail (et les indésirables).</p>
+          }
+          <button type="button" class="btn btn-secondaire btn-petit" [disabled]="attente.secondes() > 0" (click)="renvoyer()">
+            <app-icone nom="rafraichir" />
+            @if (attente.secondes() > 0) {
+              <span>Renvoyer l'email ({{ attente.secondes() }} s)</span>
+            } @else {
+              <span>Renvoyer l'email</span>
+            }
+          </button>
+        </div>
+      </div>
+    }
+
     <div class="champ">
       <label for="telephone">Téléphone</label>
       <div class="saisie">

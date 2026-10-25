@@ -1,0 +1,63 @@
+.verification {
+  text-align: center;
+  animation: apparait 0.5s var(--courbe) both;
+}
+
+/* Le sceau : même famille que celui de la page d'invitation. */
+.sceau {
+  display: inline-grid;
+  place-items: center;
+  width: 3.8rem;
+  height: 3.8rem;
+  margin-bottom: 1.1rem;
+  border-radius: 18px;
+}
+
+.sceau app-icone {
+  width: 1.7rem;
+  height: 1.7rem;
+}
+
+.sceau-attente {
+  background: var(--primaire-50);
+  color: var(--primaire-600);
+}
+
+.sceau-succes {
+  background: linear-gradient(135deg, var(--primaire-600), var(--accent-400));
+  color: var(--blanc);
+  box-shadow: 0 14px 30px -12px rgba(37, 99, 235, 0.7);
+  animation: tampon 0.55s var(--courbe) both;
+}
+
+.sceau-erreur {
+  background: var(--surface-3);
+  color: var(--texte-doux);
+}
+
+/* Le sceau « tombe » sur la page, comme un tampon. */
+@keyframes tampon {
+  from {
+    opacity: 0;
+    transform: scale(1.6) rotate(-12deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.verification .btn {
+  margin-top: 0.6rem;
+}
+
+.renvoi {
+  margin-top: 1.2rem;
+  text-align: left;
+}
+
+.verification .alerte {
+  margin-top: 1rem;
+  text-align: left;
+}

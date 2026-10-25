@@ -1,0 +1,65 @@
+<app-cadre-auth
+  accroche="Bienvenue,"
+  surligne="votre essai commence."
+  texte="30 jours pour lancer vos tontines : cotisations, tirages, caisse de prêts et rappels par SMS, sans rien payer."
+>
+  @switch (etat()) {
+    @case ('en-cours') {
+      <div class="verification" aria-live="polite">
+        <span class="sceau sceau-attente"><span class="rouage"></span></span>
+        <h2 class="titre-auth">Confirmation en cours…</h2>
+        <p class="sous-titre-auth">Nous vérifions votre lien.</p>
+      </div>
+    }
+
+    @case ('confirme') {
+      <div class="verification" aria-live="polite">
+        <span class="sceau sceau-succes"><app-icone nom="valider" /></span>
+        <h2 class="titre-auth">Adresse confirmée !</h2>
+        <p class="sous-titre-auth">
+          Votre espace est activé et vos <strong>30 jours d'essai gratuit</strong> ont commencé.
+          Connectez-vous pour créer votre première tontine.
+        </p>
+        <a class="btn btn-primaire btn-grand btn-bloc" routerLink="/connexion">
+          Me connecter <app-icone nom="flecheDroite" />
+        </a>
+      </div>
+    }
+
+    @case ('refuse') {
+      <div class="verification">
+        <span class="sceau sceau-erreur"><app-icone nom="email" /></span>
+        <h2 class="titre-auth">Lien expiré ou déjà utilisé</h2>
+        <p class="sous-titre-auth">{{ erreur() }}</p>
+
+        @if (renvoye()) {
+          <div class="alerte alerte-succes" role="status">
+            <app-icone nom="succes" />
+            <span>Si un compte attend sa confirmation à cette adresse, un nouveau lien vient de partir.</span>
+          </div>
+        } @else {
+          <form class="renvoi" (ngSubmit)="renvoyer()" novalidate>
+            <div class="champ">
+              <label for="email">Recevoir un nouveau lien</label>
+              <div class="saisie">
+                <app-icone nom="email" />
+                <input id="email" class="entree" type="email" autocomplete="email" placeholder="vous@exemple.sn" [formControl]="email" />
+              </div>
+              @if (email.touched && email.invalid) {
+                <span class="aide-erreur">Saisissez l'adresse de votre inscription.</span>
+              }
+            </div>
+            <button type="submit" class="btn btn-secondaire btn-bloc" [disabled]="envoi()">
+              @if (envoi()) {
+                <span class="rouage"></span> Envoi…
+              } @else {
+                <app-icone nom="rafraichir" /> Renvoyer l'email
+              }
+            </button>
+          </form>
+        }
+        <p class="bas-auth">Adresse déjà confirmée ? <a routerLink="/connexion">Se connecter</a></p>
+      </div>
+    }
+  }
+</app-cadre-auth>

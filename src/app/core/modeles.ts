@@ -62,6 +62,9 @@ export interface CreationUtilisateur {
   role: Role;
   // Le jeton du lien /rejoindre/{jeton} : exigé par le backend pour un MEMBRE.
   jetonInvitation?: string | null;
+  // La formule d'un gestionnaire inscrit par le site public : son essai de
+  // 30 jours démarrera dessus (exigée par le backend dans ce cas).
+  formuleId?: number | null;
 }
 
 export interface ModificationUtilisateur {

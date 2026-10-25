@@ -49,6 +49,13 @@ export const routes: Routes = [
     title: 'Mot de passe oublié · SamaNatteu',
     loadComponent: () => import('./auth/mot-de-passe-oublie/mot-de-passe-oublie').then((m) => m.MotDePasseOublie),
   },
+  // Le lien de l'email « Confirmez votre adresse ». Pas d'inviteGuard : la
+  // page doit marcher même si quelqu'un est déjà connecté sur ce navigateur.
+  {
+    path: 'verifier-email/:jeton',
+    title: 'Confirmation de votre adresse · SamaNatteu',
+    loadComponent: () => import('./auth/verifier-email/verifier-email').then((m) => m.VerifierEmail),
+  },
   {
     path: 'rejoindre/:token',
     title: 'Invitation · SamaNatteu',

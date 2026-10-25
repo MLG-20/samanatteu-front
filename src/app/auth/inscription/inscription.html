@@ -7,6 +7,44 @@
     : 'Cotisations, tirages, caisse de prêts et rappels par SMS : SamaNatteu tient les comptes à votre place.'"
   [large]="true"
 >
+  @if (emailEnvoye(); as email) {
+    <!-- Le compte existe, mais la connexion attend le clic sur le lien reçu. -->
+    <section class="boite-mail" aria-live="polite">
+      <span class="boite-mail-icone"><app-icone nom="email" /></span>
+      <h2 class="titre-auth">Vérifiez votre boîte mail</h2>
+      <p class="sous-titre-auth">
+        Nous avons envoyé un lien à <strong>{{ email }}</strong>. Cliquez-le pour activer votre espace
+        et démarrer vos <strong>30 jours d'essai gratuit</strong> de la formule {{ nomFormuleChoisie() }}.
+      </p>
+      <ul class="boite-mail-conseils">
+        <li><app-icone nom="horloge" /> Le lien est valable 24 heures.</li>
+        <li><app-icone nom="info" /> Rien reçu ? Regardez dans les courriers indésirables.</li>
+      </ul>
+
+      @if (renvoye()) {
+        <div class="alerte alerte-succes" role="status">
+          <app-icone nom="succes" />
+          <span>Un nouvel email vient de partir.</span>
+        </div>
+      }
+      @if (erreur()) {
+        <div class="alerte alerte-erreur" role="alert">
+          <app-icone nom="erreur" />
+          <span>{{ erreur() }}</span>
+        </div>
+      }
+
+      <button type="button" class="btn btn-secondaire btn-bloc" [disabled]="attente.secondes() > 0" (click)="renvoyer()">
+        <app-icone nom="rafraichir" />
+        @if (attente.secondes() > 0) {
+          <span>Renvoyer l'email ({{ attente.secondes() }} s)</span>
+        } @else {
+          <span>Renvoyer l'email</span>
+        }
+      </button>
+      <p class="bas-auth">Lien cliqué ? <a routerLink="/connexion">Se connecter</a></p>
+    </section>
+  } @else {
   <form [formGroup]="formulaire" (ngSubmit)="creerCompte()" novalidate>
     @if (invite) {
       <h2 class="titre-auth">Rejoindre la tontine</h2>
@@ -24,6 +62,39 @@
           <p>Votre gestionnaire vous a déjà inscrit ? <a routerLink="/mot-de-passe-oublie">Première connexion : choisir mon mot de passe</a></p>
         </div>
       </aside>
+
+      <!-- Le choix de la formule : l'essai de 30 jours démarre dessus. -->
+      <fieldset class="formules">
+        <legend>
+          Votre formule
+          <span class="badge badge-succes">30 jours gratuits</span>
+        </legend>
+        <div class="formules-liste">
+          @for (f of formulesChoisissables(); track f.id) {
+            <label class="formule" [class.choisie]="formuleChoisie() === f.id">
+              <input type="radio" formControlName="formuleId" [value]="f.id" />
+              <span class="formule-nom">{{ f.nom }}</span>
+              <span class="formule-prix">{{ prixFormule(f.prixMensuel) }} <small>/ mois</small></span>
+              <span class="formule-quotas">
+                {{ f.nbTontinesMax ? quota(f.nbTontinesMax) + ' tontine' + (f.nbTontinesMax > 1 ? 's' : '') : 'Tontines illimitées' }}
+                · {{ f.nbMembresMax ? quota(f.nbMembresMax) + ' membres' : 'membres illimités' }}
+              </span>
+            </label>
+          } @empty {
+            <div class="formule formule-squelette squelette" aria-hidden="true"></div>
+            <div class="formule formule-squelette squelette" aria-hidden="true"></div>
+          }
+        </div>
+        <p class="formules-note">
+          Aucun paiement aujourd'hui. À la fin de l'essai, l'équipe SamaNatteu active votre abonnement.
+          @if (existeSurDevis()) {
+            Une grande association ? <a routerLink="/contact">Demandez un devis</a>.
+          }
+        </p>
+        @if (formulaire.hasError('formuleObligatoire') && formulaire.touched) {
+          <span class="aide-erreur">Choisissez une formule.</span>
+        }
+      </fieldset>
     }
 
     @if (erreur()) {
@@ -109,7 +180,7 @@
         <span class="rouage"></span>
         <span>Création du compte…</span>
       } @else {
-        <span>{{ invite ? 'Créer mon compte et rejoindre' : 'Créer mon espace' }}</span>
+        <span>{{ invite ? 'Créer mon compte et rejoindre' : 'Démarrer mon essai gratuit' }}</span>
         <app-icone nom="flecheDroite" />
       }
     </button>
@@ -117,4 +188,5 @@
     <!-- Un invité qui a déjà un compte se connecte et revient à son invitation. -->
     <p class="bas-auth">Déjà inscrit ? <a routerLink="/connexion" [queryParams]="retour ? { retour } : {}">Se connecter</a></p>
   </form>
+  }
 </app-cadre-auth>

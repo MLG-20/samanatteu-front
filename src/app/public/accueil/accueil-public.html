@@ -351,9 +351,17 @@
                   <span><strong>{{ quota(f.smsParMois) }}</strong> SMS par mois</span>
                 </li>
               </ul>
-              <a class="bouton grand" [class.bouton-lumineux]="f.id === vedette()" [class.bouton-contour]="f.id !== vedette()" routerLink="/inscription">
-                {{ f.prixMensuel ? 'Choisir ' + f.nom : 'Demander un devis' }}
-              </a>
+              <!-- Avec un prix : l'inscription, formule déjà cochée (?formule=id).
+                   « Sur devis » : pas d'inscription directe, on écrit à l'équipe. -->
+              @if (f.prixMensuel) {
+                <a class="bouton grand" [class.bouton-lumineux]="f.id === vedette()" [class.bouton-contour]="f.id !== vedette()" routerLink="/inscription" [queryParams]="{ formule: f.id }">
+                  Essayer {{ f.nom }} 30 jours
+                </a>
+              } @else {
+                <a class="bouton grand" [class.bouton-lumineux]="f.id === vedette()" [class.bouton-contour]="f.id !== vedette()" routerLink="/contact">
+                  Demander un devis
+                </a>
+              }
             </article>
           }
         }
@@ -368,7 +376,7 @@
           <li><app-icone nom="valider" /> Caisse de prêt avec échéancier</li>
           <li><app-icone nom="valider" /> Journal financier et reçus PDF</li>
         </ul>
-        <small>Une tontine terminée ne compte plus dans votre formule. Paiement par Wave ou Orange Money, activation par l'équipe SamaNatteu.</small>
+        <small>Une tontine terminée ne compte plus dans votre formule. 30 jours d'essai gratuit, sans paiement à l'inscription ; ensuite, paiement par Wave ou Orange Money, activation par l'équipe SamaNatteu.</small>
       </div>
     </div>
   </section>

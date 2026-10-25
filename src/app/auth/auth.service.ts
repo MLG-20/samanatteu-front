@@ -137,6 +137,18 @@ export class AuthService {
     return this.http.post<Utilisateur>('/utilisateur', compte);
   }
 
+  // Le clic sur le lien de l'email : le backend vérifie l'adresse et démarre
+  // l'essai de 30 jours. 400 si le lien est inconnu, expiré ou déjà utilisé.
+  verifierEmail(jeton: string): Observable<void> {
+    return this.http.post<void>('/auth/verifier-email', { jeton });
+  }
+
+  // « Renvoyer l'email » : un nouveau lien de vérification. Le backend répond
+  // toujours 204 (il ne dit pas si le compte existe) et au plus 1 envoi par minute.
+  renvoyerVerification(identifiant: { email?: string; telephone?: string }): Observable<void> {
+    return this.http.post<void>('/auth/renvoyer-verification', identifiant);
+  }
+
   // Étape 1 du mot de passe oublié : un code part par SMS.
   demanderCode(telephone: string): Observable<void> {
     return this.http.post<void>('/auth/mot-de-passe-oublie', { telephone });
