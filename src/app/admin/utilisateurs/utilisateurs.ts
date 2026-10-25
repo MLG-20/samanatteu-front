@@ -1,10 +1,11 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { AdminApi } from '../../api/admin.api';
 import { AuthService } from '../../auth/auth.service';
-import { DateCourtePipe, initiales, teinteAvatar } from '../../core/formatage';
+import { initiales, teinteAvatar } from '../../core/formatage';
 import { messageErreur } from '../../core/libelles';
 import { Role, Utilisateur } from '../../core/modeles';
 import { ConfirmationService } from '../../ui/confirmation';
@@ -14,13 +15,16 @@ import { Modale } from '../../ui/modale';
 import { ToastService } from '../../ui/notifications-ui';
 import { Statut } from '../../ui/statut';
 
-type FiltreRole = 'TOUS' | Role;
+// Exclude<Role, 'MEMBRE'> = 'GESTIONNAIRE' | 'ADMIN' : l'admin ne voit jamais de membre.
+type RoleCompte = Exclude<Role, 'MEMBRE'>;
+type FiltreRole = 'TOUS' | RoleCompte;
 
-// Tous les comptes de la plateforme : recherche, filtre par rôle, création,
-// modification, suppression.
+// Les comptes de la plateforme : les gestionnaires (nos clientes) et les admins.
+// Les membres appartiennent aux gestionnaires : le backend ne les envoie pas, on
+// n'affiche que leur nombre par gestionnaire.
 @Component({
   selector: 'app-utilisateurs',
-  imports: [FormsModule, ReactiveFormsModule, Icone, Statut, Modale, EtatVide, DateCourtePipe],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink, Icone, Statut, Modale, EtatVide],
   templateUrl: './utilisateurs.html',
   styleUrl: './utilisateurs.css',
 })
@@ -29,6 +33,7 @@ export class Utilisateurs {
   private readonly fb = inject(FormBuilder);
   private readonly toasts = inject(ToastService);
   private readonly confirmation = inject(ConfirmationService);
+  private readonly router = inject(Router);
   protected readonly moiId = inject(AuthService).utilisateur()?.id;
 
   protected readonly liste = signal<Utilisateur[]>([]);
@@ -41,7 +46,6 @@ export class Utilisateurs {
   protected readonly teinte = teinteAvatar;
   protected readonly filtresRoles: { valeur: FiltreRole; libelle: string }[] = [
     { valeur: 'TOUS', libelle: 'Tous' },
-    { valeur: 'MEMBRE', libelle: 'Membres' },
     { valeur: 'GESTIONNAIRE', libelle: 'Gestionnaires' },
     { valeur: 'ADMIN', libelle: 'Admins' },
   ];
@@ -50,7 +54,6 @@ export class Utilisateurs {
     const l = this.liste();
     return {
       TOUS: l.length,
-      MEMBRE: l.filter((u) => u.role === 'MEMBRE').length,
       GESTIONNAIRE: l.filter((u) => u.role === 'GESTIONNAIRE').length,
       ADMIN: l.filter((u) => u.role === 'ADMIN').length,
     };
@@ -76,7 +79,7 @@ export class Utilisateurs {
     telephone: ['', Validators.required],
     email: ['', Validators.email],
     motDePasse: ['', [Validators.required, Validators.minLength(8)]],
-    role: this.fb.nonNullable.control<Role>('MEMBRE'),
+    role: this.fb.nonNullable.control<RoleCompte>('GESTIONNAIRE'),
   });
 
   constructor() {
@@ -104,7 +107,8 @@ export class Utilisateurs {
   }
 
   protected ouvrirModification(u: Utilisateur): void {
-    this.formulaire.reset({ prenom: u.prenom, nom: u.nom, telephone: u.telephone, email: u.email ?? '', role: u.role });
+    // La liste ne contient pas de MEMBRE : le « as » le dit au compilateur.
+    this.formulaire.reset({ prenom: u.prenom, nom: u.nom, telephone: u.telephone, email: u.email ?? '', role: u.role as RoleCompte });
     // disable() : le champ n'est plus validé ni modifiable (le backend ne
     // permet de changer que nom, prénom et email).
     this.formulaire.controls.telephone.disable();
@@ -122,8 +126,9 @@ export class Utilisateurs {
     }
     const v = this.formulaire.getRawValue();
     const email = v.email.trim() || null;
-    // Même règle que le backend : un ADMIN ou un GESTIONNAIRE a un email.
-    if (cible === 'nouveau' && v.role !== 'MEMBRE' && !email) {
+    // Même règle que le backend : un ADMIN ou un GESTIONNAIRE a un email (et
+    // l'admin ne crée que ces deux rôles).
+    if (cible === 'nouveau' && !email) {
       this.erreurModale.set('Un compte gestionnaire ou administrateur doit avoir un email.');
       return;
     }
@@ -163,6 +168,13 @@ export class Utilisateurs {
       },
       error: (e: unknown) => this.toasts.erreur(messageErreur(e, 'Suppression impossible.')),
     });
+  }
+
+  // Clic sur une ligne : seule une gestionnaire a une fiche.
+  protected ouvrirFiche(u: Utilisateur): void {
+    if (u.role === 'GESTIONNAIRE') {
+      this.router.navigate(['/admin/gestionnaires', u.id]);
+    }
   }
 
   protected estEdition(): boolean {

@@ -74,6 +74,12 @@ export const routes: Routes = [
         loadComponent: () => import('./admin/utilisateurs/utilisateurs').then((m) => m.Utilisateurs),
       },
       {
+        path: 'gestionnaires/:id',
+        title: 'Fiche gestionnaire · SamaNatteu',
+        loadComponent: () =>
+          import('./admin/fiche-gestionnaire/fiche-gestionnaire').then((m) => m.FicheGestionnairePage),
+      },
+      {
         path: 'formules',
         title: 'Formules · SamaNatteu',
         loadComponent: () => import('./admin/formules/formules').then((m) => m.Formules),

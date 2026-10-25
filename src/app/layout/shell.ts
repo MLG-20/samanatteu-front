@@ -24,7 +24,7 @@ const MENUS: Record<Role, { section: string; liens: Lien[] }[]> = {
       section: 'Plateforme',
       liens: [
         { libelle: "Vue d'ensemble", icone: 'accueil', chemin: '/admin', exact: true },
-        { libelle: 'Utilisateurs', icone: 'utilisateurs', chemin: '/admin/utilisateurs' },
+        { libelle: 'Gestionnaires', icone: 'utilisateurs', chemin: '/admin/utilisateurs' },
       ],
     },
     {

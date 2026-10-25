@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import {
   CotisationAPayer,
   CotisationRetard,
+  FicheGestionnaire,
   GainAVerser,
   MaTontine,
   MonGain,
@@ -55,6 +56,9 @@ export class DashboardApi {
   // ---------- Admin ----------
   statsUtilisateurs(): Observable<StatsUtilisateurs> {
     return this.http.get<StatsUtilisateurs>('/dashboard/admin/utilisateurs');
+  }
+  ficheGestionnaire(id: number): Observable<FicheGestionnaire> {
+    return this.http.get<FicheGestionnaire>(`/dashboard/admin/gestionnaire/${id}`);
   }
   statsTontines(): Observable<StatsTontines> {
     return this.http.get<StatsTontines>('/dashboard/admin/tontines');

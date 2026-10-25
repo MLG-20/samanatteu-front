@@ -19,6 +19,36 @@
   vertical-align: middle;
 }
 
+/* Une ligne de gestionnaire s'ouvre au clic : on le montre. */
+tr.cliquable {
+  cursor: pointer;
+}
+
+tr.cliquable:hover td {
+  background: var(--primaire-50);
+}
+
+.nom-lien {
+  color: inherit;
+}
+
+.nom-lien:hover strong {
+  color: var(--primaire-600);
+  text-decoration: underline;
+}
+
+/* Le nombre de membres d'un gestionnaire : une pastille, chiffres alignés. */
+.nb-membres {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--primaire-50);
+  color: var(--primaire-600);
+  font-variant-numeric: tabular-nums;
+}
+
 .actions-ligne {
   display: inline-flex;
   gap: 0.25rem;

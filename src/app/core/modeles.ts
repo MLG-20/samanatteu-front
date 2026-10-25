@@ -48,6 +48,9 @@ export interface Utilisateur {
   role: Role;
   actif?: boolean;
   createdAt?: string;
+  // Liste de l'admin seulement, pour un gestionnaire : son nombre de membres
+  // (jamais leurs noms ni leurs numéros). null pour un administrateur.
+  nbMembres?: number | null;
 }
 
 export interface CreationUtilisateur {
@@ -294,6 +297,33 @@ export interface Abonnement {
   nbMembresMax: number;
   smsParMois: number;
   smsEnvoyesMois: number;
+}
+
+// Une tontine vue par l'admin sur la fiche d'un gestionnaire : SANS argent ni
+// membre nommé (frontière SaaS, même règle que le backend).
+export interface TontineFiche {
+  id: number;
+  nom: string;
+  statut: StatutTontine;
+  frequence: string;
+  intervalle: number;
+  nbMembres: number;
+  createdAt: string | null;
+}
+
+// GET /dashboard/admin/gestionnaire/{id} : la fiche complète d'un gestionnaire.
+export interface FicheGestionnaire {
+  id: number;
+  nom: string;
+  prenom: string;
+  telephone: string;
+  email: string | null;
+  actif: boolean | null;
+  createdAt: string | null;
+  abonnement: Abonnement | null;
+  nbMembres: number;
+  nbTontinesEnCours: number;
+  tontines: TontineFiche[];
 }
 
 export interface ActivationAbonnement {

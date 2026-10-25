@@ -1,0 +1,139 @@
+@let f = fiche();
+<a class="fil" routerLink="/admin/utilisateurs"><app-icone nom="flecheGauche" /> Gestionnaires</a>
+
+@if (chargement()) {
+  <div class="entete">
+    <span class="squelette" style="width: 4.2rem; height: 4.2rem; border-radius: 50%"></span>
+    <div style="flex: 1">
+      <span class="squelette" style="height: 2rem; width: 40%"></span>
+      <span class="squelette" style="height: 1rem; width: 30%; margin-top: 0.6rem"></span>
+    </div>
+  </div>
+  <div class="grille-stats">
+    @for (i of [1, 2, 3]; track i) {
+      <span class="squelette" style="height: 7.5rem"></span>
+    }
+  </div>
+} @else if (erreur() || !f) {
+  <div class="carte">
+    <app-etat-vide icone="utilisateurs" titre="Gestionnaire introuvable" [texte]="erreur() ?? ''">
+      <a class="btn btn-secondaire" routerLink="/admin/utilisateurs">Retour aux gestionnaires</a>
+    </app-etat-vide>
+  </div>
+} @else {
+  <!-- ============ Identité ============ -->
+  <header class="entete">
+    <span class="avatar avatar-grand" [attr.data-teinte]="teinte(f.id)">{{ initiales(f.prenom, f.nom) }}</span>
+    <div class="titre">
+      <div class="ligne-titre">
+        <h1>{{ f.prenom }} {{ f.nom }}</h1>
+        <span class="badge" [class]="f.actif === false ? 'badge badge-neutre' : 'badge badge-succes'">{{ f.actif === false ? 'Compte inactif' : 'Compte actif' }}</span>
+      </div>
+      <p class="meta">
+        <a [href]="'tel:' + f.telephone"><app-icone nom="telephone" /> {{ f.telephone }}</a>
+        @if (f.email) {
+          <a [href]="'mailto:' + f.email"><app-icone nom="email" /> {{ f.email }}</a>
+        }
+        <span><app-icone nom="horloge" /> Inscrit le {{ f.createdAt | dateCourte }}</span>
+      </p>
+    </div>
+  </header>
+
+  <!-- ============ Utilisation face aux quotas ============ -->
+  <section class="grille-stats bloc" aria-label="Utilisation">
+    @for (u of usages(); track u.libelle) {
+      <div class="usage" [attr.data-ton]="ton(u)">
+        <div class="usage-haut">
+          <span class="pastille"><app-icone [nom]="u.icone" /></span>
+          <span class="usage-libelle">{{ u.libelle }}</span>
+        </div>
+        <p class="usage-valeur chiffres">
+          <strong>{{ u.utilise }}</strong>
+          @if (u.max !== null) {
+            <span>/ {{ u.max | quota }}</span>
+          }
+        </p>
+        @if (u.max) {
+          <div class="jauge" [class.jauge-attention]="ton(u) === 'attention'" [class.jauge-danger]="ton(u) === 'danger'" role="progressbar" [attr.aria-valuenow]="part(u)" aria-valuemin="0" aria-valuemax="100">
+            <span [style.width.%]="part(u)"></span>
+          </div>
+          <span class="usage-aide">{{ part(u) }} % du quota</span>
+        } @else if (u.max === 0) {
+          <span class="usage-aide">Sans plafond</span>
+        } @else {
+          <span class="usage-aide">Pas d'abonnement</span>
+        }
+      </div>
+    }
+  </section>
+
+  <div class="grille-fiche">
+    <!-- ============ Abonnement ============ -->
+    <section class="carte">
+      <div class="carte-entete">
+        <h2><app-icone nom="carte" /> Abonnement</h2>
+      </div>
+      <div class="carte-corps">
+        @if (f.abonnement; as a) {
+          <div class="formule">
+            <div>
+              <span class="formule-nom">{{ a.formule }}</span>
+              <span class="formule-prix chiffres">{{ a.prixMensuel | prixMensuel }}</span>
+            </div>
+            <app-statut domaine="abonnement" [valeur]="a.statut" />
+          </div>
+          @if (!a.actif) {
+            <div class="alerte alerte-attention"><app-icone nom="alerte" /><span>L'abonnement ne donne plus accès à la plateforme (période dépassée ou suspendu).</span></div>
+          }
+          <dl class="details">
+            <div><dt>Début</dt><dd>{{ a.dateDebut | dateCourte }}</dd></div>
+            <div><dt>Fin</dt><dd>{{ a.dateFin | dateCourte }}</dd></div>
+            <div><dt>Tontines max</dt><dd class="chiffres">{{ a.nbTontinesMax | quota }}</dd></div>
+            <div><dt>Membres max</dt><dd class="chiffres">{{ a.nbMembresMax | quota }}</dd></div>
+            <div><dt>SMS par mois</dt><dd class="chiffres">{{ a.smsParMois | quota }}</dd></div>
+          </dl>
+        } @else {
+          <app-etat-vide icone="carte" titre="Aucun abonnement" texte="Ce gestionnaire n'a jamais eu de formule.">
+            <a class="btn btn-secondaire" routerLink="/admin/abonnements">Gérer les abonnements</a>
+          </app-etat-vide>
+        }
+      </div>
+    </section>
+
+    <!-- ============ Tontines (sans argent) ============ -->
+    <section class="carte">
+      <div class="carte-entete">
+        <h2><app-icone nom="tontine" /> Tontines <span class="compte">{{ f.tontines.length }}</span></h2>
+      </div>
+      @if (f.tontines.length === 0) {
+        <app-etat-vide icone="tontine" titre="Aucune tontine" texte="Ce gestionnaire n'a pas encore créé de tontine." />
+      } @else {
+        <div class="tableau-conteneur">
+          <table class="tableau tableau-empilable">
+            <thead>
+              <tr>
+                <th>Tontine</th>
+                <th>Statut</th>
+                <th>Rythme</th>
+                <th class="droite">Membres</th>
+                <th>Créée le</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (t of f.tontines; track t.id) {
+                <tr>
+                  <td class="td-principal"><strong>{{ t.nom }}</strong></td>
+                  <td data-label="Statut"><app-statut domaine="tontine" [valeur]="t.statut" /></td>
+                  <td data-label="Rythme" class="texte-doux">{{ rythme(t.frequence, t.intervalle) }}</td>
+                  <td data-label="Membres" class="droite chiffres">{{ t.nbMembres }}</td>
+                  <td data-label="Créée le" class="texte-doux">{{ t.createdAt | dateCourte }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+      <p class="note-confidentialite"><app-icone nom="bouclier" /> Les montants et les membres restent visibles du seul gestionnaire.</p>
+    </section>
+  </div>
+}

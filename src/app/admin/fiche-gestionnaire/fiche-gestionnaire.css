@@ -1,0 +1,256 @@
+.bloc {
+  margin-bottom: 1.25rem;
+}
+
+/* ================= En-tête : identité ================= */
+
+.entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.25rem;
+  margin-bottom: 1.4rem;
+  animation: apparait 0.5s var(--courbe) both;
+}
+
+.avatar-grand {
+  width: 4.2rem;
+  height: 4.2rem;
+  font-size: 1.5rem;
+}
+
+.titre {
+  flex: 1 1 18rem;
+  min-width: 0;
+}
+
+.ligne-titre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.8rem;
+}
+
+h1 {
+  font-size: clamp(1.4rem, 1.4vw + 1rem, 1.9rem);
+  font-weight: 800;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.1rem;
+  margin: 0.45rem 0 0;
+  color: var(--texte-doux);
+  font-size: 0.88rem;
+}
+
+.meta a,
+.meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: inherit;
+  /* Un email long ne fait pas déborder l'écran du téléphone. */
+  overflow-wrap: anywhere;
+}
+
+.meta a:hover {
+  color: var(--primaire-600);
+}
+
+.meta app-icone {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+}
+
+/* ================= Utilisation face aux quotas ================= */
+
+.usage {
+  --couleur: var(--succes);
+  --fond-pastille: var(--succes-fond);
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1.15rem 1.2rem 1.2rem;
+  border-radius: var(--rayon);
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  box-shadow: var(--ombre-1);
+  animation: apparait 0.5s var(--courbe) both;
+}
+
+.usage[data-ton='attention'] {
+  --couleur: var(--attention);
+  --fond-pastille: var(--attention-fond);
+}
+
+.usage[data-ton='danger'] {
+  --couleur: var(--erreur);
+  --fond-pastille: var(--erreur-fond);
+}
+
+.usage-haut {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.pastille {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 12px;
+  background: var(--fond-pastille);
+  color: var(--couleur);
+}
+
+.pastille app-icone {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.usage-libelle {
+  color: var(--texte-doux);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.usage-valeur {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.usage-valeur strong {
+  font-family: var(--police-titre);
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.usage-valeur span {
+  color: var(--texte-doux);
+  font-size: 0.95rem;
+}
+
+.usage-aide {
+  color: var(--texte-doux);
+  font-size: 0.78rem;
+}
+
+.jauge-danger > span {
+  background: linear-gradient(90deg, #dc2626, #f87171);
+}
+
+/* ================= Abonnement + tontines ================= */
+
+.grille-fiche {
+  display: grid;
+  gap: 1.1rem;
+}
+
+@media (min-width: 1100px) {
+  .grille-fiche {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+    align-items: start;
+  }
+}
+
+.carte-entete h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.carte-entete h2 app-icone {
+  width: 1.15rem;
+  height: 1.15rem;
+  color: var(--primaire-600);
+}
+
+.compte {
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  background: var(--surface-3);
+  color: var(--texte-doux);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.formule {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem 1.1rem;
+  border-radius: var(--rayon-petit);
+  background: linear-gradient(135deg, var(--primaire-50), transparent);
+  border: 1px solid var(--bordure);
+}
+
+.formule-nom {
+  display: block;
+  font-family: var(--police-titre);
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.formule-prix {
+  color: var(--texte-doux);
+  font-size: 0.9rem;
+}
+
+.formule + .alerte {
+  margin-bottom: 1rem;
+}
+
+.details {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+
+.details div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--bordure);
+}
+
+.details div:last-child {
+  border-bottom: none;
+}
+
+.details dt {
+  color: var(--texte-doux);
+  font-size: 0.88rem;
+}
+
+.details dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.note-confidentialite {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0.8rem 1.2rem;
+  border-top: 1px solid var(--bordure);
+  color: var(--texte-doux);
+  font-size: 0.8rem;
+}
+
+.note-confidentialite app-icone {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+}

@@ -1,7 +1,7 @@
 <div class="entete-page">
   <div>
-    <h1>Utilisateurs</h1>
-    <p class="sous-titre">{{ compte().TOUS }} comptes sur la plateforme.</p>
+    <h1>Gestionnaires</h1>
+    <p class="sous-titre">{{ compte().GESTIONNAIRE }} gestionnaires et {{ compte().ADMIN }} administrateurs. Les membres restent l'affaire de leur gestionnaire : seul leur nombre apparaît ici.</p>
   </div>
   <div class="actions">
     <button type="button" class="btn btn-primaire" (click)="ouvrirCreation()"><app-icone nom="ajoutUtilisateur" /> Nouveau compte</button>
@@ -40,35 +40,51 @@
           <tr>
             <th>Personne</th>
             <th>Rôle</th>
-            <th>Email</th>
+            <th class="droite">Membres</th>
             <th>Statut</th>
-            <th>Inscrit le</th>
             <th class="droite"><span class="sr-only">Actions</span></th>
           </tr>
         </thead>
         <tbody>
           @for (u of filtres(); track u.id) {
-            <tr>
+            <!-- Une ligne de gestionnaire s'ouvre en entier (pratique au doigt sur téléphone) ;
+                 le nom reste un vrai lien pour le clavier et le clic molette. -->
+            <tr [class.cliquable]="u.role === 'GESTIONNAIRE'" (click)="ouvrirFiche(u)">
               <td class="td-principal">
                 <div class="personne">
                   <span class="avatar" [attr.data-teinte]="teinte(u.id)">{{ initiales(u.prenom, u.nom) }}</span>
                   <div>
-                    <strong>{{ u.prenom }} {{ u.nom }} @if (u.id === moiId) { <span class="vous">vous</span> }</strong>
+                    @if (u.role === 'GESTIONNAIRE') {
+                      <a class="nom-lien" [routerLink]="['/admin/gestionnaires', u.id]" (click)="$event.stopPropagation()"><strong>{{ u.prenom }} {{ u.nom }}</strong></a>
+                    } @else {
+                      <strong>{{ u.prenom }} {{ u.nom }} @if (u.id === moiId) { <span class="vous">vous</span> }</strong>
+                    }
                     <small>{{ u.telephone }}</small>
                   </div>
                 </div>
               </td>
               <td data-label="Rôle"><app-statut domaine="role" [valeur]="u.role" /></td>
-              <td data-label="Email" class="texte-doux">{{ u.email ?? '—' }}</td>
+              <!-- Un nombre, jamais la liste : les membres ne quittent pas l'espace du gestionnaire. -->
+              <td data-label="Membres" class="droite">
+                @if (u.role === 'GESTIONNAIRE') {
+                  <span class="nb-membres"><app-icone nom="utilisateurs" /> <strong>{{ u.nbMembres ?? 0 }}</strong></span>
+                } @else {
+                  <span class="texte-doux">—</span>
+                }
+              </td>
+              <!-- Email et date d'inscription : sur la fiche (la liste reste lisible sans défiler). -->
               <td data-label="Statut">
                 <span class="badge" [class]="u.actif === false ? 'badge badge-neutre' : 'badge badge-succes'">{{ u.actif === false ? 'Inactif' : 'Actif' }}</span>
               </td>
-              <td data-label="Inscrit le" class="texte-doux">{{ u.createdAt | dateCourte }}</td>
               <td class="droite">
-                <div class="actions-ligne">
+                <!-- stopPropagation : modifier ou supprimer n'ouvre pas aussi la fiche. -->
+                <div class="actions-ligne" (click)="$event.stopPropagation()">
                   <button type="button" class="btn btn-fantome btn-icone btn-petit" aria-label="Modifier" (click)="ouvrirModification(u)"><app-icone nom="crayon" /></button>
                   @if (u.id !== moiId) {
                     <button type="button" class="btn btn-fantome btn-icone btn-petit supprimer" aria-label="Supprimer" (click)="supprimer(u)"><app-icone nom="poubelle" /></button>
+                  }
+                  @if (u.role === 'GESTIONNAIRE') {
+                    <a class="btn btn-fantome btn-icone btn-petit" aria-label="Voir la fiche" [routerLink]="['/admin/gestionnaires', u.id]"><app-icone nom="chevronDroit" /></a>
                   }
                 </div>
               </td>
@@ -95,7 +111,6 @@
       <div class="champ">
         <span class="etiquette">Rôle</span>
         <div class="choix">
-          <label><input type="radio" formControlName="role" value="MEMBRE" /> Membre</label>
           <label><input type="radio" formControlName="role" value="GESTIONNAIRE" /> Gestionnaire</label>
           <label><input type="radio" formControlName="role" value="ADMIN" /> Administrateur</label>
         </div>
