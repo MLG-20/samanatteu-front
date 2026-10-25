@@ -1,12 +1,30 @@
+<!-- Deux pages en une, selon l'arrivée : un invité devient MEMBRE, le public GESTIONNAIRE. -->
 <app-cadre-auth
-  accroche="Lancez-vous,"
-  surligne="en quelques secondes."
-  texte="Rejoignez la tontine de vos proches, ou organisez la vôtre : SamaNatteu tient les comptes à votre place."
+  [accroche]="invite ? 'Bienvenue,' : 'Organisez vos tontines,'"
+  [surligne]="invite ? 'votre tontine vous attend.' : 'en quelques minutes.'"
+  [texte]="invite
+    ? 'Créez votre compte : vous reviendrez aussitôt accepter l\'invitation de votre gestionnaire.'
+    : 'Cotisations, tirages, caisse de prêts et rappels par SMS : SamaNatteu tient les comptes à votre place.'"
   [large]="true"
 >
   <form [formGroup]="formulaire" (ngSubmit)="creerCompte()" novalidate>
-    <h2 class="titre-auth">Créer un compte</h2>
-    <p class="sous-titre-auth">Votre numéro de téléphone sera votre identifiant.</p>
+    @if (invite) {
+      <h2 class="titre-auth">Rejoindre la tontine</h2>
+      <p class="sous-titre-auth">Votre numéro de téléphone sera votre identifiant.</p>
+    } @else {
+      <h2 class="titre-auth">Créer mon espace gestionnaire</h2>
+      <p class="sous-titre-auth">Pour organiser une ou plusieurs tontines. Votre numéro de téléphone sera votre identifiant.</p>
+
+      <!-- Un membre n'a rien à faire ici : il entre par le lien de son gestionnaire. -->
+      <aside class="encart-membre">
+        <span class="encart-icone"><app-icone nom="utilisateur" /></span>
+        <div>
+          <strong>Vous cotisez dans une tontine ?</strong>
+          <p>Pas besoin de créer un compte ici : votre gestionnaire vous envoie un <b>lien d'invitation</b>. Ouvrez-le, il vous guide.</p>
+          <p>Votre gestionnaire vous a déjà inscrit ? <a routerLink="/mot-de-passe-oublie">Première connexion : choisir mon mot de passe</a></p>
+        </div>
+      </aside>
+    }
 
     @if (erreur()) {
       <div class="alerte alerte-erreur" role="alert">
@@ -14,23 +32,6 @@
         <span>{{ erreur() }}</span>
       </div>
     }
-
-    <!-- Le choix du profil : deux grandes cartes-radios. -->
-    <fieldset class="profils">
-      <legend class="sr-only">Je veux…</legend>
-      <label class="profil">
-        <input type="radio" formControlName="role" value="MEMBRE" />
-        <span class="profil-icone"><app-icone nom="utilisateur" /></span>
-        <strong>Je cotise</strong>
-        <small>Je rejoins une tontine existante</small>
-      </label>
-      <label class="profil">
-        <input type="radio" formControlName="role" value="GESTIONNAIRE" />
-        <span class="profil-icone"><app-icone nom="couronne" /></span>
-        <strong>J'organise</strong>
-        <small>Je gère une ou plusieurs tontines</small>
-      </label>
-    </fieldset>
 
     <div class="ligne-champs">
       <div class="champ">
@@ -108,11 +109,12 @@
         <span class="rouage"></span>
         <span>Création du compte…</span>
       } @else {
-        <span>Créer mon compte</span>
+        <span>{{ invite ? 'Créer mon compte et rejoindre' : 'Créer mon espace' }}</span>
         <app-icone nom="flecheDroite" />
       }
     </button>
 
-    <p class="bas-auth">Déjà inscrit ? <a routerLink="/connexion">Se connecter</a></p>
+    <!-- Un invité qui a déjà un compte se connecte et revient à son invitation. -->
+    <p class="bas-auth">Déjà inscrit ? <a routerLink="/connexion" [queryParams]="retour ? { retour } : {}">Se connecter</a></p>
   </form>
 </app-cadre-auth>

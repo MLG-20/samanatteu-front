@@ -42,15 +42,21 @@ export class Inscription {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly retour = (() => {
+  protected readonly retour = (() => {
     const r = inject(ActivatedRoute).snapshot.queryParamMap.get('retour');
     return r && r.startsWith('/') && !r.startsWith('//') ? r : null;
   })();
 
+  // Le rôle n'est plus choisi : il dépend de la façon dont on arrive.
+  //   - par un lien d'invitation (/rejoindre/… → ?retour=/rejoindre/…) : MEMBRE ;
+  //   - directement (site public) : GESTIONNAIRE. Un membre sans invitation
+  //     arriverait sur un espace vide : on ne rejoint une tontine que sur invitation.
+  protected readonly invite = this.retour?.startsWith('/rejoindre/') ?? false;
+
   protected readonly formulaire = this.fb.nonNullable.group(
     {
       // control<Type>(…) : on précise le type, sinon TS en déduirait « string ».
-      role: this.fb.nonNullable.control<'MEMBRE' | 'GESTIONNAIRE'>('MEMBRE'),
+      role: this.fb.nonNullable.control<'MEMBRE' | 'GESTIONNAIRE'>(this.invite ? 'MEMBRE' : 'GESTIONNAIRE'),
       prenom: ['', Validators.required],
       nom: ['', Validators.required],
       telephone: ['', Validators.required],
