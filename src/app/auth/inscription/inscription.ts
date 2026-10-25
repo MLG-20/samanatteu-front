@@ -52,6 +52,9 @@ export class Inscription {
   //   - directement (site public) : GESTIONNAIRE. Un membre sans invitation
   //     arriverait sur un espace vide : on ne rejoint une tontine que sur invitation.
   protected readonly invite = this.retour?.startsWith('/rejoindre/') ?? false;
+  // Le jeton du lien, envoyé avec l'inscription : le backend refuse un MEMBRE sans
+  // lien valide (et, pour une invitation nominative, un autre numéro que l'invité).
+  private readonly jeton = this.invite ? this.retour!.substring('/rejoindre/'.length) : null;
 
   protected readonly formulaire = this.fb.nonNullable.group(
     {
@@ -92,7 +95,7 @@ export class Inscription {
 
     // Trois appels enchaînés : créer le compte → se connecter → qui suis-je.
     this.auth
-      .inscrire({ ...reste, email: email.trim() || null })
+      .inscrire({ ...reste, email: email.trim() || null, jetonInvitation: this.jeton })
       .pipe(
         switchMap(() => this.auth.login(reste.telephone, reste.motDePasse)),
         switchMap(() => this.auth.chargerMoi()),

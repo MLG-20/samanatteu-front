@@ -60,6 +60,8 @@ export interface CreationUtilisateur {
   email: string | null;
   motDePasse: string;
   role: Role;
+  // Le jeton du lien /rejoindre/{jeton} : exigé par le backend pour un MEMBRE.
+  jetonInvitation?: string | null;
 }
 
 export interface ModificationUtilisateur {
