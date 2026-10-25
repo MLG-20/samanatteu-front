@@ -62,7 +62,7 @@
               </td>
               <td data-label="Formule">
                 <strong>{{ a.formule }}</strong>
-                <small class="bloc-petit">{{ a.prixMensuel | fcfa }} / mois</small>
+                <small class="bloc-petit">{{ a.prixMensuel | prixMensuel }}</small>
               </td>
               <td data-label="Période" class="texte-doux">{{ a.dateDebut | dateCourte }} → {{ a.dateFin | dateCourte }}</td>
               <td data-label="SMS du mois">
@@ -70,7 +70,7 @@
                   <div class="jauge" [class.jauge-attention]="pourcentage(a.smsEnvoyesMois, a.smsParMois) >= 80">
                     <span [style.width.%]="pourcentage(a.smsEnvoyesMois, a.smsParMois)"></span>
                   </div>
-                  <small class="chiffres">{{ a.smsEnvoyesMois }} / {{ a.smsParMois }}</small>
+                  <small class="chiffres">{{ a.smsEnvoyesMois }} / {{ a.smsParMois | quota }}</small>
                 </div>
               </td>
               <td data-label="Statut"><app-statut domaine="abonnement" [valeur]="a.actif ? 'ACTIF' : a.statut === 'ACTIF' ? 'RESILIE' : a.statut" /></td>
@@ -112,7 +112,7 @@
           <label class="formule-choix">
             <input type="radio" formControlName="formuleId" [value]="f.id" />
             <strong>{{ f.nom }}</strong>
-            <small>{{ f.prixMensuel | fcfa }} / mois</small>
+            <small>{{ f.prixMensuel | prixMensuel }}</small>
           </label>
         } @empty {
           <p class="texte-doux">Aucune formule proposée : créez-en une d'abord.</p>

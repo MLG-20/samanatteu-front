@@ -140,3 +140,10 @@ h2 {
   margin-top: 1.25rem;
   max-width: 48rem;
 }
+
+/* Quota sans plafond : une jauge pleine et douce, en dégradé (rien ne se « remplit »). */
+.jauge-illimitee span {
+  width: 100%;
+  opacity: 0.35;
+  background: linear-gradient(90deg, var(--primaire-500), var(--accent-400));
+}

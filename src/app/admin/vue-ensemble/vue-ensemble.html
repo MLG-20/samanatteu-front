@@ -104,7 +104,7 @@
               <span class="avatar" [attr.data-teinte]="teinte(a.utilisateurId)">{{ initiales(a.prenom, a.nom) }}</span>
               <div>
                 <strong>{{ a.prenom }} {{ a.nom }}</strong>
-                <small>{{ a.formule }} · {{ a.prixMensuel | fcfa }}/mois</small>
+                <small>{{ a.formule }} · {{ a.prixMensuel | prixMensuel }}</small>
               </div>
             </div>
             <span class="echeance">{{ a.dateFin | dateRelative }}</span>

@@ -23,7 +23,11 @@
       </div>
       <app-statut domaine="abonnement" [valeur]="a.actif ? 'ACTIF' : a.statut" />
     </div>
-    <p class="prix"><span class="chiffres">{{ a.prixMensuel | fcfa }}</span> / mois</p>
+    @if (a.prixMensuel) {
+      <p class="prix"><span class="chiffres">{{ a.prixMensuel | fcfa }}</span> / mois</p>
+    } @else {
+      <p class="prix"><span class="chiffres">Sur devis</span></p>
+    }
     <div class="periode">
       <div class="ligne">
         <span>Du {{ a.dateDebut | dateCourte }}</span>
@@ -35,14 +39,20 @@
 
   <div class="grille-stats">
     @for (q of quotas(); track q.libelle) {
-      <section class="carte quota" [class.alerte-quota]="q.part >= 90">
+      <section class="carte quota" [class.alerte-quota]="!q.illimite && q.part >= 90">
         <div class="quota-haut">
           <span class="pastille"><app-icone [nom]="q.icone" /></span>
           <span class="libelle">{{ q.libelle }}</span>
         </div>
-        <p class="valeur chiffres"><strong>{{ q.utilise }}</strong> / {{ q.max }}</p>
-        <div class="jauge" [class.jauge-attention]="q.part >= 80"><span [style.width.%]="q.part"></span></div>
-        <small>{{ q.part >= 100 ? 'Limite atteinte' : (q.max - q.utilise) + ' restant(s)' }}</small>
+        @if (q.illimite) {
+          <p class="valeur chiffres"><strong>{{ q.utilise }}</strong> / illimité</p>
+          <div class="jauge jauge-illimitee"><span></span></div>
+          <small>Sans limite avec votre formule</small>
+        } @else {
+          <p class="valeur chiffres"><strong>{{ q.utilise }}</strong> / {{ q.max }}</p>
+          <div class="jauge" [class.jauge-attention]="q.part >= 80"><span [style.width.%]="q.part"></span></div>
+          <small>{{ q.part >= 100 ? 'Limite atteinte' : (q.max - q.utilise) + ' restant(s)' }}</small>
+        }
       </section>
     }
   </div>

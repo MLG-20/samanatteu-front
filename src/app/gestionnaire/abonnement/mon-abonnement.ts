@@ -37,18 +37,27 @@ export class MonAbonnement {
     return pourcentage(Date.now() - debut, fin - debut);
   });
 
-  // Les trois quotas de la formule et leur consommation.
-  protected readonly quotas = computed<{ icone: NomIcone; libelle: string; utilise: number; max: number; part: number }[]>(() => {
+  // Les trois quotas de la formule et leur consommation. max = 0 : sans
+  // plafond (formule MAX) → pas de jauge, ni de « restant(s) ».
+  protected readonly quotas = computed<{ icone: NomIcone; libelle: string; utilise: number; max: number; illimite: boolean; part: number }[]>(() => {
     const a = this.abonnement();
     if (!a) {
       return [];
     }
     const enCours = this.tontines().filter((t) => t.statut !== 'TERMINEE');
     const plusGrande = Math.max(0, ...this.tontines().map((t) => t.nombreMembres ?? 0));
+    const ligne = (icone: NomIcone, libelle: string, utilise: number, max: number) => ({
+      icone,
+      libelle,
+      utilise,
+      max,
+      illimite: !max,
+      part: pourcentage(utilise, max),
+    });
     return [
-      { icone: 'tontine', libelle: 'Tontines en cours', utilise: enCours.length, max: a.nbTontinesMax, part: pourcentage(enCours.length, a.nbTontinesMax) },
-      { icone: 'utilisateurs', libelle: 'Membres (plus grande tontine)', utilise: plusGrande, max: a.nbMembresMax, part: pourcentage(plusGrande, a.nbMembresMax) },
-      { icone: 'message', libelle: 'SMS ce mois-ci', utilise: a.smsEnvoyesMois, max: a.smsParMois, part: pourcentage(a.smsEnvoyesMois, a.smsParMois) },
+      ligne('tontine', 'Tontines en cours', enCours.length, a.nbTontinesMax),
+      ligne('utilisateurs', 'Membres (plus grande tontine)', plusGrande, a.nbMembresMax),
+      ligne('message', 'SMS ce mois-ci', a.smsEnvoyesMois, a.smsParMois),
     ];
   });
 

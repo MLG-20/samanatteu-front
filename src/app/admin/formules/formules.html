@@ -38,13 +38,17 @@
           }
         </header>
         <p class="prix">
-          <span class="chiffres">{{ f.prixMensuel | fcfa }}</span>
-          <small>/ mois</small>
+          @if (f.prixMensuel) {
+            <span class="chiffres">{{ f.prixMensuel | fcfa }}</span>
+            <small>/ mois</small>
+          } @else {
+            <span>Sur devis</span>
+          }
         </p>
         <ul class="quotas">
-          <li><app-icone nom="tontine" /> <strong>{{ f.nbTontinesMax }}</strong> tontine{{ f.nbTontinesMax > 1 ? 's' : '' }}</li>
-          <li><app-icone nom="utilisateurs" /> <strong>{{ f.nbMembresMax }}</strong> membres par tontine</li>
-          <li><app-icone nom="message" /> <strong>{{ f.smsParMois }}</strong> SMS par mois</li>
+          <li><app-icone nom="tontine" /> @if (f.nbTontinesMax) { <strong>{{ f.nbTontinesMax }}</strong> tontine{{ f.nbTontinesMax > 1 ? 's' : '' }} en cours } @else { <strong>Tontines illimitées</strong> }</li>
+          <li><app-icone nom="utilisateurs" /> @if (f.nbMembresMax) { <strong>{{ f.nbMembresMax }}</strong> membres par tontine } @else { <strong>Membres illimités</strong> }</li>
+          <li><app-icone nom="message" /> <strong>{{ f.smsParMois | quota }}</strong> SMS par mois</li>
           <li><app-icone nom="recu" /> Reçus PDF illimités</li>
         </ul>
         <footer>
@@ -79,6 +83,7 @@
         <input id="f-prix" class="entree" type="number" min="0" step="500" formControlName="prixMensuel" />
         <span class="suffixe">FCFA</span>
       </div>
+      <span class="aide">0 = « Sur devis » sur le site.</span>
     </div>
     <div class="ligne-champs trois">
       <div class="champ">
@@ -94,6 +99,7 @@
         <input id="f-sms" class="entree" type="number" min="0" formControlName="smsParMois" />
       </div>
     </div>
+    <p class="aide aide-quotas">Un quota à 0 = illimité (sans plafond).</p>
     <label class="interrupteur">
       <input type="checkbox" formControlName="active" />
       <span class="glissiere" aria-hidden="true"></span>

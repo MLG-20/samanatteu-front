@@ -3,7 +3,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 
 import { AdminApi } from '../../api/admin.api';
-import { DateCourtePipe, FcfaPipe, fcfa, initiales, pourcentage, teinteAvatar } from '../../core/formatage';
+import { DateCourtePipe, PrixMensuelPipe, QuotaPipe, fcfa, initiales, pourcentage, teinteAvatar } from '../../core/formatage';
 import { messageErreur } from '../../core/libelles';
 import { Abonnement, Formule, Utilisateur } from '../../core/modeles';
 import { CarteStat } from '../../ui/carte-stat';
@@ -20,7 +20,7 @@ import { Statut } from '../../ui/statut';
  */
 @Component({
   selector: 'app-abonnements',
-  imports: [FormsModule, ReactiveFormsModule, Icone, Statut, Modale, EtatVide, CarteStat, FcfaPipe, DateCourtePipe],
+  imports: [FormsModule, ReactiveFormsModule, Icone, Statut, Modale, EtatVide, CarteStat, DateCourtePipe, PrixMensuelPipe, QuotaPipe],
   templateUrl: './abonnements.html',
   styleUrl: './abonnements.css',
 })

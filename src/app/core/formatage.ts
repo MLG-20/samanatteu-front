@@ -111,3 +111,19 @@ export class DateRelativePipe implements PipeTransform {
     return dateRelative(valeur);
   }
 }
+
+// Les formules : 0 = « Illimité » (quota) ou « Sur devis » (prix). Mêmes conventions que le backend.
+@Pipe({ name: 'quota' })
+export class QuotaPipe implements PipeTransform {
+  transform(max: number | null | undefined): string {
+    return quota(max);
+  }
+}
+
+// « 5 000 FCFA / mois », ou « Sur devis » (sans « / mois ») pour un prix à 0.
+@Pipe({ name: 'prixMensuel' })
+export class PrixMensuelPipe implements PipeTransform {
+  transform(prix: number | null | undefined): string {
+    return prix ? `${fcfa(prix)} / mois` : 'Sur devis';
+  }
+}

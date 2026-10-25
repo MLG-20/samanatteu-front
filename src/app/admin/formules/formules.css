@@ -168,3 +168,9 @@
 .interrupteur input:focus-visible + .glissiere {
   box-shadow: var(--anneau);
 }
+
+.aide-quotas {
+  margin: -0.4rem 0 1.05rem;
+  color: var(--texte-doux);
+  font-size: 0.8rem;
+}

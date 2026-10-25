@@ -4,7 +4,7 @@ import { catchError, finalize, forkJoin, of } from 'rxjs';
 
 import { AdminApi } from '../../api/admin.api';
 import { DashboardApi } from '../../api/dashboard.api';
-import { DateCourtePipe, DateRelativePipe, FcfaPipe, fcfa, initiales, pourcentage, teinteAvatar } from '../../core/formatage';
+import { DateCourtePipe, DateRelativePipe, PrixMensuelPipe, fcfa, initiales, pourcentage, teinteAvatar } from '../../core/formatage';
 import { messageErreur } from '../../core/libelles';
 import { Abonnement, StatsTontines, StatsUtilisateurs, Utilisateur } from '../../core/modeles';
 import { CarteStat } from '../../ui/carte-stat';
@@ -19,7 +19,7 @@ import { Statut } from '../../ui/statut';
  */
 @Component({
   selector: 'app-vue-ensemble',
-  imports: [RouterLink, CarteStat, EtatVide, Icone, Statut, FcfaPipe, DateCourtePipe, DateRelativePipe],
+  imports: [RouterLink, CarteStat, EtatVide, Icone, Statut, DateCourtePipe, DateRelativePipe, PrixMensuelPipe],
   templateUrl: './vue-ensemble.html',
   styleUrl: './vue-ensemble.css',
 })

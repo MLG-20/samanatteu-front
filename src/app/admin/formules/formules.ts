@@ -3,7 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 
 import { AdminApi } from '../../api/admin.api';
-import { FcfaPipe } from '../../core/formatage';
+import { FcfaPipe, QuotaPipe } from '../../core/formatage';
 import { messageErreur } from '../../core/libelles';
 import { Formule } from '../../core/modeles';
 import { EtatVide } from '../../ui/etat-vide';
@@ -14,7 +14,7 @@ import { ToastService } from '../../ui/notifications-ui';
 // Les formules d'abonnement proposées aux gestionnaires, en cartes « tarifs ».
 @Component({
   selector: 'app-formules',
-  imports: [ReactiveFormsModule, Icone, Modale, EtatVide, FcfaPipe],
+  imports: [ReactiveFormsModule, Icone, Modale, EtatVide, FcfaPipe, QuotaPipe],
   templateUrl: './formules.html',
   styleUrl: './formules.css',
 })
