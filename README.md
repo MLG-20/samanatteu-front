@@ -68,6 +68,7 @@ src/app/
 | `/contact`, `/a-propos` | tous | coordonnées + formulaire, présentation ; contenu piloté par l'ADMIN |
 | `/connexion`, `/inscription`, `/mot-de-passe-oublie` | visiteur | pages publiques (un connecté est renvoyé chez lui) |
 | `/rejoindre/:token` | visiteur, membre | accepter une invitation (pas `/invitation` : préfixe de l'API dans le proxy) |
+| `/verifier-email/:jeton` | tous | le lien de l'email de confirmation : vérifie l'adresse et démarre l'essai de 30 jours (sinon : renvoyer un lien) |
 | `/admin/…` | ADMIN | vue d'ensemble, gestionnaires (et leur fiche : aucun membre nommé, seulement leur nombre), formules, abonnements, site public, messages, profil |
 | `/gestionnaire/…` | GESTIONNAIRE | tableau de bord, tontines, détail d'une tontine, prêts, journal, notifications, abonnement, profil |
 | `/membre/…` | MEMBRE | accueil, mes tontines, historique, notifications, profil |
