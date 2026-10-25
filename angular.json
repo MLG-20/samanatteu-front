@@ -64,7 +64,8 @@
             },
             "development": {
               "buildTarget": "samanatteu-front:build:development",
-              "proxyConfig": "proxy.conf.json"
+              "proxyConfig": "proxy.conf.json",
+              "allowedHosts": [".ngrok-free.app", ".ngrok-free.dev", ".ngrok.app"]
             }
           },
           "defaultConfiguration": "development"
