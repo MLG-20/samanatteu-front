@@ -219,13 +219,25 @@
     </div>
   </section>
 
-  <!-- ======================= Chiffres clés (faits sur le produit) ======================= -->
-  <section class="bande-chiffres">
-    <div class="conteneur chiffres-grille">
-      <div appApparition><strong>4</strong><span>moyens de paiement suivis</span></div>
-      <div appApparition style="--delai: 100ms"><strong>1</strong><span>lien pour inviter tout le groupe</span></div>
-      <div appApparition style="--delai: 200ms"><strong>100 %</strong><span>des paiements avec reçu</span></div>
-      <div appApparition style="--delai: 300ms"><strong>0</strong><span>cahier à tenir</span></div>
+  <!-- ======================= Confiance ======================= -->
+  <!-- Remplace l'ancien bandeau de « chiffres » (des fonctionnalités déguisées en
+       statistiques) : des engagements vrais, parce qu'une tontine, c'est de l'argent. -->
+  <section id="confiance" class="section confiance">
+    <div class="conteneur confiance-grille">
+      <div class="confiance-texte" appApparition>
+        <p class="sur-titre">Confiance</p>
+        <h2>Une tontine, c'est de l'argent. <em>Et de la confiance.</em></h2>
+        <p>SamaNatteu tient les comptes, sans jamais tenir la caisse. Voici ce qu'il garantit, et ce qu'il ne fait jamais.</p>
+      </div>
+      <ul class="garanties">
+        @for (g of garanties; track g.titre; let i = $index) {
+          <li class="garantie" appApparition [style.--delai]="i * 110 + 'ms'">
+            <span class="garantie-icone"><app-icone [nom]="g.icone" /></span>
+            <h3>{{ g.titre }}</h3>
+            <p>{{ g.texte }}</p>
+          </li>
+        }
+      </ul>
     </div>
   </section>
 

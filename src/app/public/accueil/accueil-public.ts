@@ -143,6 +143,32 @@ export class AccueilPublic {
     },
   ];
 
+  // La section Confiance : UNIQUEMENT des engagements vrais et vérifiables dans le
+  // code (aucun chiffre ni témoignage inventé). Le tirage et le reçu sont déjà
+  // dans les atouts : on ne les répète pas ici.
+  protected readonly garanties: { titre: string; texte: string; icone: NomIcone }[] = [
+    {
+      titre: 'L’argent ne passe pas par nous',
+      texte: 'Les cotisations circulent comme d’habitude, en espèces, par Wave ou Orange Money. SamaNatteu enregistre, il n’encaisse jamais.',
+      icone: 'portefeuille',
+    },
+    {
+      titre: 'Chacun ne voit que ce qui le concerne',
+      texte: 'Un membre voit ses tontines et ses paiements ; un gestionnaire, seulement les tontines qu’il organise.',
+      icone: 'cadenas',
+    },
+    {
+      titre: 'Vos comptes restent les vôtres',
+      texte: 'L’équipe SamaNatteu ne voit ni la liste de vos membres ni vos montants : seulement votre formule.',
+      icone: 'bouclier',
+    },
+    {
+      titre: 'Pas de smartphone ? Aucun souci',
+      texte: 'Rappels, confirmations de paiement, résultat du tirage : les membres reçoivent l’essentiel par simple SMS.',
+      icone: 'message',
+    },
+  ];
+
   protected readonly profils: { titre: string; texte: string; icone: NomIcone }[] = [
     { titre: 'Entre amies', texte: 'La tontine du mois, sans le cahier ni les calculs du dimanche soir.', icone: 'utilisateurs' },
     { titre: 'Associations & quartiers', texte: 'Des dizaines de membres, plusieurs tontines, une gestion qui reste simple.', icone: 'accueil' },
