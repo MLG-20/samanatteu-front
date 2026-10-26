@@ -30,7 +30,7 @@ export class AvantApres {
     },
     {
       question: 'Combien y a-t-il dans la caisse ?',
-      cahier: [{ texte: 'Total ' }, { texte: '180\u00a0000', barre: true }, { texte: ' 175 000 ' }, { texte: '??', doute: true }],
+      cahier: [{ texte: 'Total ' }, { texte: '180\u00a0000', barre: true }, { texte: ' 175\u00a0000 ' }, { texte: '??', doute: true }],
       apres: { titre: 'Collecté ce cycle', detail: '7 membres sur 10 ont payé', valeur: '175 000 F', badge: 'À jour', ton: 'ok' },
     },
     {
