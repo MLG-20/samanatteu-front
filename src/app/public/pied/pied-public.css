@@ -225,3 +225,67 @@
     transform: none;
   }
 }
+
+/* ---------- Le bouton WhatsApp flottant ---------- */
+.whatsapp-flottant {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 3.5rem;
+  padding: 0 1.05rem;
+  border-radius: 999px;
+  background: #25d366; /* le vert de WhatsApp : reconnu d'un coup d'œil */
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.92rem;
+  box-shadow:
+    0 12px 28px -8px rgba(37, 211, 102, 0.6),
+    0 4px 10px rgba(0, 0, 0, 0.25);
+  animation: arrivee-whatsapp 0.5s 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  transition: transform 0.25s;
+}
+
+.whatsapp-flottant:hover {
+  transform: translateY(-3px);
+}
+
+.whatsapp-flottant app-icone {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* Sur téléphone : juste la pastille ronde, le texte prendrait trop de place. */
+@media (max-width: 719px) {
+  .whatsapp-flottant {
+    width: 3.5rem;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .whatsapp-bulle {
+    display: none;
+  }
+}
+
+@keyframes arrivee-whatsapp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-flottant {
+    animation: none;
+  }
+}

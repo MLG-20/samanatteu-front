@@ -70,3 +70,13 @@
     </div>
   </div>
 </footer>
+
+<!-- Le bouton WhatsApp flottant : le canal naturel des visiteurs. Il n'existe que
+     si l'ADMIN a renseigné un numéro (Site → Contact) ; placé ici, il suit le
+     footer sur toutes les pages publiques. -->
+@if (parametres()?.contactWhatsapp; as numero) {
+  <a class="whatsapp-flottant" [href]="lienWhatsapp(numero, messageWhatsapp)" target="_blank" rel="noopener noreferrer" aria-label="Nous écrire sur WhatsApp">
+    <app-icone nom="whatsapp" />
+    <span class="whatsapp-bulle">Une question ? Écrivez-nous</span>
+  </a>
+}

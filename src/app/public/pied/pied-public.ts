@@ -57,10 +57,15 @@ export class PiedPublic {
     return `tel:${numero.replace(/\s/g, '')}`;
   }
 
+  // Le message déjà tapé quand la conversation s'ouvre (le visiteur n'a qu'à envoyer).
+  protected readonly messageWhatsapp = 'Bonjour SamaNatteu, j’ai une question sur votre application de tontine.';
+
   // wa.me veut le numéro international, sans + ni espaces. Un numéro local
-  // sénégalais (9 chiffres) reçoit l'indicatif 221.
-  protected lienWhatsapp(numero: string): string {
+  // sénégalais (9 chiffres) reçoit l'indicatif 221. ?text= pré-remplit le
+  // message ; encodeURIComponent ≈ URLEncoder.encode (espaces, accents…).
+  protected lienWhatsapp(numero: string, message?: string): string {
     const chiffres = numero.replace(/\D/g, '');
-    return `https://wa.me/${chiffres.length === 9 ? '221' + chiffres : chiffres}`;
+    const lien = `https://wa.me/${chiffres.length === 9 ? '221' + chiffres : chiffres}`;
+    return message ? `${lien}?text=${encodeURIComponent(message)}` : lien;
   }
 }
