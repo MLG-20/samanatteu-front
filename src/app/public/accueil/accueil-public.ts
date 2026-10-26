@@ -7,6 +7,7 @@ import { fcfa, prixFormule, quota } from '../../core/formatage';
 import { Formule } from '../../core/modeles';
 import { Apparition } from '../../ui/apparition';
 import { Icone, NomIcone } from '../../ui/icone';
+import { AvantApres } from '../avant-apres/avant-apres';
 import { PiedPublic } from '../pied/pied-public';
 
 interface Etape {
@@ -34,7 +35,7 @@ interface Atout {
  */
 @Component({
   selector: 'app-accueil-public',
-  imports: [RouterLink, Icone, Apparition, PiedPublic],
+  imports: [RouterLink, Icone, Apparition, PiedPublic, AvantApres],
   templateUrl: './accueil-public.html',
   styleUrl: './accueil-public.css',
   // host : des liaisons sur la balise <app-accueil-public> elle-même. Les

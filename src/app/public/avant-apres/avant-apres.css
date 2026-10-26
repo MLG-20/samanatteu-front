@@ -1,0 +1,161 @@
+:host {
+  display: block;
+}
+
+.aa-entetes {
+  display: none; /* les colonnes n'existent qu'à partir de la tablette */
+}
+
+.aa-lignes {
+  display: grid;
+  gap: 1.1rem;
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.aa-ligne {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.3rem;
+  border-radius: 22px;
+  border: 1px solid var(--ligne);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.aa-question {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+/* Sur téléphone, chaque côté porte sa petite étiquette ; en colonnes, ce
+   sont les en-têtes qui le disent. */
+.aa-etiquette {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-family: var(--police, inherit);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--doux);
+}
+
+/* Le bout de cahier : papier crème ligné, marge rouge, écriture à la main,
+   légèrement de travers (--penche alterne d'une ligne à l'autre). */
+.aa-cahier {
+  position: relative;
+  margin: 0;
+  padding: 0.75rem 1rem 0.75rem 1.6rem;
+  border-radius: 6px;
+  background:
+    linear-gradient(90deg, transparent 1.05rem, rgba(220, 38, 38, 0.45) 1.05rem, rgba(220, 38, 38, 0.45) 1.15rem, transparent 1.15rem),
+    repeating-linear-gradient(180deg, #fbf7ec 0 1.55rem, #dfe6f3 1.55rem calc(1.55rem + 1px));
+  color: #1e3a8a;
+  font-family: 'Caveat', cursive;
+  font-size: 1.45rem;
+  line-height: 1.2;
+  transform: rotate(var(--penche, -0.8deg));
+  box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.6);
+}
+
+.aa-cahier .aa-etiquette {
+  color: #64748b;
+}
+
+.aa-cahier .barre {
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  color: #64748b;
+}
+
+.aa-cahier .doute {
+  color: #c2410c;
+  font-weight: 700;
+}
+
+/* Le côté SamaNatteu : net, une carte de l'application. */
+.aa-carte {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(34, 211, 238, 0.22);
+  background: linear-gradient(180deg, rgba(13, 27, 69, 0.9), rgba(8, 19, 51, 0.9));
+  box-shadow: 0 14px 30px -18px rgba(34, 211, 238, 0.5);
+}
+
+.aa-carte strong {
+  display: block;
+  font-size: 0.98rem;
+}
+
+.aa-carte small {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--doux);
+  font-size: 0.8rem;
+}
+
+.aa-droite {
+  display: grid;
+  justify-items: end;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.aa-droite b {
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.aa-badge {
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.aa-ok {
+  background: rgba(16, 185, 129, 0.15);
+  color: #6ee7b7;
+}
+
+.aa-attente {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fcd34d;
+}
+
+.aa-or {
+  background: rgba(251, 191, 36, 0.15);
+  color: var(--or);
+}
+
+@media (min-width: 900px) {
+  /* Avant / après : trois colonnes, question · cahier · SamaNatteu. */
+  .aa-entetes,
+  .aa-ligne {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .aa-entetes {
+    max-width: 64rem;
+    margin: 0 auto 0.8rem;
+    padding: 0 1.3rem;
+    color: var(--doux);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .aa-ligne .aa-etiquette {
+    display: none;
+  }
+}

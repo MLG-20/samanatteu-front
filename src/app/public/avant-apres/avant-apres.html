@@ -1,0 +1,34 @@
+<!-- Les questions de chaque mois : au cahier, puis dans SamaNatteu.
+     Les couleurs (--ligne, --doux, --or…) viennent de la vitrine qui
+     l'entoure : une variable CSS se transmet aux éléments enfants. -->
+<div class="aa-entetes" aria-hidden="true">
+  <span></span>
+  <span>Dans le cahier</span>
+  <span>Dans SamaNatteu</span>
+</div>
+<ul class="aa-lignes">
+  @for (l of avantApres; track l.question; let i = $index) {
+    <li class="aa-ligne" appApparition [style.--delai]="i * 120 + 'ms'">
+      <h3 class="aa-question">{{ l.question }}</h3>
+      <p class="aa-cahier" [style.--penche]="(i % 2 ? 1 : -1) * 0.8 + 'deg'">
+        <span class="aa-etiquette">Dans le cahier</span>
+        @for (m of l.cahier; track $index) {
+          <span [class.barre]="m.barre" [class.doute]="m.doute">{{ m.texte }}</span>
+        }
+      </p>
+      <div class="aa-apres">
+        <span class="aa-etiquette">Dans SamaNatteu</span>
+        <div class="aa-carte">
+          <div>
+            <strong>{{ l.apres.titre }}</strong>
+            <small>{{ l.apres.detail }}</small>
+          </div>
+          <div class="aa-droite">
+            <b>{{ l.apres.valeur }}</b>
+            <span class="aa-badge" [class]="'aa-badge aa-' + l.apres.ton">{{ l.apres.badge }}</span>
+          </div>
+        </div>
+      </div>
+    </li>
+  }
+</ul>

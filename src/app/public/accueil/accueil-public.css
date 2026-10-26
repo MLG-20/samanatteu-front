@@ -1162,6 +1162,12 @@ h3 {
   background: linear-gradient(90deg, var(--cyan), #a7f3d0);
 }
 
+/* ---------- Avant / après (la liste est dans public/avant-apres) ---------- */
+
+.avant-apres {
+  padding-bottom: 4rem;
+}
+
 /* ---------- Confiance ---------- */
 
 .confiance {
